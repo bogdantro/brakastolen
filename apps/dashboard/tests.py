@@ -406,3 +406,26 @@ class PlotMapTests(DashboardTestCase):
         self.assertContains(self.client.get(reverse('dashboard_inquiry_detail', args=[inquiry.pk])), 'tomt 21')
         csv_text = self.client.get(reverse('dashboard_inquiries') + '?export=csv').content.decode('utf-8')
         self.assertIn(';21;', csv_text)
+
+
+class MissingUserTests(DashboardTestCase):
+    """Log entries and notes can lose their user (lockouts, deleted accounts) – pages must still load."""
+
+    def test_overview_and_activity_load_with_an_entry_without_a_user(self):
+        ActivityLog.objects.create(action='Innlogging sperret etter for mange forsøk', target='ukjent (127.0.0.1)')
+        for name in ('dashboard_home', 'dashboard_activity'):
+            with self.subTest(page=name):
+                self.assertContains(self.client.get(reverse(name)), 'System')
+
+    def test_note_whose_author_was_deleted_still_shows(self):
+        inquiry = make_inquiry()
+        author = User.objects.create_user('tidligere', password=PASSWORD, is_staff=True)
+        InquiryNote.objects.create(inquiry=inquiry, author=author, text='Ringte mandag')
+        author.delete()
+        response = self.client.get(reverse('dashboard_inquiry_detail', args=[inquiry.pk]))
+        self.assertContains(response, 'Ringte mandag')
+        self.assertContains(response, 'Ukjent')
+
+    def test_names_prefer_full_name(self):
+        entry = ActivityLog.objects.create(user=self.user, action='Logget inn')
+        self.assertEqual(entry.who, 'Haakon')

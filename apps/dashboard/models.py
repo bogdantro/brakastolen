@@ -18,6 +18,14 @@ class ActivityLog(models.Model):
     def __str__(self):
         return f'{self.user} – {self.action} {self.target}'
 
+    @property
+    def who(self):
+        """'Haakon Edland', 'haakon', or 'System' for entries without a user
+        (e.g. a login lockout, or a user who has since been deleted)."""
+        if self.user is None:
+            return 'System'
+        return self.user.get_full_name() or self.user.username
+
 
 class LoginAttempt(models.Model):
     ip = models.GenericIPAddressField(null=True, blank=True)

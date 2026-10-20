@@ -72,7 +72,7 @@
     {% for note in notes %}
     <li>
       <p class="pre">{{ note.text }}</p>
-      <small>{{ note.author.get_full_name|default:note.author.username|default:'Ukjent' }}, {{ note.created_at|date:'d.m.Y H:i' }}</small>
+      <small>{{ note.author_name }}, {{ note.created_at|date:'d.m.Y H:i' }}</small>
       <form method="post" class="inline" data-confirm="Slette notatet?">
         {% csrf_token %}
         <input type="hidden" name="action" value="delete_note">

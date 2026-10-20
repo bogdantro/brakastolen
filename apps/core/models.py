@@ -78,6 +78,13 @@ class InquiryNote(models.Model):
     def __str__(self):
         return f'Notat for {self.inquiry.name}'
 
+    @property
+    def author_name(self):
+        """'Haakon Edland', 'haakon', or 'Ukjent' when the author's user has been deleted."""
+        if self.author is None:
+            return 'Ukjent'
+        return self.author.get_full_name() or self.author.username
+
 
 # ------------------------------------------------------------------
 # Projects: cabin groups (hyttegrender) and cabins
