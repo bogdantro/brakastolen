@@ -81,6 +81,62 @@
     }
   }
 
+  // The Tranberg group: logo, name and what each company does
+  .footer-group {
+    border-top: 1px solid $borderOnDark;
+
+    h2 a {
+      color: $sage;
+      text-decoration: underline;
+      text-decoration-color: rgba(144, 174, 140, 0.5);
+      text-underline-offset: 4px;
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+    }
+
+    li a {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: $white;
+      transition: opacity 0.25s ease;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    img {
+      height: 84px;
+      width: auto;
+      flex-shrink: 0;
+    }
+
+    .group-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      strong {
+        font-family: $fontDisplay;
+        font-weight: 400;
+        font-size: 21px;
+        line-height: 1.15;
+      }
+
+      span {
+        font-size: 14px;
+        line-height: 1.45;
+        color: rgba(246, 243, 233, 0.7);
+      }
+    }
+  }
+
   .footer-bottom {
     display: flex;
     flex-wrap: wrap;
@@ -118,6 +174,14 @@
       padding-top: 22px;
       padding-bottom: 28px;
     }
+
+    .footer-group {
+      padding-top: 36px;
+      padding-bottom: 40px;
+
+      ul { gap: 24px; }
+      img { height: 70px; }
+    }
   }
 }
 
@@ -134,6 +198,16 @@
     .footer-bottom {
       padding-top: 26px;
       padding-bottom: 30px;
+    }
+
+    .footer-group {
+      padding-top: u(56);
+      padding-bottom: u(60);
+
+      ul {
+        grid-template-columns: repeat(3, 1fr);
+        gap: u(48);
+      }
     }
   }
 }

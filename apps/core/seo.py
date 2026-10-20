@@ -60,6 +60,17 @@ BUSINESS = {
     'same_as': [],
 }
 
+# The Tranberg group (tranberg-gruppen.no, read 20.10.2026; org. numbers from brreg.no).
+# Shown in the footer. (name, org. number, what it does, link, logo in static/)
+GROUP = [
+    ('Tranberg Holding AS', '883 074 602', 'Finans, eiendomsforvaltning, eiendomsutvikling og gårdsdrift',
+     'https://tranberg-gruppen.no/', 'images/logo/tranberg/tranberg-holding.png'),
+    ('Tranberg Gård AS', '915 651 143', 'Hestefor, utleie av næringslokaler og konsulenttjenester',
+     'https://tranberg-gruppen.no/tranberg-gard-as/', 'images/logo/tranberg/tranberg-gard.png'),
+    ('Tranberg Utvikling AS', '925 233 498', 'Utvikling av hytteområder – Brakastølen',
+     'https://tranberg-gruppen.no/tranberg-utvikling-a-s/', 'images/logo/logo-brakastolen-hvit.png'),
+]
+
 # Partners named on the old website ("Våre samarbeidspartnere på Brakastølen")
 PARTNERS = [
     ('Hytteleverandør', 'Tinde Hytter', 'https://www.tindehytter.no'),

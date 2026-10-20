@@ -33,6 +33,23 @@
     </nav>
   </div>
 
+  <div class="content footer-group">
+    <h2>En del av <a href="https://tranberg-gruppen.no/" target="_blank" rel="noopener">Tranberg-gruppen</a></h2>
+    <ul>
+      {% for name, org_number, description, url, logo in group %}
+      <li>
+        <a href="{{ url }}" target="_blank" rel="noopener">
+          <img src="{% static logo %}" alt="{{ name }}" loading="lazy">
+          <span class="group-text">
+            <strong>{{ name }}</strong>
+            <span>{{ description }}</span>
+          </span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
   <div class="content footer-bottom">
     <p>© {% now "Y" %} {{ business.company }}</p>
     <a href="{% url 'personvern' %}">Personvern</a>
