@@ -61,42 +61,35 @@
 
 {% include 'core/plot-picker.html' %}
 
-<section class="intro section">
-  <div class="content split">
-    <div class="split-head">
-      <h2>Høyt og fritt ved Panoramavegen</h2>
+<section class="intro" aria-labelledby="intro-title">
+  <div class="intro-grid">
+    <div class="intro-text">
+      <h2 id="intro-title">Høyt og fritt ved Panoramavegen</h2>
       <span class="copper-rule" aria-hidden="true"></span>
-    </div>
-    <div class="prose large">
-      <p>Brakastølen – Vaset i Valdres ligger høyt og flott ved Panoramavegen mellom Valdres og Hemsedal.</p>
+      <p class="intro-lead">Brakastølen – Vaset i Valdres ligger høyt og flott ved Panoramavegen mellom Valdres og Hemsedal.</p>
       <p>Området er en naturperle og byr på et flott og variert fjellterreng med et levende stølsmiljø, varierte aktiviteter, butikker og hyggelige serveringssteder.</p>
-      <p>Her er det åpent og vilt landskap med flott utsyn mot den ville Jotunheimen.</p>
+      <a href="{% url 'om_vaset' %}" class="circle-link"><span class="circle" aria-hidden="true">{% include 'core/arrow.svg' %}</span>Mer om Vaset</a>
     </div>
+
+    <figure class="intro-photo">
+      <img src="{% static 'images/projects/leve-hytte-utsikt-til-syndin.jpg' %}" alt="Utsikt fra hyttevinduet mot Syndin og fjellene rundt Vaset" loading="lazy">
+      <figcaption class="intro-quote">Her er det åpent og vilt landskap med flott utsyn mot den ville Jotunheimen.</figcaption>
+    </figure>
   </div>
 
-  <dl class="content fact-strip">
-    <div><dt>Høyde</dt><dd>900–1050 moh.</dd></div>
-    <div><dt>Utsikt</dt><dd>180 grader</dd></div>
-    <div><dt>Sol</dt><dd>Morgen til kveld</dd></div>
-    <div><dt>Byggeklausul</dt><dd>Ingen</dd></div>
-  </dl>
-</section>
-
-<section class="feature plots-feature section">
-  <div class="content feature-grid">
-    <figure class="feature-image map-frame">
-      <a href="{% url 'tomter' %}#tomtekart">
-        <img src="{% static 'images/misc/tomtekart-2022-02-01.png' %}" alt="Tomtekart over Brakastølen med hyttegrender og nummererte tomter" loading="lazy">
-      </a>
-    </figure>
-    <div class="feature-text">
-      <h2>Tomter i mindre hyttegrender</h2>
-      <span class="copper-rule" aria-hidden="true"></span>
-      <p>Alle tomtene ligger på 900–1050 moh. med fantastisk utsikt og unike solforhold fra morgen til kveld. Tomtene fordeler seg på mindre hyttegrender, og det er ingen byggeklausul.</p>
-      <p class="price-line">Fra <strong>{{ business.price_from_display }}</strong> + omk.</p>
-      {% if available_plots %}<p class="note">{{ available_plots }} ledig{{ available_plots|pluralize:"e" }} tomt{{ available_plots|pluralize:"er" }} akkurat nå.</p>{% endif %}
-      <a href="{% url 'tomter' %}" class="circle-link"><span class="circle" aria-hidden="true">{% include 'core/arrow.svg' %}</span>Se tomtene</a>
-    </div>
+  <div class="facts-band">
+    <dl class="content facts">
+      <div><dt>Høyde</dt><dd>900–1050 <span>moh.</span></dd></div>
+      <div><dt>Utsikt</dt><dd>180°</dd></div>
+      <div><dt>Sol</dt><dd>Morgen til kveld</dd></div>
+      <div><dt>Byggeklausul</dt><dd>Ingen</dd></div>
+    </dl>
+    {% comment %} A mountain ridge with the 900–1050 moh. band the plots sit in – decorative {% endcomment %}
+    <svg class="ridge" viewBox="0 0 1600 150" preserveAspectRatio="none" aria-hidden="true">
+      <path class="ridge-fill" d="M0 150V96L90 80 170 92 260 58 330 74 420 30 470 44 540 12 610 40 690 34 760 62 850 40 930 66 1010 22 1080 48 1160 38 1240 70 1330 46 1410 64 1500 50 1600 72V150Z"/>
+      <path class="ridge-line" d="M0 96L90 80 170 92 260 58 330 74 420 30 470 44 540 12 610 40 690 34 760 62 850 40 930 66 1010 22 1080 48 1160 38 1240 70 1330 46 1410 64 1500 50 1600 72"/>
+      <path class="ridge-band" d="M0 52H1600M0 86H1600"/>
+    </svg>
   </div>
 </section>
 

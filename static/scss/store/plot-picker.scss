@@ -243,26 +243,6 @@ $mapGround: #E6E3D3;
     color: $mutedText;
   }
 
-  .favorites-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: none;
-    border: 0;
-    padding: 4px 0;
-    font: inherit;
-    font-size: 14px;
-    color: $mutedText;
-    cursor: pointer;
-
-    &[aria-pressed="true"] {
-      color: $primaryColor;
-      font-weight: 500;
-
-      path { fill: currentColor; }
-    }
-  }
-
   .cards {
     flex: 1;
     overflow-y: auto;
@@ -292,7 +272,7 @@ $mapGround: #E6E3D3;
     text-align: left;
     background: none;
     border: 0;
-    padding: 18px 56px 18px 22px;
+    padding: 18px 22px;
     font: inherit;
     color: inherit;
     cursor: pointer;
@@ -339,30 +319,6 @@ $mapGround: #E6E3D3;
     font-family: $fontBody;
     font-size: 16px;
     color: $mutedText;
-  }
-
-  .fav {
-    position: absolute;
-    top: 16px;
-    right: 14px;
-    display: grid;
-    place-items: center;
-    width: 36px;
-    height: 36px;
-    background: none;
-    border: 0;
-    color: #A39C8E;
-    cursor: pointer;
-
-    svg {
-      width: 19px;
-      height: 19px;
-    }
-
-    &:hover,
-    &.is-active {
-      color: $primaryColor;
-    }
   }
 
   .empty {

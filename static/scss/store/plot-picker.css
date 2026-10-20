@@ -201,25 +201,6 @@
   font-size: 14px;
   color: #5C5956;
 }
-.plot-picker .favorites-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: 0;
-  padding: 4px 0;
-  font: inherit;
-  font-size: 14px;
-  color: #5C5956;
-  cursor: pointer;
-}
-.plot-picker .favorites-toggle[aria-pressed=true] {
-  color: #002223;
-  font-weight: 500;
-}
-.plot-picker .favorites-toggle[aria-pressed=true] path {
-  fill: currentColor;
-}
 .plot-picker .cards {
   flex: 1;
   overflow-y: auto;
@@ -244,7 +225,7 @@
   text-align: left;
   background: none;
   border: 0;
-  padding: 18px 56px 18px 22px;
+  padding: 18px 22px;
   font: inherit;
   color: inherit;
   cursor: pointer;
@@ -290,26 +271,6 @@
   font-family: "Newsreader", Georgia, serif;
   font-size: 16px;
   color: #5C5956;
-}
-.plot-picker .fav {
-  position: absolute;
-  top: 16px;
-  right: 14px;
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  background: none;
-  border: 0;
-  color: #A39C8E;
-  cursor: pointer;
-}
-.plot-picker .fav svg {
-  width: 19px;
-  height: 19px;
-}
-.plot-picker .fav:hover, .plot-picker .fav.is-active {
-  color: #002223;
 }
 .plot-picker .empty {
   padding: 48px 22px;

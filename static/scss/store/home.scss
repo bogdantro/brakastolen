@@ -324,53 +324,108 @@
 // Sections below the hero
 // ------------------------------------------------------------
 
-// Tomter: the plot map on a sand panel beside the text
-.plots-feature {
-  background: $card;
+// "Høyt og fritt": text beside a tall photo that bleeds to the right edge; a cream block with
+// the Jotunheimen line steps into the photo, and the photo overlaps a green band of facts
+// that ends in a mountain ridge marking the 900–1050 moh. the plots sit at.
+.intro {
+  position: relative;
 
-  .map-frame {
-    margin: 0;
-    background: #fff;
-    border: 1px solid $border;
-    overflow: hidden;
-
-    a {
-      display: block;
-    }
-
-    img {
-      width: 100%;
-      object-fit: cover;
-      object-position: 50% 32%;
-    }
+  .intro-grid {
+    position: relative;
+    z-index: 2;
   }
 
-  .feature-text {
-    .copper-rule { margin: 28px 0 24px; }
-    p { color: $mutedText; max-width: 26em; }
+  h2 {
+    letter-spacing: -0.025em;
   }
 
-  .price-line {
-    margin-top: 22px;
-    font-size: 20px;
-    color: $black;
-
-    strong {
-      font-family: $fontDisplay;
-      font-weight: 400;
-      font-size: 1.6em;
-      letter-spacing: -0.02em;
-      color: $heroText;
-    }
+  .copper-rule {
+    margin: 30px 0 28px;
   }
 
-  .note {
-    margin-top: 6px;
-    color: $sageDeep;
+  .intro-lead {
+    font-family: $fontDisplay;
+    color: $heroText;
+    line-height: 1.3;
+  }
+
+  .intro-text > p:not(.intro-lead) {
+    color: $mutedText;
+    max-width: 30em;
   }
 
   .circle-link {
-    margin-top: 34px;
+    margin-top: 36px;
+  }
+
+  .intro-photo {
+    position: relative;
+    margin: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .intro-quote {
+    background: $background;
+    font-family: $fontDisplay;
+    color: $heroText;
+    line-height: 1.25;
+
+    &::before {
+      content: '';
+      display: block;
+      width: 48px;
+      height: 2px;
+      background: $sageDeep;
+      margin-bottom: 20px;
+    }
+  }
+
+  .facts-band {
+    position: relative;
+    background: $primaryColor;
+    color: $white;
+    overflow: hidden;
+  }
+
+  .facts {
+    display: grid;
+    margin-top: 0;
+    margin-bottom: 0;
+
+    dt {
+      color: $sage;
+      font-size: 15px;
+      letter-spacing: 0.04em;
+    }
+
+    dd {
+      margin: 10px 0 0;
+      font-family: $fontDisplay;
+      line-height: 1;
+      color: $white;
+      letter-spacing: -0.02em;
+
+      span {
+        font-family: $fontBody;
+        font-size: 0.36em;
+        color: $sage;
+        letter-spacing: 0;
+      }
+    }
+  }
+
+  .ridge {
+    display: block;
+    width: 100%;
+
+    .ridge-fill { fill: #0A3031; }
+    .ridge-line { fill: none; stroke: $sage; stroke-width: 1.5; vector-effect: non-scaling-stroke; opacity: 0.7; }
+    .ridge-band { fill: none; stroke: $sage; stroke-width: 1; stroke-dasharray: 4 7; vector-effect: non-scaling-stroke; opacity: 0.45; }
   }
 }
 
@@ -403,12 +458,6 @@
 }
 
 @media (max-width: 1139px) {
-  .intro .split-head .copper-rule { margin-bottom: 0; }
-
-  .plots-feature {
-    .feature-grid { display: grid; gap: 36px; }
-    .map-frame img { height: 320px; }
-  }
 
   .cabins-feature {
     .cabins-photo { height: 58vh; min-height: 320px; max-height: 560px; }
@@ -422,19 +471,6 @@
 }
 
 @media only screen and (min-width: 1140px) {
-  .plots-feature {
-    .feature-grid {
-      display: grid;
-      grid-template-columns: 7fr 5fr;
-      gap: u(110);
-      align-items: center;
-    }
-
-    .map-frame img {
-      height: u(560);
-    }
-  }
-
   // Photo from the hero's photo line to the right edge; the card is cream from the left edge
   .cabins-feature {
     height: u(780);
@@ -455,6 +491,119 @@
       padding: u(80) u(90) u(90) u(116);
 
       p { max-width: u(500); }
+    }
+  }
+}
+
+@media (max-width: 1139px) {
+  .intro {
+    padding-top: 72px;
+
+    .intro-text {
+      padding: 0 20px 44px;
+    }
+
+    .intro-lead {
+      font-size: 26px;
+      margin-bottom: 18px;
+    }
+
+    .intro-photo img {
+      height: 64vh;
+      min-height: 340px;
+      max-height: 560px;
+    }
+
+    .intro-quote {
+      position: relative;
+      margin: -72px 20px 0 0;
+      padding: 26px 20px 28px;
+      font-size: 24px;
+    }
+
+    .facts-band {
+      padding-top: 48px;
+    }
+
+    .facts {
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 16px;
+
+      dd { font-size: 34px; }
+    }
+
+    .ridge {
+      height: 90px;
+      margin-top: 40px;
+    }
+  }
+}
+
+@media only screen and (min-width: 1140px) {
+  .intro {
+    padding-top: u(150);
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: u(640) 1fr;
+      column-gap: u(110);
+      padding-left: u(116);
+      align-items: start;
+    }
+
+    // Bottom padding keeps the text clear of the green band, which only the photo overlaps
+    .intro-text {
+      padding-top: u(40);
+      padding-bottom: u(200);
+    }
+
+    h2 {
+      font-size: u(76);
+    }
+
+    .intro-lead {
+      font-size: u(30);
+      margin-bottom: u(22);
+    }
+
+    .intro-text > p:not(.intro-lead) {
+      font-size: u(19);
+    }
+
+    .intro-photo {
+      height: u(760);
+    }
+
+    // Steps out of the photo's lower-left corner, over the gap and into the text column
+    .intro-quote {
+      position: absolute;
+      left: u(-120);
+      bottom: 0;
+      width: u(500);
+      padding: u(40) u(48) u(44) u(44);
+      font-size: u(31);
+    }
+
+    // The photo overlaps the top of the green band
+    .facts-band {
+      margin-top: u(-150);
+      padding-top: u(150 + 80);
+    }
+
+    .facts {
+      grid-template-columns: 1fr 0.8fr 1.4fr 0.9fr;
+
+      > div + div {
+        border-left: 1px solid $borderOnDark;
+        padding-left: u(36);
+      }
+
+      dd { font-size: u(50); }
+    }
+
+    .ridge {
+      height: u(150);
+      margin-top: u(80);
     }
   }
 }

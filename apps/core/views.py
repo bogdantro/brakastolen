@@ -83,7 +83,6 @@ def hjemme(request):
         'hero_images': hero_images(),
         'featured_projects': Project.objects.public().filter(is_featured=True)[:6],
         'latest_posts': Blog.objects.public()[:3],
-        'available_plots': plots.filter(status='available').count(),
         'picker_plots': [plot.as_picker_data() for plot in plots],
         'picker_form': InquiryForm(initial={'interest': 'viewing'}, auto_id='picker_%s'),
         'faq': FAQ,

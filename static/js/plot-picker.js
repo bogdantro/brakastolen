@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function(){
     const ZOOM_MIN = 0.85;
     const ZOOM_MAX = 2.4;
     const ZOOM_STEP = 0.25;
-    const FAVORITES_KEY = 'brakastolen-favoritt-tomter';
     const SVG_NS = 'http://www.w3.org/2000/svg';
 
     const plots = JSON.parse(dataScript.textContent);
@@ -24,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function(){
     const cardsBox = root.querySelector('[data-cards]');
     const countLabel = root.querySelector('[data-count]');
     const listHint = root.querySelector('[data-list-hint]');
-    const favoritesToggle = root.querySelector('[data-favorites-toggle]');
     const viewport = root.querySelector('[data-map-viewport]');
     const svg = viewport.querySelector('svg');
     const plotLayer = svg.querySelector('[data-plot-layer]');
@@ -34,7 +32,6 @@ document.addEventListener('DOMContentLoaded', function(){
     const form = root.querySelector('[data-picker-form]');
 
     let selectedId = null;
-    let favoritesOnly = false;
     let zoom = 1;
     let panX = 0;
     let panY = 0;
@@ -49,24 +46,6 @@ document.addEventListener('DOMContentLoaded', function(){
 
     function plotLabel(plot){
         return 'Tomt ' + plot.number;
-    }
-
-    // ------------------------------------------------------------
-    // Favourites – remembered in this browser only
-    // ------------------------------------------------------------
-    let favorites = new Set();
-    try {
-        favorites = new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]'));
-    } catch (error) {
-        favorites = new Set();
-    }
-
-    function saveFavorites(){
-        try {
-            localStorage.setItem(FAVORITES_KEY, JSON.stringify(Array.from(favorites)));
-        } catch (error) {
-            // Private browsing or blocked storage: favourites just last until the page is closed
-        }
     }
 
     // ------------------------------------------------------------
@@ -123,7 +102,6 @@ document.addEventListener('DOMContentLoaded', function(){
             // Plots without a price ("ta kontakt") are never hidden by the price filter
             if (!priceField.hidden && plot.price && (plot.price < low || plot.price > high)) return false;
             if (query && String(plot.number).toLowerCase().indexOf(query) === -1) return false;
-            if (favoritesOnly && !favorites.has(plot.id)) return false;
             return true;
         });
 
@@ -148,24 +126,10 @@ document.addEventListener('DOMContentLoaded', function(){
         return node;
     }
 
-    function heartIcon(filled){
-        const icon = document.createElementNS(SVG_NS, 'svg');
-        icon.setAttribute('viewBox', '0 0 24 24');
-        icon.setAttribute('aria-hidden', 'true');
-        const path = document.createElementNS(SVG_NS, 'path');
-        path.setAttribute('d', 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z');
-        path.setAttribute('fill', filled ? 'currentColor' : 'none');
-        path.setAttribute('stroke', 'currentColor');
-        path.setAttribute('stroke-width', '1.7');
-        icon.appendChild(path);
-        return icon;
-    }
-
     function renderCards(list){
         cardsBox.replaceChildren();
         countLabel.textContent = list.length + (list.length === 1 ? ' tomt' : ' tomter');
         listHint.textContent = list.length ? 'Trykk på en tomt for detaljer' : 'Ingen treff med disse filtrene';
-        favoritesToggle.setAttribute('aria-pressed', favoritesOnly ? 'true' : 'false');
 
         if (!list.length) {
             const empty = el('div', 'empty');
@@ -210,22 +174,6 @@ document.addEventListener('DOMContentLoaded', function(){
             pick.appendChild(el('span', 'lot-price', priceText));
             pick.addEventListener('click', function(){ choose(plot.id, false); });
             card.appendChild(pick);
-
-            const fav = el('button', 'fav' + (favorites.has(plot.id) ? ' is-active' : ''));
-            fav.type = 'button';
-            fav.setAttribute('aria-pressed', favorites.has(plot.id) ? 'true' : 'false');
-            fav.setAttribute('aria-label', (favorites.has(plot.id) ? 'Fjern ' : 'Legg til ') + plotLabel(plot).toLowerCase() + (favorites.has(plot.id) ? ' fra favoritter' : ' i favoritter'));
-            fav.appendChild(heartIcon(favorites.has(plot.id)));
-            fav.addEventListener('click', function(){
-                if (favorites.has(plot.id)) {
-                    favorites.delete(plot.id);
-                } else {
-                    favorites.add(plot.id);
-                }
-                saveFavorites();
-                render();
-            });
-            card.appendChild(fav);
             cardsBox.appendChild(card);
         });
     }
@@ -379,7 +327,6 @@ document.addEventListener('DOMContentLoaded', function(){
         filters.reset();
         priceMin.value = lowestPrice;
         priceMax.value = highestPrice;
-        favoritesOnly = false;
         updatePriceRange();
         render();
     }
@@ -562,10 +509,6 @@ document.addEventListener('DOMContentLoaded', function(){
     root.querySelector('[data-reset]').addEventListener('click', function(e){
         e.preventDefault();
         resetFilters();
-    });
-    favoritesToggle.addEventListener('click', function(){
-        favoritesOnly = !favoritesOnly;
-        render();
     });
 
     // Start with the first free plot chosen, so the card shows what the picker does
