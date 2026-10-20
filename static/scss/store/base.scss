@@ -737,50 +737,70 @@ h3 {
     margin-top: 64px;
   }
 
+  // The photo fills most of the first screen; the title steps up out of it on cream,
+  // and the lead sits on a cream panel below
   .page-header {
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
+    min-height: 72vh;
+    min-height: 72svh;
     padding-top: 64px;
 
     .page-header-photo {
-      position: relative;
-      height: 46vh;
-      min-height: 280px;
-      max-height: 520px;
+      position: absolute;
+      inset: 0;
     }
 
     .page-header-text {
       position: relative;
-      padding: 0 20px 48px;
-      margin-top: -46px;
+      z-index: 2;
     }
 
     h1 {
-      font-size: clamp(44px, 12vw, 80px);
+      font-size: clamp(36px, 10.4vw, 80px);
       // 1.25 em = DM Serif Display's full glyph box, so the cream line backgrounds
       // touch without covering the descenders of the line above
       line-height: 1.25;
+      // Long words ("Personvernerklæring") break instead of running off the screen
+      overflow-wrap: anywhere;
+      hyphens: auto;
 
       span {
-        padding: 0 14px 0 0;
+        padding: 0 16px 0 20px;
       }
     }
 
-    &.is-plain .page-header-text {
-      margin-top: 48px;
+    .page-header-sub {
+      background: $background;
+      padding: 6px 20px 34px;
     }
 
     .meta {
-      margin-top: 18px;
+      margin-top: 10px;
     }
 
     .copper-rule {
-      margin: 22px 0 18px;
+      margin: 16px 0 14px;
     }
 
     .lead {
-      font-size: 19px;
+      font-size: 18px;
       line-height: 1.5;
+    }
+
+    // No photo: a band of the brand green
+    &.is-plain {
+      min-height: 0;
+      padding-top: 112px;
+
+      // Small enough that one long word ("Personvernerklæring") fits on a phone
+      h1 { font-size: clamp(30px, 8.4vw, 64px); }
+
+      .page-header-sub {
+        background: none;
+        padding-bottom: 44px;
+      }
     }
   }
 
@@ -1199,5 +1219,80 @@ h3 {
         border-color: $sageDeep;
       }
     }
+  }
+}
+
+// ------------------------------------------------------------
+// Tablet (700–1139 px): wider margins and real columns instead of the stretched phone layout
+// ------------------------------------------------------------
+@media (min-width: 700px) and (max-width: 1139px) {
+  .content {
+    padding: 0 40px;
+  }
+
+  .section {
+    padding: 96px 0;
+  }
+
+  .page-header {
+    h1 span {
+      padding-left: 40px;
+    }
+
+    .page-header-sub {
+      width: min(100%, 620px);
+      padding: 10px 40px 44px;
+    }
+
+    .lead {
+      font-size: 20px;
+    }
+
+    &.is-plain .page-header-sub {
+      width: auto;
+    }
+  }
+
+  .split {
+    gap: 40px;
+  }
+
+  .split-head h2,
+  .section-head h2 {
+    font-size: 46px;
+  }
+
+  .project-list {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px 24px;
+  }
+
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px 24px;
+  }
+
+  .stat-row {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .route {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px 24px;
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .news-list a {
+    grid-template-columns: 180px 1fr;
+    column-gap: 28px;
+
+    time {
+      grid-row: span 2;
+    }
+  }
+
+  .flash-messages .flash {
+    padding: 16px 40px;
   }
 }

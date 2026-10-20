@@ -384,6 +384,7 @@ $mapGround: #E6E3D3;
   .map-tools {
     display: flex;
     gap: 6px;
+    margin-left: auto;
     pointer-events: auto;
   }
 
@@ -727,9 +728,21 @@ $mapGround: #E6E3D3;
       gap: 14px;
     }
 
+    // The map runs edge to edge and gets most of the screen's height;
+    // the chosen plot's card sits below it, so it never covers the plots
     .picker-map {
       order: -1;
-      height: 460px;
+      margin: 0 -20px;
+      border-left: 0;
+      border-right: 0;
+    }
+
+    .map-viewport {
+      flex: none;
+      height: 66vh;
+      height: 66svh;
+      min-height: 460px;
+      max-height: 700px;
     }
 
     .picker-list {
@@ -745,20 +758,23 @@ $mapGround: #E6E3D3;
     }
 
     .selected-card {
-      left: 12px;
-      right: 12px;
-      bottom: 64px;
-      padding: 14px 16px 16px;
+      position: static;
+      border-width: 1px 0 0;
+      box-shadow: none;
+      padding: 18px 20px 22px;
 
-      .card-top strong { font-size: 22px; }
-      .card-price { font-size: 26px; margin-top: 10px; }
-      .button { margin-top: 12px; min-height: 46px; }
+      .card-top strong { font-size: 24px; }
+      .card-price { font-size: 28px; margin-top: 10px; }
+      .button { margin-top: 14px; min-height: 50px; }
     }
 
+    // In the free top-left corner (the zoom buttons are top-right)
     .map-legend {
+      top: 16px;
+      bottom: auto;
       left: 12px;
-      right: 12px;
-      bottom: 12px;
+      right: auto;
+      max-width: 170px;
       font-size: 12px;
       gap: 4px 12px;
     }
@@ -813,5 +829,77 @@ $mapGround: #E6E3D3;
   .plot-picker .map-viewport svg,
   .plot-picker .plot .parcel {
     transition: none;
+  }
+}
+
+// ------------------------------------------------------------
+// Tablet (700–1139 px)
+// ------------------------------------------------------------
+@media (min-width: 700px) and (max-width: 1139px) {
+  // List and map side by side; the chosen plot's card floats in the map's corner
+  .plot-picker {
+    padding: 96px 0;
+
+    .picker-intro {
+      flex-direction: row;
+      align-items: flex-end;
+    }
+
+    .picker-intro .picker-from {
+      text-align: right;
+    }
+
+    .picker-filters {
+      grid-template-columns: repeat(3, 1fr);
+      padding: 22px;
+
+      .price-field { grid-column: 1 / -1; }
+      .filter-field:nth-child(5) { grid-column: auto; }
+    }
+
+    .picker-grid {
+      grid-template-columns: 290px minmax(0, 1fr);
+      height: 640px;
+    }
+
+    .picker-map {
+      order: 0;
+      height: auto;
+    }
+
+    .picker-list {
+      max-height: none;
+    }
+
+    .map-name { display: block; }
+
+    .map-viewport {
+      flex: 1;
+      height: auto;
+      min-height: 0;
+      max-height: none;
+    }
+
+    .picker-map {
+      margin: 0;
+      border: 1px solid $border;
+    }
+
+    .selected-card {
+      position: absolute;
+      left: auto;
+      right: 14px;
+      bottom: 60px;
+      width: 270px;
+      border-width: 1px;
+      box-shadow: 0 18px 50px rgba(0, 34, 35, 0.22);
+    }
+
+    .map-legend {
+      top: auto;
+      bottom: 16px;
+      right: auto;
+      max-width: none;
+    }
   }
 }

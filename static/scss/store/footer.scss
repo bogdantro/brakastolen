@@ -211,3 +211,28 @@
     }
   }
 }
+
+// ------------------------------------------------------------
+// Tablet (700–1139 px)
+// ------------------------------------------------------------
+@media (min-width: 700px) and (max-width: 1139px) {
+  .site-footer {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 48px 40px;
+    }
+
+    .footer-links { grid-column: 1 / -1; }
+    .footer-links ul { columns: 4; }
+
+    .footer-group ul {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .footer-group li a {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+}

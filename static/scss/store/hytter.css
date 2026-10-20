@@ -117,5 +117,21 @@
     grid-template-columns: repeat(4, 1fr);
   }
 }
+@media (min-width: 700px) and (max-width: 1139px) {
+  .supplier {
+    padding: 96px 0;
+  }
+  .supplier .supplier-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .supplier.is-flipped .supplier-photos {
+    order: 2;
+  }
+  .partner-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 
 /*# sourceMappingURL=hytter.css.map */

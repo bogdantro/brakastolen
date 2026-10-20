@@ -68,5 +68,14 @@
     padding: calc(var(--u) * 72) calc(var(--u) * 60);
   }
 }
+@media (min-width: 700px) and (max-width: 1139px) {
+  .contact-section .field-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .contact-section .form-column,
+  .contact-section .contact-info {
+    padding: 56px 40px;
+  }
+}
 
 /*# sourceMappingURL=kontakt.css.map */

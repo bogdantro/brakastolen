@@ -175,5 +175,25 @@
     gap: calc(var(--u) * 48);
   }
 }
+@media (min-width: 700px) and (max-width: 1139px) {
+  .site-footer .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 48px 40px;
+  }
+  .site-footer .footer-links {
+    grid-column: 1/-1;
+  }
+  .site-footer .footer-links ul {
+    columns: 4;
+  }
+  .site-footer .footer-group ul {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .site-footer .footer-group li a {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
 
 /*# sourceMappingURL=footer.css.map */

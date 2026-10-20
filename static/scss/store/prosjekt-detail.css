@@ -97,5 +97,11 @@
     transition: none;
   }
 }
+@media (min-width: 700px) and (max-width: 1139px) {
+  .gallery {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+}
 
 /*# sourceMappingURL=prosjekt-detail.css.map */

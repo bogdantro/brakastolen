@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function(){
     const ZOOM_MAX = 2.4;
     const ZOOM_STEP = 0.25;
     const SVG_NS = 'http://www.w3.org/2000/svg';
+    const canHover = window.matchMedia('(hover: hover)').matches;
 
     const plots = JSON.parse(dataScript.textContent);
     const byId = new Map(plots.map(function(plot){ return [plot.id, plot]; }));
@@ -219,7 +220,8 @@ document.addEventListener('DOMContentLoaded', function(){
                     choose(plot.id, true);
                 }
             });
-            group.addEventListener('mouseenter', function(){ showTooltip(plot); });
+            // The hover tooltip is for mice only – on a phone a tap selects the plot instead
+            group.addEventListener('mouseenter', function(){ if (canHover) showTooltip(plot); });
             group.addEventListener('mousemove', moveTooltip);
             group.addEventListener('mouseleave', function(){ tooltip.hidden = true; });
             plotLayer.appendChild(group);
@@ -338,6 +340,41 @@ document.addEventListener('DOMContentLoaded', function(){
         svg.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + zoom + ')';
     }
 
+    // Below desktop width the wide drawing would shrink to fit, so the map frames
+    // the area where the plots are instead – the plots come out much larger
+    const FULL_VIEW = [0, 0, 960, 760];
+    const NARROW_SCREEN = 1140;
+    const FRAME_PADDING = 55;
+
+    function fitMapToScreen(){
+        const placed = plots.filter(function(plot){ return plot.x !== null && plot.y !== null; });
+        if (window.innerWidth >= NARROW_SCREEN || !placed.length) {
+            svg.setAttribute('viewBox', FULL_VIEW.join(' '));
+            return;
+        }
+        const xs = placed.map(function(plot){ return plot.x; });
+        const ys = placed.map(function(plot){ return plot.y; });
+        let minX = Math.min.apply(null, xs) - FRAME_PADDING;
+        let maxX = Math.max.apply(null, xs) + FRAME_PADDING;
+        let minY = Math.min.apply(null, ys) - FRAME_PADDING;
+        let maxY = Math.max.apply(null, ys) + FRAME_PADDING;
+        // Grow the frame to the map box's shape, so nothing is stretched
+        const box = viewport.getBoundingClientRect();
+        const ratio = box.width / (box.height || 1);
+        let width = maxX - minX;
+        let height = maxY - minY;
+        if (width / height < ratio) {
+            const extra = height * ratio - width;
+            minX -= extra / 2;
+            width += extra;
+        } else {
+            const extra = width / ratio - height;
+            minY -= extra / 2;
+            height += extra;
+        }
+        svg.setAttribute('viewBox', [minX, minY, width, height].map(Math.round).join(' '));
+    }
+
     root.querySelectorAll('[data-zoom]').forEach(function(button){
         button.addEventListener('click', function(){
             const action = button.dataset.zoom;
@@ -347,6 +384,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 zoom = 1;
                 panX = 0;
                 panY = 0;
+                fitMapToScreen();
             }
             applyTransform();
         });
@@ -516,6 +554,13 @@ document.addEventListener('DOMContentLoaded', function(){
     selectedId = firstFree ? firstFree.id : null;
 
     buildMap();
+    fitMapToScreen();
     updatePriceRange();
     render();
+
+    let resizeTimer = null;
+    window.addEventListener('resize', function(){
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(fitMapToScreen, 150);
+    });
 });

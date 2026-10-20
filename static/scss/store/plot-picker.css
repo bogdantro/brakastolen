@@ -325,6 +325,7 @@
 .plot-picker .map-tools {
   display: flex;
   gap: 6px;
+  margin-left: auto;
   pointer-events: auto;
 }
 .plot-picker .icon-btn {
@@ -640,7 +641,16 @@
   }
   .plot-picker .picker-map {
     order: -1;
-    height: 460px;
+    margin: 0 -20px;
+    border-left: 0;
+    border-right: 0;
+  }
+  .plot-picker .map-viewport {
+    flex: none;
+    height: 66vh;
+    height: 66svh;
+    min-height: 460px;
+    max-height: 700px;
   }
   .plot-picker .picker-list {
     max-height: 520px;
@@ -652,26 +662,28 @@
     display: none;
   }
   .plot-picker .selected-card {
-    left: 12px;
-    right: 12px;
-    bottom: 64px;
-    padding: 14px 16px 16px;
+    position: static;
+    border-width: 1px 0 0;
+    box-shadow: none;
+    padding: 18px 20px 22px;
   }
   .plot-picker .selected-card .card-top strong {
-    font-size: 22px;
+    font-size: 24px;
   }
   .plot-picker .selected-card .card-price {
-    font-size: 26px;
+    font-size: 28px;
     margin-top: 10px;
   }
   .plot-picker .selected-card .button {
-    margin-top: 12px;
-    min-height: 46px;
+    margin-top: 14px;
+    min-height: 50px;
   }
   .plot-picker .map-legend {
+    top: 16px;
+    bottom: auto;
     left: 12px;
-    right: 12px;
-    bottom: 12px;
+    right: auto;
+    max-width: 170px;
     font-size: 12px;
     gap: 4px 12px;
   }
@@ -713,6 +725,67 @@
   .plot-picker .map-viewport svg,
   .plot-picker .plot .parcel {
     transition: none;
+  }
+}
+@media (min-width: 700px) and (max-width: 1139px) {
+  .plot-picker {
+    padding: 96px 0;
+  }
+  .plot-picker .picker-intro {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+  .plot-picker .picker-intro .picker-from {
+    text-align: right;
+  }
+  .plot-picker .picker-filters {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 22px;
+  }
+  .plot-picker .picker-filters .price-field {
+    grid-column: 1/-1;
+  }
+  .plot-picker .picker-filters .filter-field:nth-child(5) {
+    grid-column: auto;
+  }
+  .plot-picker .picker-grid {
+    grid-template-columns: 290px minmax(0, 1fr);
+    height: 640px;
+  }
+  .plot-picker .picker-map {
+    order: 0;
+    height: auto;
+  }
+  .plot-picker .picker-list {
+    max-height: none;
+  }
+  .plot-picker .map-name {
+    display: block;
+  }
+  .plot-picker .map-viewport {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+  .plot-picker .picker-map {
+    margin: 0;
+    border: 1px solid rgba(20, 22, 22, 0.16);
+  }
+  .plot-picker .selected-card {
+    position: absolute;
+    left: auto;
+    right: 14px;
+    bottom: 60px;
+    width: 270px;
+    border-width: 1px;
+    box-shadow: 0 18px 50px rgba(0, 34, 35, 0.22);
+  }
+  .plot-picker .map-legend {
+    top: auto;
+    bottom: 16px;
+    right: auto;
+    max-width: none;
   }
 }
 

@@ -120,77 +120,87 @@
 }
 
 // ------------------------------------------------------------
-// Mobile and tablet: photo on top, the heading steps up into it
+// Mobile and tablet: the photo fills the first screen; the heading steps up out of it on
+// cream blocks, and a cream panel below carries the place, the text and the button – all
+// within the first screen. On tablets the panel is narrower, so the photo shows beside it.
 // ------------------------------------------------------------
 @media (max-width: 1139px) {
   .hero {
     display: flex;
     flex-direction: column;
-    padding-bottom: 56px;
+    justify-content: flex-end;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding-top: 64px;
 
     .hero-photo {
-      position: relative;
-      order: 1;
-      height: 64vh;
-      min-height: 380px;
-      max-height: 640px;
+      position: absolute;
+      inset: 0;
     }
 
-    .step, .side-column, .side-text, .winter {
+    .step, .side-column, .side-text, .winter, .price-card {
       display: none;
     }
 
-
-    .price-card {
-      order: 2;
-      position: relative;
-      align-self: flex-end;
-      margin-top: -64px;
-      padding: 18px 20px 14px 24px;
-      .copper-rule { width: 32px; margin-bottom: 12px; }
-      .label { font-size: 11px; }
-      .price { font-size: 44px; margin-top: 4px; }
-      .costs { font-size: 14px; }
-    }
-
     .hero-text {
-      order: 3;
-      padding: 0 20px;
-      margin-top: -34px;
+      position: relative;
+      z-index: 2;
     }
 
     h1 {
-      font-size: clamp(44px, 12.2vw, 92px);
-      line-height: 1.02;
+      font-size: clamp(44px, 11.6vw, 96px);
+      line-height: 1.04;
 
+      // The lines step out from the left edge, each on its own cream block
       .line {
-        padding: 4px 14px 0 0;
+        padding: 6px 18px 0 20px;
       }
     }
 
+    .hero-sub {
+      background: $background;
+      padding: 14px 20px 32px;
+    }
+
     .place {
-      font-size: 24px;
-      // Room for the descender of the "j" in "fjellet" above
-      margin-top: 0.3em;
-      padding-top: 0.12em;
+      font-size: 22px;
+      // Room for the descender of the "g" in "utvalg" above
+      padding-top: 0.1em;
     }
 
     .copper-rule {
       width: 48px;
-      margin: 16px 0 18px;
+      margin: 14px 0 14px;
     }
 
     .lead {
-      font-size: 18px;
+      font-size: 17px;
       line-height: 1.45;
     }
 
     .circle-link {
-      margin-top: 28px;
-      gap: 18px;
+      margin-top: 22px;
+      gap: 16px;
       font-size: 18px;
-      .circle { width: 60px; height: 60px; }
+
+      .circle { width: 56px; height: 56px; }
     }
+  }
+}
+
+@media (min-width: 700px) and (max-width: 1139px) {
+  .hero {
+    h1 .line {
+      padding-left: 40px;
+    }
+
+    .hero-sub {
+      width: min(100%, 600px);
+      padding: 20px 40px 44px;
+    }
+
+    .place { font-size: 28px; }
+    .lead { font-size: 19px; }
   }
 }
 
@@ -749,5 +759,37 @@
 @media (prefers-reduced-motion: reduce) {
   .activities .activity-photo img {
     transition: none;
+  }
+}
+
+// ------------------------------------------------------------
+// Tablet (700–1139 px)
+// ------------------------------------------------------------
+@media (min-width: 700px) and (max-width: 1139px) {
+  .intro {
+    .intro-text { padding: 0 40px 56px; }
+    .intro-quote { margin-right: 40px; max-width: 560px; padding: 30px 36px 32px; font-size: 28px; }
+    .facts { grid-template-columns: repeat(4, 1fr); }
+    .facts-band { padding-top: 64px; }
+  }
+
+  .activities {
+    padding: 96px 0;
+
+    .activities-head { grid-template-columns: 1fr 1fr; align-items: end; gap: 32px; }
+
+    .activity-cards {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+
+      li:nth-child(2) { margin-top: 56px; }
+    }
+
+    .activity-fact { padding: 12px 16px 0 0; }
+  }
+
+  .cabins-feature {
+    .cabins-photo { height: 64vh; max-height: 640px; }
+    .cabins-card { margin-right: 40px; max-width: 600px; padding: 40px; }
   }
 }

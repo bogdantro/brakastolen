@@ -144,3 +144,20 @@
     gap: u(44);
   }
 }
+
+// ------------------------------------------------------------
+// Tablet (700–1139 px)
+// ------------------------------------------------------------
+@media (min-width: 700px) and (max-width: 1139px) {
+  .quote-photo figcaption {
+    margin-right: 40px;
+    max-width: 600px;
+    padding: 32px 40px 36px;
+    font-size: 30px;
+  }
+
+  .area-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+}

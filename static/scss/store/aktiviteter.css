@@ -122,5 +122,18 @@
     order: 2;
   }
 }
+@media (min-width: 700px) and (max-width: 1139px) {
+  .activity {
+    padding: 96px 0;
+  }
+  .activity .activity-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .activity.is-flipped .activity-photo {
+    order: 2;
+  }
+}
 
 /*# sourceMappingURL=aktiviteter.css.map */

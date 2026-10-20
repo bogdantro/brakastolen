@@ -144,3 +144,24 @@
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+// ------------------------------------------------------------
+// Tablet (700–1139 px)
+// ------------------------------------------------------------
+@media (min-width: 700px) and (max-width: 1139px) {
+  .supplier {
+    padding: 96px 0;
+
+    .supplier-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    &.is-flipped .supplier-photos { order: 2; }
+  }
+
+  .partner-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

@@ -17,8 +17,10 @@
 
   <div class="page-header-text">
     <h1><span>{{ title }}</span></h1>
-    {% if meta %}<p class="meta">{{ meta }}</p>{% endif %}
-    <span class="copper-rule" aria-hidden="true"></span>
-    {% if lead %}<p class="lead">{{ lead }}</p>{% endif %}
+    <div class="page-header-sub">
+      {% if meta %}<p class="meta">{{ meta }}</p>{% endif %}
+      <span class="copper-rule" aria-hidden="true"></span>
+      {% if lead %}<p class="lead">{{ lead }}</p>{% endif %}
+    </div>
   </div>
 </header>

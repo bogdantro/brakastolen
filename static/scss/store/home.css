@@ -96,72 +96,68 @@
   .hero {
     display: flex;
     flex-direction: column;
-    padding-bottom: 56px;
+    justify-content: flex-end;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding-top: 64px;
   }
   .hero .hero-photo {
-    position: relative;
-    order: 1;
-    height: 64vh;
-    min-height: 380px;
-    max-height: 640px;
+    position: absolute;
+    inset: 0;
   }
-  .hero .step, .hero .side-column, .hero .side-text, .hero .winter {
+  .hero .step, .hero .side-column, .hero .side-text, .hero .winter, .hero .price-card {
     display: none;
   }
-  .hero .price-card {
-    order: 2;
-    position: relative;
-    align-self: flex-end;
-    margin-top: -64px;
-    padding: 18px 20px 14px 24px;
-  }
-  .hero .price-card .copper-rule {
-    width: 32px;
-    margin-bottom: 12px;
-  }
-  .hero .price-card .label {
-    font-size: 11px;
-  }
-  .hero .price-card .price {
-    font-size: 44px;
-    margin-top: 4px;
-  }
-  .hero .price-card .costs {
-    font-size: 14px;
-  }
   .hero .hero-text {
-    order: 3;
-    padding: 0 20px;
-    margin-top: -34px;
+    position: relative;
+    z-index: 2;
   }
   .hero h1 {
-    font-size: clamp(44px, 12.2vw, 92px);
-    line-height: 1.02;
+    font-size: clamp(44px, 11.6vw, 96px);
+    line-height: 1.04;
   }
   .hero h1 .line {
-    padding: 4px 14px 0 0;
+    padding: 6px 18px 0 20px;
+  }
+  .hero .hero-sub {
+    background: #F1EBDF;
+    padding: 14px 20px 32px;
   }
   .hero .place {
-    font-size: 24px;
-    margin-top: 0.3em;
-    padding-top: 0.12em;
+    font-size: 22px;
+    padding-top: 0.1em;
   }
   .hero .copper-rule {
     width: 48px;
-    margin: 16px 0 18px;
+    margin: 14px 0 14px;
   }
   .hero .lead {
-    font-size: 18px;
+    font-size: 17px;
     line-height: 1.45;
   }
   .hero .circle-link {
-    margin-top: 28px;
-    gap: 18px;
+    margin-top: 22px;
+    gap: 16px;
     font-size: 18px;
   }
   .hero .circle-link .circle {
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
+  }
+}
+@media (min-width: 700px) and (max-width: 1139px) {
+  .hero h1 .line {
+    padding-left: 40px;
+  }
+  .hero .hero-sub {
+    width: min(100%, 600px);
+    padding: 20px 40px 44px;
+  }
+  .hero .place {
+    font-size: 28px;
+  }
+  .hero .lead {
+    font-size: 19px;
   }
 }
 @media only screen and (min-width: 1140px) {
@@ -652,6 +648,50 @@
 @media (prefers-reduced-motion: reduce) {
   .activities .activity-photo img {
     transition: none;
+  }
+}
+@media (min-width: 700px) and (max-width: 1139px) {
+  .intro .intro-text {
+    padding: 0 40px 56px;
+  }
+  .intro .intro-quote {
+    margin-right: 40px;
+    max-width: 560px;
+    padding: 30px 36px 32px;
+    font-size: 28px;
+  }
+  .intro .facts {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .intro .facts-band {
+    padding-top: 64px;
+  }
+  .activities {
+    padding: 96px 0;
+  }
+  .activities .activities-head {
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    gap: 32px;
+  }
+  .activities .activity-cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .activities .activity-cards li:nth-child(2) {
+    margin-top: 56px;
+  }
+  .activities .activity-fact {
+    padding: 12px 16px 0 0;
+  }
+  .cabins-feature .cabins-photo {
+    height: 64vh;
+    max-height: 640px;
+  }
+  .cabins-feature .cabins-card {
+    margin-right: 40px;
+    max-width: 600px;
+    padding: 40px;
   }
 }
 

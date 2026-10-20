@@ -145,25 +145,29 @@
       cursor: pointer;
     }
 
-    .menu-icon,
-    .menu-icon::before {
-      display: block;
-      width: 22px;
-      height: 1px;
-      background: currentColor;
+    // Two lines that turn into an X when the menu is open
+    .menu-icon {
       position: relative;
-      transition: transform 0.3s ease;
+      display: block;
+      width: 24px;
+      height: 12px;
+
+      span {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 1.5px;
+        background: currentColor;
+        transition: transform 0.3s ease, top 0.3s ease;
+      }
+
+      span:first-child { top: 0; }
+      span:last-child { top: 10.5px; }
     }
 
-    .menu-icon::before {
-      content: '';
-      position: absolute;
-      top: 7px;
-    }
-
-    .menu-toggle[aria-expanded="true"] {
-      .menu-icon { transform: translateY(3px) rotate(45deg); }
-      .menu-icon::before { transform: translateY(-7px) rotate(-90deg); }
+    .menu-toggle[aria-expanded="true"] .menu-icon {
+      span:first-child { top: 5.25px; transform: rotate(45deg); }
+      span:last-child { top: 5.25px; transform: rotate(-45deg); }
     }
 
     .nav-panel {
@@ -338,7 +342,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .nav .nav-panel,
-  .nav .menu-icon,
+  .nav .menu-icon span,
   .nav,
   .site-header.is-sticky .nav {
     transition: none;

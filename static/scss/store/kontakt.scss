@@ -88,3 +88,17 @@
     }
   }
 }
+
+// ------------------------------------------------------------
+// Tablet (700–1139 px)
+// ------------------------------------------------------------
+@media (min-width: 700px) and (max-width: 1139px) {
+  .contact-section {
+    .field-row { grid-template-columns: 1fr 1fr; }
+
+    .form-column,
+    .contact-info {
+      padding: 56px 40px;
+    }
+  }
+}

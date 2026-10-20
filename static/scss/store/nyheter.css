@@ -280,5 +280,37 @@
     transition: none;
   }
 }
+@media (min-width: 700px) and (max-width: 1139px) {
+  .article-header {
+    padding: 128px 0 56px;
+  }
+  .has-wide-image .article-header {
+    padding-bottom: 140px;
+  }
+  .article-figure.is-wide {
+    margin: -100px 40px 0;
+  }
+  .article-body {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    column-gap: 40px;
+    padding-top: 64px;
+  }
+  .article-text {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .article-aside {
+    grid-row: 1;
+    grid-column: 2;
+    order: 0;
+  }
+  .article-figure.is-portrait {
+    grid-column: 1/-1;
+  }
+  .more-news .news-cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
 
 /*# sourceMappingURL=nyheter.css.map */

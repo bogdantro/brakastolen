@@ -119,5 +119,17 @@
     gap: calc(var(--u) * 44);
   }
 }
+@media (min-width: 700px) and (max-width: 1139px) {
+  .quote-photo figcaption {
+    margin-right: 40px;
+    max-width: 600px;
+    padding: 32px 40px 36px;
+    font-size: 30px;
+  }
+  .area-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+}
 
 /*# sourceMappingURL=om-vaset.css.map */
