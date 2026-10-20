@@ -1,11 +1,338 @@
-// Nyheter: list and single post.
+// News: the list page uses the shared news-list; a single post is an editorial article –
+// a green header band, a wide photo stepping out of it, a reading column with a sticky
+// side column (date, reading time, sharing), then photo cards for more news.
 @use '../global/variables' as *;
 
-.post .post-meta {
-  color: $mutedText;
-  margin-bottom: 18px;
+.article-header {
+  background: $primaryColor;
+  color: $white;
+
+  .crumb {
+    display: inline-flex;
+    gap: 8px;
+    color: $sage;
+    text-decoration: none;
+    font-size: 16px;
+
+    &:hover {
+      color: $white;
+    }
+  }
+
+  h1 {
+    color: $white;
+    letter-spacing: -0.025em;
+    line-height: 1.04;
+    max-width: 15em;
+  }
+
+  .article-meta {
+    color: $sage;
+    font-size: 16px;
+
+    span {
+      margin: 0 6px;
+    }
+  }
+
+  .article-lead {
+    color: rgba(246, 243, 233, 0.86);
+    max-width: 34em;
+    line-height: 1.5;
+  }
 }
 
+.article-figure {
+  margin: 0;
+
+  img {
+    width: 100%;
+    display: block;
+  }
+
+  figcaption {
+    margin-top: 10px;
+    font-size: 14px;
+    color: $mutedText;
+  }
+
+  &.is-wide img {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: $sand;
+  }
+
+  // Tall images (printed ads) are shown whole, on a sand mat
+  &.is-portrait {
+    background: $card;
+    padding: 16px;
+    align-self: start;
+  }
+}
+
+.article-aside {
+  dl {
+    margin: 0;
+
+    > div {
+      padding: 12px 0;
+      border-bottom: 1px solid $border;
+    }
+
+    > div:first-child {
+      border-top: 1px solid $heroText;
+    }
+  }
+
+  dt {
+    font-size: 14px;
+    color: $sageDeep;
+  }
+
+  dd {
+    margin: 2px 0 0;
+    color: $heroText;
+  }
+
+  .share {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    > p:first-child {
+      flex-basis: 100%;
+      font-size: 14px;
+      color: $sageDeep;
+      margin-bottom: 2px;
+    }
+  }
+
+  .share-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 14px;
+    background: none;
+    border: 1px solid $border;
+    border-radius: 2px;
+    font: inherit;
+    font-size: 15px;
+    color: $primaryColor;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+
+    &:hover {
+      border-color: $primaryColor;
+      background: #FBF8F1;
+    }
+  }
+
+  .copy-status {
+    flex-basis: 100%;
+    min-height: 1.5em;
+    font-size: 14px;
+    color: $sageDeep;
+  }
+}
+
+.article-text {
+  max-width: 40rem;
+  color: #3E3C38;
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  // Lists get a short sage dash instead of a bullet
+  ul {
+    list-style: none;
+    padding-left: 0;
+
+    li {
+      position: relative;
+      padding-left: 26px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.8em;
+        width: 12px;
+        height: 2px;
+        background: $sage;
+      }
+    }
+  }
+}
+
+// More news as photo cards (cream, so it stays apart from the sand plot picker below)
 .more-news {
-  background: $card;
+  border-top: 1px solid $border;
+
+  .news-cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  .news-card {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover h3 {
+      color: $sageDeep;
+    }
+
+    &:hover img {
+      transform: scale(1.03);
+    }
+  }
+
+  .news-card-photo {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+    background: $sand;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1.2s ease;
+    }
+  }
+
+  time {
+    display: block;
+    margin-top: 16px;
+    font-size: 15px;
+    color: $sageDeep;
+  }
+
+  h3 {
+    margin-top: 6px;
+    transition: color 0.25s ease;
+  }
+
+  p {
+    margin-top: 8px;
+    color: $mutedText;
+    font-size: 17px;
+  }
+}
+
+// ------------------------------------------------------------
+// Mobile and tablet
+// ------------------------------------------------------------
+@media (max-width: 1139px) {
+  .article-header {
+    padding: 112px 0 44px;
+
+    h1 {
+      font-size: clamp(36px, 9.6vw, 60px);
+      margin-top: 18px;
+    }
+
+    .article-meta { margin-top: 16px; }
+    .article-lead { margin-top: 18px; font-size: 19px; }
+  }
+
+  .has-wide-image .article-header {
+    padding-bottom: 110px;
+  }
+
+  .article-figure.is-wide {
+    margin: -80px 20px 0;
+  }
+
+  .article-body {
+    display: grid;
+    gap: 36px;
+    padding-top: 44px;
+    padding-bottom: 64px;
+  }
+
+  .article-aside {
+    order: 2;
+  }
+
+  .article-figure.is-portrait {
+    order: 3;
+    max-width: 420px;
+  }
+
+  .more-news {
+    padding: 64px 0;
+
+    .news-cards { gap: 40px; }
+  }
+}
+
+// ------------------------------------------------------------
+// Desktop – on the reference grid
+// ------------------------------------------------------------
+@media only screen and (min-width: 1140px) {
+  .article-header {
+    padding: u(220) 0 u(110);
+
+    h1 {
+      font-size: u(84);
+      margin-top: u(26);
+    }
+
+    .article-meta { margin-top: u(24); }
+    .article-lead { margin-top: u(26); font-size: u(23); }
+  }
+
+  // The photo overlaps the bottom of the green band
+  .has-wide-image .article-header {
+    padding-bottom: u(250);
+  }
+
+  .article-figure.is-wide {
+    margin: u(-180) u(89) 0 u(116);
+
+    img {
+      max-height: u(720);
+    }
+  }
+
+  .article-body {
+    display: grid;
+    grid-template-columns: u(250) minmax(0, 40rem) minmax(0, 1fr);
+    column-gap: u(80);
+    padding-top: u(90);
+    padding-bottom: u(140);
+    align-items: start;
+  }
+
+  .article-aside {
+    position: sticky;
+    top: 40px;
+  }
+
+  .article-figure.is-portrait {
+    position: sticky;
+    top: 40px;
+    max-width: u(400);
+  }
+
+  .more-news {
+    padding: u(120) 0 u(130);
+
+    .news-cards {
+      grid-template-columns: repeat(3, 1fr);
+      gap: u(44);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .more-news .news-card-photo img {
+    transition: none;
+  }
 }

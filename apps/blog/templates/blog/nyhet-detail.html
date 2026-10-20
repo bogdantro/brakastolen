@@ -14,32 +14,82 @@
 
 {% if not post.is_published %}<p class="draft-notice" role="status">Utkast – bare synlig for innloggede.</p>{% endif %}
 
-{% with meta=post.created_at|date:'j. F Y' %}
-{% include 'core/page-header.html' with title=post.title lead=post.excerpt image_url=post_image image_alt=post.image_alt|default:post.title meta=meta %}
-{% endwith %}
+<article class="article{% if post.image and not image_portrait %} has-wide-image{% endif %}">
+  <header class="article-header">
+    <div class="content">
+      <a href="{% url 'nyheter' %}" class="crumb"><span aria-hidden="true">←</span> Alle nyheter</a>
+      <h1>{{ post.title }}</h1>
+      <p class="article-meta">
+        <time datetime="{{ post.created_at|date:'Y-m-d' }}">{{ post.created_at|date:'j. F Y' }}</time>
+        <span aria-hidden="true">·</span> {{ minutes }} min lesetid
+        {% if post.author %}<span aria-hidden="true">·</span> {{ post.author }}{% endif %}
+      </p>
+      {% if post.excerpt %}<p class="article-lead">{{ post.excerpt }}</p>{% endif %}
+    </div>
+  </header>
 
-<article class="section post">
-  <div class="content split">
-    <aside class="split-head">
-      <p class="post-meta">{{ minutes }} min lesetid{% if post.author %}<br>{{ post.author }}{% endif %}</p>
-      <a href="{% url 'nyheter' %}" class="text-link">Alle nyheter</a>
+  {% if post.image and not image_portrait %}
+  <figure class="article-figure is-wide">
+    <img src="{{ post.image.url }}" alt="{{ post.image_alt|default:post.title }}" fetchpriority="high">
+    {% if post.image_alt %}<figcaption>{{ post.image_alt }}</figcaption>{% endif %}
+  </figure>
+  {% endif %}
+
+  <div class="content article-body">
+    <aside class="article-aside" aria-label="Om innlegget">
+      <dl>
+        <div><dt>Publisert</dt><dd>{{ post.created_at|date:'j. F Y' }}</dd></div>
+        <div><dt>Lesetid</dt><dd>{{ minutes }} min</dd></div>
+        {% if post.author %}<div><dt>Skrevet av</dt><dd>{{ post.author }}</dd></div>{% endif %}
+      </dl>
+      <div class="share">
+        <p>Del nyheten</p>
+        <button type="button" class="share-link" data-copy-link="{{ share_url }}">Kopier lenke</button>
+        <a class="share-link" href="mailto:?subject={{ post.title|urlencode }}&amp;body={{ share_url|urlencode }}">E-post</a>
+        <a class="share-link" href="https://www.facebook.com/sharer/sharer.php?u={{ share_url|urlencode }}" target="_blank" rel="noopener">Facebook</a>
+        <p class="copy-status" role="status" data-copy-status></p>
+      </div>
     </aside>
-    <div class="prose large">{{ post.text|rich }}</div>
+
+    <div class="prose large article-text">
+      {{ post.text|rich }}
+    </div>
+
+    {% if post.image and image_portrait %}
+    <figure class="article-figure is-portrait">
+      <img src="{{ post.image.url }}" alt="{{ post.image_alt|default:post.title }}" loading="lazy">
+      {% if post.image_alt %}<figcaption>{{ post.image_alt }}</figcaption>{% endif %}
+    </figure>
+    {% endif %}
   </div>
 </article>
 
 {% if more_posts %}
-<section class="section more-news">
+<section class="more-news" aria-labelledby="more-news-title">
   <div class="content">
-    <div class="section-head"><h2>Flere nyheter</h2></div>
-    <ul class="news-list">
+    <div class="section-head">
+      <h2 id="more-news-title">Flere nyheter</h2>
+      <a href="{% url 'nyheter' %}" class="text-link">Alle nyheter</a>
+    </div>
+    <ul class="news-cards">
       {% for other in more_posts %}
-      <li><a href="{{ other.get_absolute_url }}"><time datetime="{{ other.created_at|date:'Y-m-d' }}">{{ other.created_at|date:'j. F Y' }}</time><h3>{{ other.title }}</h3><p>{{ other.excerpt }}</p></a></li>
+      <li>
+        <a href="{{ other.get_absolute_url }}" class="news-card">
+          <span class="news-card-photo">
+            {% if other.image %}<img src="{{ other.image.url }}" alt="{{ other.image_alt|default:other.title }}" loading="lazy">{% endif %}
+          </span>
+          <time datetime="{{ other.created_at|date:'Y-m-d' }}">{{ other.created_at|date:'j. F Y' }}</time>
+          <h3>{{ other.title }}</h3>
+          {% if other.excerpt %}<p>{{ other.excerpt }}</p>{% endif %}
+        </a>
+      </li>
       {% endfor %}
     </ul>
   </div>
 </section>
 {% endif %}
 
-{% include 'core/cta.html' with heading="Interessert i en tomt?" text="Vi sender deg prospekt med pris på de ledige tomtene." interest="prospectus" button="Be om prospekt" %}
+{% include 'core/plot-picker.html' %}
 {% endblock %}
+
+{% block scripts %}<script src="{% static 'js/share.js' %}" defer></script>{% endblock %}

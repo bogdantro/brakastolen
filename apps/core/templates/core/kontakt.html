@@ -82,15 +82,7 @@
   </div>
 </section>
 
-<section class="section faq-section">
-  <div class="content split">
-    <div class="split-head">
-      <h2>Ofte stilte spørsmål</h2>
-      <span class="copper-rule" aria-hidden="true"></span>
-    </div>
-    {% include 'core/faq-list.html' %}
-  </div>
-</section>
+{% include 'core/plot-picker.html' %}
 {% endblock %}
 
 {% block scripts %}<script src="{% static 'js/contact.js' %}" defer></script>{% endblock %}

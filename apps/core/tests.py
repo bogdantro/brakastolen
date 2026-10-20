@@ -611,6 +611,11 @@ class PlotPickerTests(MediaTestCase):
         html = self.client.get('/').content.decode()
         self.assertNotIn('</script><b>', html)
 
+    def test_contact_page_has_the_plot_picker_instead_of_the_faq(self):
+        response = self.client.get(reverse('kontakt'))
+        self.assertContains(response, 'id="tomtevelger"')
+        self.assertNotContains(response, 'class="faq-list"')
+
     def test_homepage_is_never_cached(self):
         self.assertIn('no-cache', self.client.get('/')['Cache-Control'])
 

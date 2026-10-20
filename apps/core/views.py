@@ -76,16 +76,24 @@ def hero_images():
     ]
 
 
+def plot_picker_context():
+    """What core/plot-picker.html needs. Pages that include it must be @never_cache,
+    because its viewing form carries a CSRF token."""
+    plots = Plot.objects.public().select_related('project')
+    return {
+        'picker_plots': [plot.as_picker_data() for plot in plots],
+        'picker_form': InquiryForm(initial={'interest': 'viewing'}, auto_id='picker_%s'),
+    }
+
+
 @never_cache  # the plot picker's viewing form carries a CSRF token, which must never be stale
 def hjemme(request):
-    plots = Plot.objects.public().select_related('project')
     return render(request, 'core/index.html', {
         'hero_images': hero_images(),
         'featured_projects': Project.objects.public().filter(is_featured=True)[:6],
         'latest_posts': Blog.objects.public()[:3],
-        'picker_plots': [plot.as_picker_data() for plot in plots],
-        'picker_form': InquiryForm(initial={'interest': 'viewing'}, auto_id='picker_%s'),
         'faq': FAQ,
+        **plot_picker_context(),
     })
 
 
@@ -266,7 +274,7 @@ def render_kontakt(request, form, status=200, csrf_expired=False):
     response = render(request, 'core/kontakt.html', {
         'form': form,
         'csrf_expired': csrf_expired,
-        'faq': FAQ,
+        **plot_picker_context(),
     }, status=status)
     add_never_cache_headers(response)
     return response

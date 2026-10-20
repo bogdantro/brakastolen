@@ -3,8 +3,10 @@
     Plots come from the database (Dashboard → Tomter); plot-picker.js builds the list and the map
     from the JSON at the bottom. The viewing form posts to the normal contact form, so it gets the
     same spam protection and lands in the dashboard inbox linked to the plot.
-    Parameters: picker_plots (list of Plot.as_picker_data()), picker_form (InquiryForm).
+    Parameters: picker_plots and picker_form – from core.views.plot_picker_context().
+    Brings its own stylesheet and script, so a page only needs to include it.
 {% endcomment %}
+<link rel="stylesheet" href="{% static 'scss/store/plot-picker.css' %}">
 <section class="plot-picker" id="tomtevelger" data-plot-picker aria-labelledby="picker-title">
   <div class="content">
     <div class="picker-intro">
@@ -138,3 +140,4 @@
 
   {{ picker_plots|json_script:"plot-picker-data" }}
 </section>
+<script src="{% static 'js/plot-picker.js' %}" defer></script>

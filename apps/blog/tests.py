@@ -73,3 +73,25 @@ class BlogTests(TestCase):
         self.assertFalse(Blog.objects.get(title='Reguleringsplan vedtatt').is_published)
         self.assertFalse(Blog.objects.filter(is_published=True, text__icontains='lorem').exists())
         self.assertEqual(Blog.objects.get(title='Bærår i år?').created_at.year, 2020)
+
+
+@override_settings(MEDIA_ROOT=MEDIA_ROOT, SITE_URL='https://www.xn--brakastlen-6cb.no')
+class NewsArticleTests(TestCase):
+    def test_article_has_the_plot_picker_and_is_never_cached(self):
+        response = self.client.get(make_post().get_absolute_url())
+        self.assertContains(response, 'id="tomtevelger"')
+        self.assertIn('no-cache', response['Cache-Control'])
+
+    def test_share_link_uses_site_url_not_the_request_host(self):
+        post = make_post()
+        response = self.client.get(post.get_absolute_url(), HTTP_HOST='localhost')
+        self.assertContains(response, f'data-copy-link="https://www.xn--brakastlen-6cb.no{post.get_absolute_url()}"')
+
+    def test_tall_image_is_shown_whole_beside_the_text(self):
+        import io
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from PIL import Image
+        buffer = io.BytesIO()
+        Image.new('RGB', (30, 60), 'white').save(buffer, 'JPEG')
+        post = make_post(image=SimpleUploadedFile('annonse.jpg', buffer.getvalue(), content_type='image/jpeg'))
+        self.assertContains(self.client.get(post.get_absolute_url()), 'article-figure is-portrait')

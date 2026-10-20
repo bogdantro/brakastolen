@@ -213,6 +213,7 @@
   .nav .nav-cta {
     background: #002223;
     color: #F6F3E9;
+    border: 1px solid rgba(246, 243, 233, 0.4);
     margin-left: calc(var(--u) * 48);
     height: calc(var(--u) * 52);
     padding: 0 calc(var(--u) * 26);

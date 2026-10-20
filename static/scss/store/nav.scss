@@ -267,6 +267,8 @@
     .nav-cta {
       background: $primaryColor;
       color: $white;
+      // Keeps the button visible on pages whose header is the same green
+      border: 1px solid rgba(246, 243, 233, 0.4);
       margin-left: u(48);
       height: u(52);
       padding: 0 u(26);
