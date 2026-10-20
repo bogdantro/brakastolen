@@ -225,14 +225,15 @@ def export_inquiries_csv(inquiries):
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     response.write('﻿')  # BOM so Excel opens æøå correctly
     writer = csv.writer(response, delimiter=';')
-    writer.writerow(['Dato', 'Navn', 'E-post', 'Telefon', 'Interessert i', 'Status', 'Arkivert', 'Spam', 'Beskjed'])
-    for inquiry in inquiries:
+    writer.writerow(['Dato', 'Navn', 'E-post', 'Telefon', 'Interessert i', 'Tomt', 'Status', 'Arkivert', 'Spam', 'Beskjed'])
+    for inquiry in inquiries.select_related('plot'):
         writer.writerow([
             timezone.localtime(inquiry.created_at).strftime('%d.%m.%Y %H:%M'),
             inquiry.name,
             inquiry.email,
             inquiry.phone,
             inquiry.get_interest_display(),
+            inquiry.plot.number if inquiry.plot else '',
             inquiry.get_status_display(),
             'Ja' if inquiry.is_archived else 'Nei',
             'Ja' if inquiry.is_spam else 'Nei',
@@ -566,6 +567,14 @@ def dashboard_plots(request):
     })
 
 
+def other_plots_on_map(plot=None):
+    """The other plots, drawn faintly in the plot form's map so a new one can be placed beside them."""
+    plots = Plot.objects.filter(map_x__isnull=False, map_y__isnull=False)
+    if plot is not None:
+        plots = plots.exclude(pk=plot.pk)
+    return [{'number': p.number, 'x': p.map_x, 'y': p.map_y, 'rotation': p.map_rotation} for p in plots]
+
+
 @staff_required
 def dashboard_plot_create(request):
     form = PlotForm(request.POST or None)
@@ -576,7 +585,7 @@ def dashboard_plot_create(request):
         log_activity(request, 'La til tomt', str(plot), reverse('dashboard_plot_edit', args=[plot.pk]))
         messages.success(request, f'«{plot}» ble lagt til.')
         return redirect(reverse('dashboard_plots'))
-    return render(request, 'dashboard/plot_form.html', {'form': form, 'plot': None})
+    return render(request, 'dashboard/plot_form.html', {'form': form, 'plot': None, 'map_plots': other_plots_on_map()})
 
 
 @staff_required
@@ -588,7 +597,7 @@ def dashboard_plot_edit(request, pk):
         log_activity(request, 'Oppdaterte tomt', str(plot), reverse('dashboard_plot_edit', args=[plot.pk]))
         messages.success(request, f'«{plot}» ble oppdatert.')
         return redirect(reverse('dashboard_plots'))
-    return render(request, 'dashboard/plot_form.html', {'form': form, 'plot': plot})
+    return render(request, 'dashboard/plot_form.html', {'form': form, 'plot': plot, 'map_plots': other_plots_on_map(plot)})
 
 
 @staff_required

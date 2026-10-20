@@ -38,7 +38,7 @@
         <br><small>{{ inquiry.email }}{% if inquiry.phone %} · {{ inquiry.phone }}{% endif %}</small>
         {% if inquiry.is_spam %}<br><small>Spam-grunn: {{ inquiry.spam_reason|default:'ukjent' }}</small>{% endif %}
       </td>
-      <td>{{ inquiry.get_interest_display }}</td>
+      <td>{{ inquiry.get_interest_display }}{% if inquiry.plot %}<br><small>Tomt {{ inquiry.plot.number }}</small>{% endif %}</td>
       <td><span class="status-label status-{{ inquiry.status }}">{{ inquiry.get_status_display }}</span></td>
       <td>{{ inquiry.created_at|date:'d.m.Y H:i' }}</td>
     </tr>

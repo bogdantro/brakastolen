@@ -169,6 +169,34 @@ form.inline { display: inline-flex; gap: 8px; align-items: center; margin: 0 6px
 
 .login { max-width: 360px; margin: 12vh auto; }
 
+// Plot placement map in the plot form
+.plot-placer {
+  .placer-map {
+    max-width: 760px;
+    border: 1px solid $border;
+    cursor: crosshair;
+
+    svg { display: block; width: 100%; height: auto; }
+  }
+
+  .placer-other path { fill: #D6CFBF; stroke: #fff; stroke-width: 2; }
+  .placer-other text { font-size: 12px; fill: #8C8577; }
+  .placer-current path { fill: $primaryColor; stroke: #fff; stroke-width: 3; }
+  .placer-current text { font-size: 13px; font-weight: 700; fill: #fff; }
+
+  .placer-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px;
+    margin-top: 14px;
+
+    .field { margin: 0; max-width: 220px; }
+  }
+
+  .placer-status { margin: 0; color: #4E6B4A; }
+}
+
 @media (max-width: 1139px) {
   body.dashboard { flex-direction: column; }
   .sidebar { width: auto; }

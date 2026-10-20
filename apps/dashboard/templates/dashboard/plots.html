@@ -17,7 +17,7 @@
 
 <table class="table">
   <thead>
-    <tr><th scope="col">Tomt</th><th scope="col">Hyttegrend</th><th scope="col">Areal</th><th scope="col">Pris</th><th scope="col">Status</th><th scope="col"><span class="visually-hidden">Handlinger</span></th></tr>
+    <tr><th scope="col">Tomt</th><th scope="col">Hyttegrend</th><th scope="col">Areal</th><th scope="col">Pris</th><th scope="col">I kartet</th><th scope="col">Status</th><th scope="col"><span class="visually-hidden">Handlinger</span></th></tr>
   </thead>
   <tbody>
     {% for plot in plots %}
@@ -26,6 +26,7 @@
       <td>{{ plot.project.title|default:'–' }}</td>
       <td>{{ plot.area_display|default:'–' }}</td>
       <td>{{ plot.price_display|default:'–' }}</td>
+      <td>{{ plot.is_on_map|yesno:'Ja,Nei – bare i listen' }}</td>
       <td>
         <form method="post" action="{% url 'dashboard_plot_status' plot.pk %}" class="inline">
           {% csrf_token %}
@@ -44,7 +45,7 @@
       </td>
     </tr>
     {% empty %}
-    <tr><td colspan="6">Ingen tomter lagt inn ennå. Trykk «Ny tomt» for å legge til den første.</td></tr>
+    <tr><td colspan="7">Ingen tomter lagt inn ennå. Trykk «Ny tomt» for å legge til den første.</td></tr>
     {% endfor %}
   </tbody>
 </table>

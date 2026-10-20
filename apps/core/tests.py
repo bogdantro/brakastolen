@@ -121,7 +121,7 @@ class PageTests(MediaTestCase):
         response = self.client.get('/')
         # The heading is split into spans for the stepped layout; compare its visible text
         h1 = re.search(r'<h1>(.*?)</h1>', response.content.decode(), re.S).group(1)
-        self.assertEqual(' '.join(re.sub(r'<[^>]+>', '', h1).split()), 'Stort utvalg i fantastiske tomter.')
+        self.assertEqual(' '.join(re.sub(r'<[^>]+>', '', h1).split()), 'Stort utvalg av fantastiske tomter.')
         self.assertContains(response, '900 000 kr')
 
     def test_hero_images_are_read_from_the_folder_in_natural_order(self):
@@ -577,3 +577,89 @@ class SeedProjectsTests(MediaTestCase):
     def test_dry_run_changes_nothing(self):
         call_command('seed_projects', '--dry-run', stdout=io.StringIO())
         self.assertFalse(Project.objects.exists())
+
+
+# ------------------------------------------------------------------
+# Plot picker on the homepage
+# ------------------------------------------------------------------
+
+class PlotPickerTests(MediaTestCase):
+    def picker_data(self):
+        html = self.client.get('/').content.decode()
+        match = re.search(r'<script id="plot-picker-data" type="application/json">(.*?)</script>', html, re.S)
+        return json.loads(match.group(1))
+
+    def test_picker_lists_public_plots_with_map_positions(self):
+        group = make_project()
+        Plot.objects.create(project=group, number='T10', price=900000, area_m2=1400, map_x=200, map_y=300)
+        data = self.picker_data()
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]['number'], 'T10')
+        self.assertEqual((data[0]['x'], data[0]['y']), (200, 300))
+        self.assertEqual(data[0]['group'], 'Ulven hyttegrend')
+
+    def test_picker_hides_plots_in_draft_groups(self):
+        Plot.objects.create(project=make_project(title='Utkast', is_published=False), number='X1')
+        self.assertEqual(self.picker_data(), [])
+
+    def test_plot_without_position_is_still_listed(self):
+        Plot.objects.create(number='5')
+        self.assertIsNone(self.picker_data()[0]['x'])
+
+    def test_plot_number_cannot_break_out_of_the_json(self):
+        Plot.objects.create(number='</script><b>')
+        html = self.client.get('/').content.decode()
+        self.assertNotIn('</script><b>', html)
+
+    def test_homepage_is_never_cached(self):
+        self.assertIn('no-cache', self.client.get('/')['Cache-Control'])
+
+    def test_viewing_request_from_picker_is_saved_with_the_plot(self):
+        plot = Plot.objects.create(number='21', price=1250000)
+        response = self.client.post(reverse('kontakt'), form_data(plot=plot.pk, interest='viewing'),
+                                    HTTP_ACCEPT='application/json')
+        self.assertEqual(response.json()['ok'], True)
+        inquiry = Inquiry.objects.get()
+        self.assertEqual(inquiry.plot, plot)
+        self.assertEqual(inquiry.interest, 'viewing')
+
+    def test_picker_errors_come_back_as_json_per_field(self):
+        response = self.client.post(reverse('kontakt'), form_data(email='feil'), HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('email', response.json()['fields'])
+        self.assertFalse(Inquiry.objects.exists())
+
+    def test_plot_in_draft_group_cannot_be_attached(self):
+        plot = Plot.objects.create(project=make_project(title='Utkast', is_published=False), number='X1')
+        response = self.client.post(reverse('kontakt'), form_data(plot=plot.pk), HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('plot', response.json()['fields'])
+
+    def test_contact_page_without_plot_still_works(self):
+        self.client.post(reverse('kontakt'), form_data())
+        self.assertIsNone(Inquiry.objects.get().plot)
+
+    @override_settings(EMAIL_HOST='smtp.example.no', INQUIRY_NOTIFY_EMAILS=['post@brakastolen.no'],
+                       EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    def test_email_names_the_plot(self):
+        inquiry = Inquiry.objects.create(name='Kari', email='kari@example.no', plot=Plot.objects.create(number='21'))
+        with mock.patch('apps.core.notify.close_old_connections'):
+            notify.send_now(inquiry.pk)
+        self.assertIn('Tomt: tomt 21', mail.outbox[0].body)
+
+
+class SeedPlotsDemoTests(TestCase):
+    @override_settings(DEBUG=False)
+    def test_example_plots_never_load_on_a_live_server(self):
+        from django.core.management.base import CommandError
+        with self.assertRaises(CommandError):
+            call_command('seed_plots_demo', stdout=io.StringIO())
+        self.assertFalse(Plot.objects.exists())
+
+    @override_settings(DEBUG=True)
+    def test_example_plots_load_locally_and_only_once(self):
+        call_command('seed_plots_demo', stdout=io.StringIO())
+        call_command('seed_plots_demo', stdout=io.StringIO())
+        self.assertEqual(Plot.objects.count(), 26)
+        self.assertFalse(Plot.objects.get(number='13').price)
+        self.assertEqual(Plot.objects.get(number='13').status, 'sold')

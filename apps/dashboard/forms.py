@@ -87,7 +87,7 @@ class ProjectForm(forms.ModelForm):
 class PlotForm(forms.ModelForm):
     class Meta:
         model = Plot
-        fields = ['project', 'number', 'status', 'area_m2', 'price', 'altitude', 'note']
+        fields = ['project', 'number', 'status', 'area_m2', 'price', 'altitude', 'note', 'map_x', 'map_y', 'map_rotation']
         widgets = {
             'project': forms.Select(attrs={'class': 'input'}),
             'number': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. 7'}),
@@ -96,11 +96,21 @@ class PlotForm(forms.ModelForm):
             'price': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 900000', 'min': 0}),
             'altitude': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 980', 'min': 0}),
             'note': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Rett ved langrennssporet'}),
+            # Set by clicking on the map in the plot form (dashboard.js)
+            'map_x': forms.HiddenInput,
+            'map_y': forms.HiddenInput,
+            'map_rotation': forms.NumberInput(attrs={'class': 'input', 'step': 1, 'min': -180, 'max': 180}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['project'].empty_label = 'Ikke i en hyttegrend'
+        self.fields['map_rotation'].required = False
+
+    def clean_map_rotation(self):
+        """Empty -> the default angle, so a plot can always be saved without touching the map."""
+        value = self.cleaned_data.get('map_rotation')
+        return Plot._meta.get_field('map_rotation').default if value is None else value
 
 
 class BlogForm(forms.ModelForm):

@@ -1,0 +1,861 @@
+// Plot picker (tomtevelger) on the homepage – the Webiser prototype in the site's design:
+// sand section, square corners, the brand green, sage for free plots, DM Serif for numbers.
+@use '../global/variables' as *;
+
+$panel: #FBF8F1;
+$reserved: #C9A65E;
+$reservedText: #7E5F22;
+$soldFill: #D6CFBF;
+$mapGround: #E6E3D3;
+
+.plot-picker {
+  background: $card;
+  // Links to #tomtevelger stop below the fixed nav bar
+  scroll-margin-top: 64px;
+
+  .picker-intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+
+    .copper-rule {
+      margin: 24px 0 20px;
+    }
+
+    p {
+      color: $mutedText;
+      max-width: 34em;
+    }
+  }
+
+  .picker-intro .picker-from {
+    text-align: right;
+    font-family: $fontDisplay;
+    font-size: clamp(30px, 2.6vw, 44px);
+    line-height: 1;
+    color: $heroText;
+    white-space: nowrap;
+
+    span {
+      display: block;
+      margin-bottom: 10px;
+      font-family: $fontBody;
+      font-size: 15px;
+      color: $sageDeep;
+    }
+
+    small {
+      font-family: $fontBody;
+      font-size: 16px;
+      color: $mutedText;
+    }
+  }
+
+  // ------------------------------------------------------------
+  // Filters
+  // ------------------------------------------------------------
+  .picker-filters {
+    display: grid;
+    gap: 18px 22px;
+    align-items: end;
+    background: $panel;
+    border: 1px solid $border;
+  }
+
+  .filter-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: $sageDeep;
+    margin-bottom: 8px;
+  }
+
+  .input {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    font: inherit;
+    font-size: 16px;
+    color: $black;
+    background: #fff;
+    border: 1px solid $border;
+    border-radius: 2px;
+
+    &:focus {
+      outline: none;
+      border-color: $primaryColor;
+      box-shadow: 0 0 0 3px rgba(144, 174, 140, 0.35);
+    }
+  }
+
+  select.input {
+    appearance: none;
+    padding-right: 34px;
+    background-image: linear-gradient(45deg, transparent 50%, $primaryColor 50%), linear-gradient(135deg, $primaryColor 50%, transparent 50%);
+    background-position: calc(100% - 20px) 52%, calc(100% - 14px) 52%;
+    background-size: 6px 6px;
+    background-repeat: no-repeat;
+  }
+
+  .price-values {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    font-weight: 500;
+    color: $heroText;
+    margin-bottom: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Two range inputs on one rail; only their thumbs take clicks
+  .dual-range {
+    position: relative;
+    height: 22px;
+    display: flex;
+    align-items: center;
+
+    .range-rail,
+    .range-fill {
+      position: absolute;
+      height: 3px;
+      left: 0;
+      right: 0;
+    }
+
+    .range-rail { background: $sand; }
+    .range-fill { background: $primaryColor; }
+
+    input {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 22px;
+      margin: 0;
+      background: none;
+      pointer-events: none;
+      -webkit-appearance: none;
+      appearance: none;
+
+      &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: $primaryColor;
+        border: 3px solid $panel;
+        box-shadow: 0 0 0 1px $primaryColor;
+        cursor: ew-resize;
+        pointer-events: auto;
+      }
+
+      &::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: $primaryColor;
+        border: 3px solid $panel;
+        box-shadow: 0 0 0 1px $primaryColor;
+        cursor: ew-resize;
+        pointer-events: auto;
+      }
+
+      &:focus-visible::-webkit-slider-thumb {
+        outline: 2px solid $sage;
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 46px;
+    padding: 0 14px;
+    background: #fff;
+    border: 1px solid $border;
+    font-size: 16px;
+    white-space: nowrap;
+    cursor: pointer;
+
+    input {
+      width: 18px;
+      height: 18px;
+      accent-color: $primaryColor;
+    }
+  }
+
+  .text-reset {
+    justify-self: start;
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    font-size: 15px;
+    color: $primaryColor;
+    text-decoration: underline;
+    text-decoration-color: $sage;
+    text-underline-offset: 5px;
+    cursor: pointer;
+  }
+
+  // ------------------------------------------------------------
+  // List of plots
+  // ------------------------------------------------------------
+  .picker-grid {
+    display: grid;
+  }
+
+  .picker-list {
+    display: flex;
+    flex-direction: column;
+    background: $panel;
+    border: 1px solid $border;
+    min-height: 0;
+  }
+
+  .list-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 24px 22px 0;
+
+    h3 {
+      font-size: 26px;
+    }
+  }
+
+  .count {
+    color: $sageDeep;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .list-sub {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 22px 16px;
+    border-bottom: 1px solid $border;
+    font-size: 14px;
+    color: $mutedText;
+  }
+
+  .favorites-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 0;
+    padding: 4px 0;
+    font: inherit;
+    font-size: 14px;
+    color: $mutedText;
+    cursor: pointer;
+
+    &[aria-pressed="true"] {
+      color: $primaryColor;
+      font-weight: 500;
+
+      path { fill: currentColor; }
+    }
+  }
+
+  .cards {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: $sand transparent;
+  }
+
+  .lot-card {
+    position: relative;
+    border-bottom: 1px solid $border;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: #fff;
+    }
+
+    // The chosen plot: cream background and a green bar on the left
+    &.is-selected {
+      background: $background;
+      box-shadow: inset 3px 0 0 $primaryColor;
+    }
+  }
+
+  .lot-pick {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 0;
+    padding: 18px 56px 18px 22px;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .lot-top {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .lot-title {
+    font-family: $fontDisplay;
+    font-size: 22px;
+    color: $heroText;
+  }
+
+  .status {
+    font-size: 13px;
+    font-weight: 600;
+
+    &.status-available { color: $sageDeep; }
+    &.status-reserved { color: $reservedText; }
+    &.status-sold { color: $mutedText; }
+  }
+
+  .lot-meta {
+    display: block;
+    margin-top: 4px;
+    font-size: 14px;
+    color: $mutedText;
+  }
+
+  .lot-price {
+    display: block;
+    margin-top: 10px;
+    font-family: $fontDisplay;
+    font-size: 21px;
+    color: $primaryColor;
+  }
+
+  .status-sold .lot-price,
+  .status-reserved .lot-price {
+    font-family: $fontBody;
+    font-size: 16px;
+    color: $mutedText;
+  }
+
+  .fav {
+    position: absolute;
+    top: 16px;
+    right: 14px;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: 0;
+    color: #A39C8E;
+    cursor: pointer;
+
+    svg {
+      width: 19px;
+      height: 19px;
+    }
+
+    &:hover,
+    &.is-active {
+      color: $primaryColor;
+    }
+  }
+
+  .empty {
+    padding: 48px 22px;
+    text-align: center;
+    color: $mutedText;
+
+    strong {
+      display: block;
+      font-family: $fontDisplay;
+      font-weight: 400;
+      font-size: 22px;
+      color: $heroText;
+      margin-bottom: 8px;
+    }
+
+    .text-reset {
+      margin-top: 16px;
+    }
+  }
+
+  // ------------------------------------------------------------
+  // Map
+  // ------------------------------------------------------------
+  .picker-map {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid $border;
+    background: $mapGround;
+  }
+
+  .map-toolbar {
+    position: absolute;
+    z-index: 4;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    pointer-events: none;
+  }
+
+  .map-name {
+    background: $panel;
+    border: 1px solid $border;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: $mutedText;
+
+    strong {
+      display: block;
+      font-family: $fontDisplay;
+      font-weight: 400;
+      font-size: 19px;
+      color: $heroText;
+    }
+  }
+
+  .map-tools {
+    display: flex;
+    gap: 6px;
+    pointer-events: auto;
+  }
+
+  .icon-btn {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    background: $panel;
+    border: 1px solid $border;
+    border-radius: 2px;
+    color: $primaryColor;
+    cursor: pointer;
+
+    &:hover {
+      background: #fff;
+    }
+  }
+
+  .map-viewport {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: pan-y;
+
+    &.is-dragging {
+      cursor: grabbing;
+
+      svg { transition: none; }
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      transform-origin: center center;
+      transition: transform 0.15s ease;
+    }
+  }
+
+  // Plots on the map: colour + a text label in the legend and tooltip, never colour alone
+  .plot {
+    cursor: pointer;
+    outline: none;
+
+    .parcel {
+      stroke: #FBF8F1;
+      stroke-width: 2.2;
+      stroke-linejoin: round;
+      transition: fill 0.12s ease, opacity 0.12s ease;
+    }
+
+    .parcel-number {
+      font-family: $fontBody;
+      font-size: 13px;
+      font-weight: 600;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      fill: $primaryColor;
+      pointer-events: none;
+    }
+
+    &.status-available .parcel { fill: $sage; }
+    &.status-available:hover .parcel,
+    &.status-available:focus-visible .parcel { fill: $sageDeep; }
+    &.status-available:hover .parcel-number { fill: #fff; }
+    &.status-reserved .parcel { fill: $reserved; }
+    &.status-sold .parcel { fill: $soldFill; }
+    &.status-sold .parcel-number { fill: #8C8577; }
+
+    &:focus-visible .parcel {
+      stroke: $primaryColor;
+      stroke-width: 3;
+    }
+
+    &.is-selected .parcel {
+      fill: $primaryColor;
+      stroke: #fff;
+      stroke-width: 3.5;
+    }
+
+    &.is-selected .parcel-number {
+      fill: #fff;
+    }
+
+    &.is-filtered {
+      opacity: 0.2;
+    }
+  }
+
+  .map-legend {
+    position: absolute;
+    z-index: 3;
+    left: 16px;
+    bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin: 0;
+    padding: 10px 14px;
+    list-style: none;
+    background: $panel;
+    border: 1px solid $border;
+    font-size: 13px;
+    color: $mutedText;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      &.available { background: $sage; }
+      &.reserved { background: $reserved; }
+      &.sold { background: $soldFill; }
+      &.selected { background: $primaryColor; }
+    }
+  }
+
+  .map-note {
+    position: absolute;
+    z-index: 3;
+    right: 16px;
+    bottom: 16px;
+    font-size: 12px;
+    color: $mutedText;
+
+    a {
+      color: $primaryColor;
+    }
+  }
+
+  .map-tooltip {
+    position: absolute;
+    z-index: 6;
+    pointer-events: none;
+    background: $panel;
+    border: 1px solid $border;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: $mutedText;
+    box-shadow: 0 8px 22px rgba(0, 34, 35, 0.16);
+
+    strong {
+      display: block;
+      font-family: $fontDisplay;
+      font-weight: 400;
+      font-size: 17px;
+      color: $heroText;
+    }
+  }
+
+  // The chosen plot's details, floating over the map
+  .selected-card {
+    position: absolute;
+    z-index: 5;
+    background: $background;
+    border: 1px solid $border;
+    box-shadow: 0 18px 50px rgba(0, 34, 35, 0.22);
+    padding: 20px 22px 22px;
+    animation: card-in 0.2s ease-out;
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      strong {
+        font-family: $fontDisplay;
+        font-weight: 400;
+        font-size: 28px;
+        color: $heroText;
+      }
+    }
+
+    .card-close {
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: 1px solid $border;
+      font-size: 20px;
+      line-height: 1;
+      color: $mutedText;
+      cursor: pointer;
+    }
+
+    .card-meta {
+      margin-top: 6px;
+      font-size: 14px;
+      color: $mutedText;
+    }
+
+    .card-note {
+      margin-top: 6px;
+      font-size: 14px;
+      color: $sageDeep;
+    }
+
+    .card-price {
+      margin-top: 14px;
+      font-family: $fontDisplay;
+      font-size: 32px;
+      line-height: 1;
+      color: $primaryColor;
+
+      small {
+        font-family: $fontBody;
+        font-size: 15px;
+        color: $mutedText;
+      }
+    }
+
+    .button {
+      width: 100%;
+      justify-content: center;
+      margin-top: 18px;
+
+      &:disabled {
+        background: $soldFill;
+        color: $mutedText;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// ------------------------------------------------------------
+// Viewing request dialog
+// ------------------------------------------------------------
+.picker-dialog {
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  padding: 30px 30px 28px;
+  border: 0;
+  background: $background;
+  color: $black;
+  box-shadow: 0 30px 90px rgba(0, 20, 20, 0.35);
+
+  &::backdrop {
+    background: rgba(0, 34, 35, 0.62);
+  }
+
+  .form {
+    gap: 16px;
+  }
+
+  .dialog-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+      font-size: 32px;
+    }
+  }
+
+  .dialog-close {
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: 1px solid $border;
+    font-size: 22px;
+    line-height: 1;
+    color: $mutedText;
+    cursor: pointer;
+  }
+
+  .dialog-intro {
+    color: $mutedText;
+    margin-top: -4px;
+  }
+
+  textarea.input {
+    min-height: 96px;
+    resize: vertical;
+  }
+
+  .form-status {
+    padding: 12px 16px;
+    background: #E3ECDF;
+    border-left: 2px solid $sageDeep;
+    color: $primaryColor;
+
+    &.is-error {
+      background: #F6E3DF;
+      border-left-color: #A23B2A;
+      color: #7A2A1D;
+    }
+  }
+
+  .button {
+    justify-self: stretch;
+    justify-content: center;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+  }
+}
+
+// ------------------------------------------------------------
+// Mobile and tablet: filters in two columns, the map above the list
+// ------------------------------------------------------------
+@media (max-width: 1139px) {
+  .plot-picker {
+    padding: 64px 0;
+
+    .picker-intro {
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 28px;
+    }
+
+    .picker-intro .picker-from {
+      text-align: left;
+    }
+
+    .picker-filters {
+      grid-template-columns: 1fr 1fr;
+      padding: 18px;
+      margin-bottom: 14px;
+
+      .price-field,
+      .filter-field:nth-child(5) {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .picker-grid {
+      gap: 14px;
+    }
+
+    .picker-map {
+      order: -1;
+      height: 460px;
+    }
+
+    .picker-list {
+      max-height: 520px;
+    }
+
+    .map-name {
+      display: none;
+    }
+
+    .map-note {
+      display: none;
+    }
+
+    .selected-card {
+      left: 12px;
+      right: 12px;
+      bottom: 64px;
+      padding: 14px 16px 16px;
+
+      .card-top strong { font-size: 22px; }
+      .card-price { font-size: 26px; margin-top: 10px; }
+      .button { margin-top: 12px; min-height: 46px; }
+    }
+
+    .map-legend {
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      font-size: 12px;
+      gap: 4px 12px;
+    }
+  }
+
+  .picker-dialog {
+    padding: 22px 20px;
+  }
+}
+
+// ------------------------------------------------------------
+// Desktop
+// ------------------------------------------------------------
+@media only screen and (min-width: 1140px) {
+  .plot-picker {
+    padding: u(120) 0 u(130);
+
+    .picker-intro {
+      margin-bottom: u(48);
+    }
+
+    .picker-filters {
+      grid-template-columns: minmax(250px, 2fr) 1fr 1fr 1fr 1.1fr;
+      padding: 22px 26px 24px;
+      margin-bottom: 18px;
+
+      .text-reset {
+        grid-column: 1 / -1;
+        margin-top: -4px;
+      }
+    }
+
+    .picker-grid {
+      grid-template-columns: minmax(330px, 380px) minmax(0, 1fr);
+      gap: 18px;
+      height: max(600px, u(700));
+    }
+
+    .selected-card {
+      right: 16px;
+      bottom: 62px;
+      width: 300px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plot-picker .selected-card {
+    animation: none;
+  }
+
+  .plot-picker .map-viewport svg,
+  .plot-picker .plot .parcel {
+    transition: none;
+  }
+}

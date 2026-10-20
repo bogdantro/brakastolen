@@ -140,6 +140,71 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     // ------------------------------------------------------------
+    // Plot placement – click in the map to set where the plot sits in the
+    // homepage plot picker (map_x / map_y in the 960 × 760 drawing)
+    // ------------------------------------------------------------
+    const placer = document.querySelector('[data-plot-placer]');
+    if (placer){
+        const SVG_NS = 'http://www.w3.org/2000/svg';
+        const svg = placer.querySelector('svg');
+        const layer = svg.querySelector('[data-plot-layer]');
+        const form = placer.closest('form');
+        const inputX = form.elements.map_x;
+        const inputY = form.elements.map_y;
+        const inputRotation = form.elements.map_rotation;
+        const inputNumber = form.elements.number;
+        const status = placer.querySelector('[data-placer-status]');
+        const otherPlots = JSON.parse(document.getElementById('placer-other-plots').textContent);
+
+        function parcel(x, y, rotation, label, className){
+            const group = document.createElementNS(SVG_NS, 'g');
+            group.setAttribute('class', className);
+            group.setAttribute('transform', 'translate(' + x + ' ' + y + ') rotate(' + rotation + ')');
+            const shape = document.createElementNS(SVG_NS, 'path');
+            shape.setAttribute('d', 'M-26 -19 L19 -19 L26 14 L-21 19 Z');
+            const text = document.createElementNS(SVG_NS, 'text');
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('dominant-baseline', 'middle');
+            text.textContent = label;
+            group.appendChild(shape);
+            group.appendChild(text);
+            return group;
+        }
+
+        function draw(){
+            layer.replaceChildren();
+            otherPlots.forEach(function(plot){
+                layer.appendChild(parcel(plot.x, plot.y, plot.rotation, plot.number, 'placer-other'));
+            });
+            if (inputX.value && inputY.value){
+                const rotation = Number(inputRotation.value || -20);
+                layer.appendChild(parcel(Number(inputX.value), Number(inputY.value), rotation, inputNumber.value || '?', 'placer-current'));
+                status.textContent = 'Plassert i kartet. Husk å lagre.';
+            } else {
+                status.textContent = 'Ikke plassert ennå – trykk i kartet.';
+            }
+        }
+
+        svg.addEventListener('click', function(e){
+            const point = svg.createSVGPoint();
+            point.x = e.clientX;
+            point.y = e.clientY;
+            const inSvg = point.matrixTransform(svg.getScreenCTM().inverse());
+            inputX.value = Math.round(inSvg.x);
+            inputY.value = Math.round(inSvg.y);
+            draw();
+        });
+        inputRotation.addEventListener('input', draw);
+        inputNumber.addEventListener('input', draw);
+        placer.querySelector('[data-placer-clear]').addEventListener('click', function(){
+            inputX.value = '';
+            inputY.value = '';
+            draw();
+        });
+        draw();
+    }
+
+    // ------------------------------------------------------------
     // Gallery upload – one file per request, so a big gallery never makes
     // one request too large or too slow for the server
     // ------------------------------------------------------------

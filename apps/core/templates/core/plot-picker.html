@@ -1,0 +1,144 @@
+{% load static %}{% comment %}
+    Interactive plot picker (tomtevelger) – after the Webiser design prototype, in the site's design.
+    Plots come from the database (Dashboard → Tomter); plot-picker.js builds the list and the map
+    from the JSON at the bottom. The viewing form posts to the normal contact form, so it gets the
+    same spam protection and lands in the dashboard inbox linked to the plot.
+    Parameters: picker_plots (list of Plot.as_picker_data()), picker_form (InquiryForm).
+{% endcomment %}
+<section class="plot-picker" id="tomtevelger" data-plot-picker aria-labelledby="picker-title">
+  <div class="content">
+    <div class="picker-intro">
+      <div>
+        <h2 id="picker-title">Finn din plass på fjellet</h2>
+        <span class="copper-rule" aria-hidden="true"></span>
+        <p>Utforsk tomtene på Brakastølen. Filtrer etter pris og størrelse, velg en tomt i kartet, og avtal visning.</p>
+      </div>
+      <p class="picker-from"><span>Hyttetomter fra</span> {{ business.price_from_display }} <small>+ omk.</small></p>
+    </div>
+
+    <form class="picker-filters" role="search" aria-label="Filtrer tomter" data-picker-filters>
+      <div class="filter-field price-field">
+        <span class="filter-label" id="picker-price-label">Prisklasse</span>
+        <p class="price-values"><span data-price-min-label></span><span data-price-max-label></span></p>
+        <div class="dual-range" role="group" aria-labelledby="picker-price-label">
+          <span class="range-rail"></span>
+          <span class="range-fill" data-range-fill></span>
+          <input type="range" name="price_min" step="50000" aria-label="Laveste pris" data-price-min>
+          <input type="range" name="price_max" step="50000" aria-label="Høyeste pris" data-price-max>
+        </div>
+      </div>
+      <div class="filter-field">
+        <label class="filter-label" for="picker-area">Tomtestørrelse</label>
+        <select id="picker-area" name="area" class="input" data-filter>
+          <option value="0">Alle størrelser</option>
+          <option value="1200">Fra 1 200 m²</option>
+          <option value="1500">Fra 1 500 m²</option>
+          <option value="1800">Fra 1 800 m²</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label class="filter-label" for="picker-search">Tomtenummer</label>
+        <input id="picker-search" name="search" class="input" type="search" inputmode="search" placeholder="F.eks. 21" autocomplete="off" data-filter>
+      </div>
+      <div class="filter-field">
+        <label class="filter-label" for="picker-sort">Sorter etter</label>
+        <select id="picker-sort" name="sort" class="input" data-filter>
+          <option value="number">Tomtenummer</option>
+          <option value="priceAsc">Laveste pris</option>
+          <option value="priceDesc">Høyeste pris</option>
+          <option value="areaDesc">Største tomt</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <span class="filter-label">Salgsstatus</span>
+        <label class="toggle"><input type="checkbox" name="only_available" checked data-filter> Bare ledige tomter</label>
+      </div>
+      <button type="reset" class="text-reset" data-reset>Nullstill filtrene</button>
+    </form>
+
+    <div class="picker-grid">
+      <aside class="picker-list" aria-labelledby="picker-list-title">
+        <div class="list-head">
+          <h3 id="picker-list-title">Velg din tomt</h3>
+          <span class="count" data-count></span>
+        </div>
+        <div class="list-sub">
+          <span data-list-hint>Velg en tomt for å se detaljer</span>
+          <button type="button" class="favorites-toggle" aria-pressed="false" data-favorites-toggle>
+            <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+            Favoritter
+          </button>
+        </div>
+        <div class="cards" data-cards aria-live="polite"></div>
+      </aside>
+
+      <div class="picker-map" aria-label="Kart over tomtene">
+        <div class="map-toolbar">
+          <p class="map-name"><strong>Brakastølen</strong> Trykk på en tomt for detaljer</p>
+          <div class="map-tools">
+            <button type="button" class="icon-btn" data-zoom="in" aria-label="Zoom inn"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h14M12 5v14" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></button>
+            <button type="button" class="icon-btn" data-zoom="out" aria-label="Zoom ut"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h14" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></button>
+            <button type="button" class="icon-btn" data-zoom="reset" aria-label="Tilbakestill kartet"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 10V4h6M20 14v6h-6M20 10V4h-6M4 14v6h6" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></button>
+          </div>
+        </div>
+        <div class="map-viewport" data-map-viewport>
+          {% include 'core/plot-map-svg.html' with map_id='picker-map' %}
+        </div>
+        <ul class="map-legend" aria-label="Tegnforklaring">
+          <li><i class="dot available"></i>Ledig</li>
+          <li><i class="dot reserved"></i>Reservert</li>
+          <li><i class="dot sold"></i>Solgt</li>
+          <li><i class="dot selected"></i>Valgt</li>
+        </ul>
+        <p class="map-note">Illustrativt kart, ikke i målestokk. <a href="{% url 'tomter' %}#tomtekart">Se tomtekartet</a></p>
+        <div class="map-tooltip" data-tooltip hidden></div>
+        <div class="selected-card" data-selected-card hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <dialog class="picker-dialog" data-picker-dialog aria-labelledby="picker-dialog-title">
+    <form method="post" action="{% url 'kontakt' %}" class="form" data-picker-form novalidate>
+      <div class="dialog-head">
+        <h3 id="picker-dialog-title">Avtal visning</h3>
+        <button type="button" class="dialog-close" data-dialog-close aria-label="Lukk">×</button>
+      </div>
+      <p class="dialog-intro" data-dialog-intro>Send en uforpliktende forespørsel om visning.</p>
+
+      {% csrf_token %}
+      {{ picker_form.form_ts }}
+      {{ picker_form.plot }}
+      <input type="hidden" name="interest" value="viewing">
+      <div class="hp-field" aria-hidden="true">
+        <label for="{{ picker_form.hp_check.id_for_label }}">Ikke fyll ut dette feltet</label>
+        {{ picker_form.hp_check }}
+      </div>
+
+      <div class="field">
+        <label for="{{ picker_form.name.id_for_label }}">Navn <span class="required" aria-hidden="true">*</span></label>
+        {{ picker_form.name }}
+      </div>
+      <div class="field">
+        <label for="{{ picker_form.email.id_for_label }}">E-post <span class="required" aria-hidden="true">*</span></label>
+        {{ picker_form.email }}
+      </div>
+      <div class="field">
+        <label for="{{ picker_form.phone.id_for_label }}">Telefon <span class="optional">(valgfritt)</span></label>
+        {{ picker_form.phone }}
+      </div>
+      <div class="field">
+        <label for="{{ picker_form.message.id_for_label }}">Beskjed <span class="optional">(valgfritt)</span></label>
+        {{ picker_form.message }}
+      </div>
+      <div class="field checkbox">
+        {{ picker_form.consent }}
+        <label for="{{ picker_form.consent.id_for_label }}">Jeg godtar <a href="{% url 'personvern' %}" target="_blank">personvernerklæringen</a> <span class="required" aria-hidden="true">*</span></label>
+      </div>
+
+      <p class="form-status" role="status" data-form-status hidden></p>
+      <button type="submit" class="button">Send forespørsel {% include 'core/arrow.svg' %}</button>
+    </form>
+  </dialog>
+
+  {{ picker_plots|json_script:"plot-picker-data" }}
+</section>

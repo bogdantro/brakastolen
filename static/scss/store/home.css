@@ -141,9 +141,6 @@
   .hero h1 .line {
     padding: 4px 14px 0 0;
   }
-  .hero h1 .line-2 {
-    margin-left: 0.3em;
-  }
   .hero .place {
     font-size: 24px;
     margin-top: 0.3em;
@@ -210,9 +207,6 @@
   }
   .hero h1 .line {
     padding-right: calc(var(--u) * 30);
-  }
-  .hero h1 .line-2 {
-    margin-left: calc(var(--u) * 48);
   }
   .hero .place {
     font-size: calc(var(--u) * 34);

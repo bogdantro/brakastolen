@@ -7,7 +7,23 @@
 
 <form method="post" class="stack" novalidate>
   {% csrf_token %}
-  {% for field in form %}{% include 'dashboard/_field.html' %}{% endfor %}
+  {% for field in form.visible_fields %}{% if field.name != 'map_rotation' %}{% include 'dashboard/_field.html' %}{% endif %}{% endfor %}
+  {{ form.map_x }}{{ form.map_y }}
+
+  <fieldset class="plot-placer" data-plot-placer>
+    <legend>Plassering i tomtevelgeren på forsiden</legend>
+    <p>Trykk i kartet der tomten ligger. De andre tomtene vises blekt. Uten plassering vises tomten bare i listen.</p>
+    <div class="placer-map">
+      {% include 'core/plot-map-svg.html' with map_id='placer-map' %}
+    </div>
+    <div class="placer-controls">
+      {% include 'dashboard/_field.html' with field=form.map_rotation %}
+      <button type="button" class="button secondary" data-placer-clear>Fjern fra kartet</button>
+      <p class="placer-status" role="status" data-placer-status></p>
+    </div>
+  </fieldset>
+
   <button type="submit" class="button">Lagre</button>
 </form>
+{{ map_plots|json_script:"placer-other-plots" }}
 {% endblock %}

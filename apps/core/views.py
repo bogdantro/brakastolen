@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.contrib.staticfiles import finders
 from django.core.cache import cache
 from django.db.models import F
-from django.http import FileResponse, Http404, HttpResponse, HttpResponseServerError
+from django.http import FileResponse, Http404, HttpResponse, HttpResponseServerError, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.templatetags.static import static
@@ -76,12 +76,16 @@ def hero_images():
     ]
 
 
+@never_cache  # the plot picker's viewing form carries a CSRF token, which must never be stale
 def hjemme(request):
+    plots = Plot.objects.public().select_related('project')
     return render(request, 'core/index.html', {
         'hero_images': hero_images(),
         'featured_projects': Project.objects.public().filter(is_featured=True)[:6],
         'latest_posts': Blog.objects.public()[:3],
-        'available_plots': Plot.objects.public().available().count(),
+        'available_plots': plots.filter(status='available').count(),
+        'picker_plots': [plot.as_picker_data() for plot in plots],
+        'picker_form': InquiryForm(initial={'interest': 'viewing'}, auto_id='picker_%s'),
         'faq': FAQ,
     })
 
@@ -221,10 +225,18 @@ def over_rate_limit(request):
     return count > INQUIRY_RATE_LIMIT
 
 
+def wants_json(request):
+    """The plot picker sends the viewing form in the background and asks for JSON."""
+    return 'application/json' in request.headers.get('Accept', '')
+
+
 @never_cache  # an old cached copy would carry a stale CSRF token and fail on submit
 def kontakt(request):
     if request.method == 'POST':
         form = InquiryForm(request.POST)
+        if not form.is_valid() and wants_json(request):
+            errors = {name: [str(e) for e in errs] for name, errs in form.errors.items()}
+            return JsonResponse({'error': 'Noe må rettes før forespørselen kan sendes.', 'fields': errors}, status=400)
         if form.is_valid():
             inquiry = form.save(commit=False)
             # Spam is kept out of the inbox, but the bot still sees the normal thank-you.
@@ -238,7 +250,10 @@ def kontakt(request):
                 log.warning('Inquiry %s marked as spam: %s', inquiry.pk, reason)
             else:
                 notify.send_inquiry(inquiry)
-            messages.success(request, 'Takk for henvendelsen! Vi tar kontakt med deg så snart som mulig.')
+            thanks = 'Takk for henvendelsen! Vi tar kontakt med deg så snart som mulig.'
+            if wants_json(request):
+                return JsonResponse({'ok': True, 'message': thanks})
+            messages.success(request, thanks)
             return redirect(reverse('kontakt'))
     else:
         # "Avtal visning" links to /kontakt/?interesse=viewing so the right choice is ready

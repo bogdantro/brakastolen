@@ -383,3 +383,26 @@ class ActivityTests(DashboardTestCase):
     def test_failed_logins_last_week_are_counted(self):
         LoginAttempt.objects.create(ip='10.0.0.1', username='x')
         self.assertEqual(self.client.get(reverse('dashboard_activity')).context['failed_logins'], 1)
+
+
+class PlotMapTests(DashboardTestCase):
+    def test_plot_position_from_the_map_is_saved(self):
+        plot = Plot.objects.create(number='7')
+        self.client.post(reverse('dashboard_plot_edit', args=[plot.pk]),
+                         {'number': '7', 'status': 'available', 'map_x': '480', 'map_y': '379', 'map_rotation': '-15'})
+        plot.refresh_from_db()
+        self.assertEqual((plot.map_x, plot.map_y, plot.map_rotation), (480, 379, -15))
+        self.assertTrue(plot.is_on_map)
+
+    def test_plot_form_shows_the_other_plots_on_the_map(self):
+        Plot.objects.create(number='1', map_x=100, map_y=100)
+        plot = Plot.objects.create(number='2', map_x=200, map_y=200)
+        response = self.client.get(reverse('dashboard_plot_edit', args=[plot.pk]))
+        self.assertEqual([p['number'] for p in response.context['map_plots']], ['1'])
+
+    def test_inquiry_shows_which_plot_it_is_about(self):
+        plot = Plot.objects.create(number='21')
+        inquiry = make_inquiry(plot=plot)
+        self.assertContains(self.client.get(reverse('dashboard_inquiry_detail', args=[inquiry.pk])), 'tomt 21')
+        csv_text = self.client.get(reverse('dashboard_inquiries') + '?export=csv').content.decode('utf-8')
+        self.assertIn(';21;', csv_text)

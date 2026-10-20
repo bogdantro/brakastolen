@@ -1,0 +1,758 @@
+.plot-picker {
+  background: #EEE8DA;
+  scroll-margin-top: 64px;
+}
+.plot-picker .picker-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+}
+.plot-picker .picker-intro .copper-rule {
+  margin: 24px 0 20px;
+}
+.plot-picker .picker-intro p {
+  color: #5C5956;
+  max-width: 34em;
+}
+.plot-picker .picker-intro .picker-from {
+  text-align: right;
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+  font-size: clamp(30px, 2.6vw, 44px);
+  line-height: 1;
+  color: #0D1716;
+  white-space: nowrap;
+}
+.plot-picker .picker-intro .picker-from span {
+  display: block;
+  margin-bottom: 10px;
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 15px;
+  color: #5E7D5A;
+}
+.plot-picker .picker-intro .picker-from small {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 16px;
+  color: #5C5956;
+}
+.plot-picker .picker-filters {
+  display: grid;
+  gap: 18px 22px;
+  align-items: end;
+  background: #FBF8F1;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+}
+.plot-picker .filter-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #5E7D5A;
+  margin-bottom: 8px;
+}
+.plot-picker .input {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 16px;
+  color: #141616;
+  background: #fff;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  border-radius: 2px;
+}
+.plot-picker .input:focus {
+  outline: none;
+  border-color: #002223;
+  box-shadow: 0 0 0 3px rgba(144, 174, 140, 0.35);
+}
+.plot-picker select.input {
+  appearance: none;
+  padding-right: 34px;
+  background-image: linear-gradient(45deg, transparent 50%, #002223 50%), linear-gradient(135deg, #002223 50%, transparent 50%);
+  background-position: calc(100% - 20px) 52%, calc(100% - 14px) 52%;
+  background-size: 6px 6px;
+  background-repeat: no-repeat;
+}
+.plot-picker .price-values {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+  font-weight: 500;
+  color: #0D1716;
+  margin-bottom: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.plot-picker .dual-range {
+  position: relative;
+  height: 22px;
+  display: flex;
+  align-items: center;
+}
+.plot-picker .dual-range .range-rail,
+.plot-picker .dual-range .range-fill {
+  position: absolute;
+  height: 3px;
+  left: 0;
+  right: 0;
+}
+.plot-picker .dual-range .range-rail {
+  background: #E6DDCB;
+}
+.plot-picker .dual-range .range-fill {
+  background: #002223;
+}
+.plot-picker .dual-range input {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 22px;
+  margin: 0;
+  background: none;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.plot-picker .dual-range input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #002223;
+  border: 3px solid #FBF8F1;
+  box-shadow: 0 0 0 1px #002223;
+  cursor: ew-resize;
+  pointer-events: auto;
+}
+.plot-picker .dual-range input::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #002223;
+  border: 3px solid #FBF8F1;
+  box-shadow: 0 0 0 1px #002223;
+  cursor: ew-resize;
+  pointer-events: auto;
+}
+.plot-picker .dual-range input:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid #90AE8C;
+  outline-offset: 2px;
+}
+.plot-picker .toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 14px;
+  background: #fff;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  font-size: 16px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.plot-picker .toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: #002223;
+}
+.plot-picker .text-reset {
+  justify-self: start;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 15px;
+  color: #002223;
+  text-decoration: underline;
+  text-decoration-color: #90AE8C;
+  text-underline-offset: 5px;
+  cursor: pointer;
+}
+.plot-picker .picker-grid {
+  display: grid;
+}
+.plot-picker .picker-list {
+  display: flex;
+  flex-direction: column;
+  background: #FBF8F1;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  min-height: 0;
+}
+.plot-picker .list-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 24px 22px 0;
+}
+.plot-picker .list-head h3 {
+  font-size: 26px;
+}
+.plot-picker .count {
+  color: #5E7D5A;
+  font-size: 15px;
+  font-weight: 500;
+}
+.plot-picker .list-sub {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 22px 16px;
+  border-bottom: 1px solid rgba(20, 22, 22, 0.16);
+  font-size: 14px;
+  color: #5C5956;
+}
+.plot-picker .favorites-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 0;
+  padding: 4px 0;
+  font: inherit;
+  font-size: 14px;
+  color: #5C5956;
+  cursor: pointer;
+}
+.plot-picker .favorites-toggle[aria-pressed=true] {
+  color: #002223;
+  font-weight: 500;
+}
+.plot-picker .favorites-toggle[aria-pressed=true] path {
+  fill: currentColor;
+}
+.plot-picker .cards {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #E6DDCB transparent;
+}
+.plot-picker .lot-card {
+  position: relative;
+  border-bottom: 1px solid rgba(20, 22, 22, 0.16);
+  transition: background 0.2s ease;
+}
+.plot-picker .lot-card:hover {
+  background: #fff;
+}
+.plot-picker .lot-card.is-selected {
+  background: #F1EBDF;
+  box-shadow: inset 3px 0 0 #002223;
+}
+.plot-picker .lot-pick {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 18px 56px 18px 22px;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.plot-picker .lot-top {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.plot-picker .lot-title {
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+  font-size: 22px;
+  color: #0D1716;
+}
+.plot-picker .status {
+  font-size: 13px;
+  font-weight: 600;
+}
+.plot-picker .status.status-available {
+  color: #5E7D5A;
+}
+.plot-picker .status.status-reserved {
+  color: #7E5F22;
+}
+.plot-picker .status.status-sold {
+  color: #5C5956;
+}
+.plot-picker .lot-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 14px;
+  color: #5C5956;
+}
+.plot-picker .lot-price {
+  display: block;
+  margin-top: 10px;
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  color: #002223;
+}
+.plot-picker .status-sold .lot-price,
+.plot-picker .status-reserved .lot-price {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 16px;
+  color: #5C5956;
+}
+.plot-picker .fav {
+  position: absolute;
+  top: 16px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: 0;
+  color: #A39C8E;
+  cursor: pointer;
+}
+.plot-picker .fav svg {
+  width: 19px;
+  height: 19px;
+}
+.plot-picker .fav:hover, .plot-picker .fav.is-active {
+  color: #002223;
+}
+.plot-picker .empty {
+  padding: 48px 22px;
+  text-align: center;
+  color: #5C5956;
+}
+.plot-picker .empty strong {
+  display: block;
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 22px;
+  color: #0D1716;
+  margin-bottom: 8px;
+}
+.plot-picker .empty .text-reset {
+  margin-top: 16px;
+}
+.plot-picker .picker-map {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  background: #E6E3D3;
+}
+.plot-picker .map-toolbar {
+  position: absolute;
+  z-index: 4;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  pointer-events: none;
+}
+.plot-picker .map-name {
+  background: #FBF8F1;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #5C5956;
+}
+.plot-picker .map-name strong {
+  display: block;
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 19px;
+  color: #0D1716;
+}
+.plot-picker .map-tools {
+  display: flex;
+  gap: 6px;
+  pointer-events: auto;
+}
+.plot-picker .icon-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  background: #FBF8F1;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  border-radius: 2px;
+  color: #002223;
+  cursor: pointer;
+}
+.plot-picker .icon-btn:hover {
+  background: #fff;
+}
+.plot-picker .map-viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+}
+.plot-picker .map-viewport.is-dragging {
+  cursor: grabbing;
+}
+.plot-picker .map-viewport.is-dragging svg {
+  transition: none;
+}
+.plot-picker .map-viewport svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+  transition: transform 0.15s ease;
+}
+.plot-picker .plot {
+  cursor: pointer;
+  outline: none;
+}
+.plot-picker .plot .parcel {
+  stroke: #FBF8F1;
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+  transition: fill 0.12s ease, opacity 0.12s ease;
+}
+.plot-picker .plot .parcel-number {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  fill: #002223;
+  pointer-events: none;
+}
+.plot-picker .plot.status-available .parcel {
+  fill: #90AE8C;
+}
+.plot-picker .plot.status-available:hover .parcel, .plot-picker .plot.status-available:focus-visible .parcel {
+  fill: #5E7D5A;
+}
+.plot-picker .plot.status-available:hover .parcel-number {
+  fill: #fff;
+}
+.plot-picker .plot.status-reserved .parcel {
+  fill: #C9A65E;
+}
+.plot-picker .plot.status-sold .parcel {
+  fill: #D6CFBF;
+}
+.plot-picker .plot.status-sold .parcel-number {
+  fill: #8C8577;
+}
+.plot-picker .plot:focus-visible .parcel {
+  stroke: #002223;
+  stroke-width: 3;
+}
+.plot-picker .plot.is-selected .parcel {
+  fill: #002223;
+  stroke: #fff;
+  stroke-width: 3.5;
+}
+.plot-picker .plot.is-selected .parcel-number {
+  fill: #fff;
+}
+.plot-picker .plot.is-filtered {
+  opacity: 0.2;
+}
+.plot-picker .map-legend {
+  position: absolute;
+  z-index: 3;
+  left: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 0;
+  padding: 10px 14px;
+  list-style: none;
+  background: #FBF8F1;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  font-size: 13px;
+  color: #5C5956;
+}
+.plot-picker .map-legend li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.plot-picker .map-legend .dot {
+  width: 12px;
+  height: 12px;
+}
+.plot-picker .map-legend .dot.available {
+  background: #90AE8C;
+}
+.plot-picker .map-legend .dot.reserved {
+  background: #C9A65E;
+}
+.plot-picker .map-legend .dot.sold {
+  background: #D6CFBF;
+}
+.plot-picker .map-legend .dot.selected {
+  background: #002223;
+}
+.plot-picker .map-note {
+  position: absolute;
+  z-index: 3;
+  right: 16px;
+  bottom: 16px;
+  font-size: 12px;
+  color: #5C5956;
+}
+.plot-picker .map-note a {
+  color: #002223;
+}
+.plot-picker .map-tooltip {
+  position: absolute;
+  z-index: 6;
+  pointer-events: none;
+  background: #FBF8F1;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  padding: 9px 12px;
+  font-size: 13px;
+  color: #5C5956;
+  box-shadow: 0 8px 22px rgba(0, 34, 35, 0.16);
+}
+.plot-picker .map-tooltip strong {
+  display: block;
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 17px;
+  color: #0D1716;
+}
+.plot-picker .selected-card {
+  position: absolute;
+  z-index: 5;
+  background: #F1EBDF;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  box-shadow: 0 18px 50px rgba(0, 34, 35, 0.22);
+  padding: 20px 22px 22px;
+  animation: card-in 0.2s ease-out;
+}
+.plot-picker .selected-card .card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.plot-picker .selected-card .card-top strong {
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 28px;
+  color: #0D1716;
+}
+.plot-picker .selected-card .card-close {
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  font-size: 20px;
+  line-height: 1;
+  color: #5C5956;
+  cursor: pointer;
+}
+.plot-picker .selected-card .card-meta {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #5C5956;
+}
+.plot-picker .selected-card .card-note {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #5E7D5A;
+}
+.plot-picker .selected-card .card-price {
+  margin-top: 14px;
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+  font-size: 32px;
+  line-height: 1;
+  color: #002223;
+}
+.plot-picker .selected-card .card-price small {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 15px;
+  color: #5C5956;
+}
+.plot-picker .selected-card .button {
+  width: 100%;
+  justify-content: center;
+  margin-top: 18px;
+}
+.plot-picker .selected-card .button:disabled {
+  background: #D6CFBF;
+  color: #5C5956;
+  cursor: not-allowed;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.picker-dialog {
+  width: min(520px, 100vw - 32px);
+  max-height: calc(100vh - 32px);
+  padding: 30px 30px 28px;
+  border: 0;
+  background: #F1EBDF;
+  color: #141616;
+  box-shadow: 0 30px 90px rgba(0, 20, 20, 0.35);
+}
+.picker-dialog::backdrop {
+  background: rgba(0, 34, 35, 0.62);
+}
+.picker-dialog .form {
+  gap: 16px;
+}
+.picker-dialog .dialog-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.picker-dialog .dialog-head h3 {
+  font-size: 32px;
+}
+.picker-dialog .dialog-close {
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  font-size: 22px;
+  line-height: 1;
+  color: #5C5956;
+  cursor: pointer;
+}
+.picker-dialog .dialog-intro {
+  color: #5C5956;
+  margin-top: -4px;
+}
+.picker-dialog textarea.input {
+  min-height: 96px;
+  resize: vertical;
+}
+.picker-dialog .form-status {
+  padding: 12px 16px;
+  background: #E3ECDF;
+  border-left: 2px solid #5E7D5A;
+  color: #002223;
+}
+.picker-dialog .form-status.is-error {
+  background: #F6E3DF;
+  border-left-color: #A23B2A;
+  color: #7A2A1D;
+}
+.picker-dialog .button {
+  justify-self: stretch;
+  justify-content: center;
+}
+.picker-dialog .button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+@media (max-width: 1139px) {
+  .plot-picker {
+    padding: 64px 0;
+  }
+  .plot-picker .picker-intro {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 28px;
+  }
+  .plot-picker .picker-intro .picker-from {
+    text-align: left;
+  }
+  .plot-picker .picker-filters {
+    grid-template-columns: 1fr 1fr;
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .plot-picker .picker-filters .price-field,
+  .plot-picker .picker-filters .filter-field:nth-child(5) {
+    grid-column: 1/-1;
+  }
+  .plot-picker .picker-grid {
+    gap: 14px;
+  }
+  .plot-picker .picker-map {
+    order: -1;
+    height: 460px;
+  }
+  .plot-picker .picker-list {
+    max-height: 520px;
+  }
+  .plot-picker .map-name {
+    display: none;
+  }
+  .plot-picker .map-note {
+    display: none;
+  }
+  .plot-picker .selected-card {
+    left: 12px;
+    right: 12px;
+    bottom: 64px;
+    padding: 14px 16px 16px;
+  }
+  .plot-picker .selected-card .card-top strong {
+    font-size: 22px;
+  }
+  .plot-picker .selected-card .card-price {
+    font-size: 26px;
+    margin-top: 10px;
+  }
+  .plot-picker .selected-card .button {
+    margin-top: 12px;
+    min-height: 46px;
+  }
+  .plot-picker .map-legend {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    font-size: 12px;
+    gap: 4px 12px;
+  }
+  .picker-dialog {
+    padding: 22px 20px;
+  }
+}
+@media only screen and (min-width: 1140px) {
+  .plot-picker {
+    padding: calc(var(--u) * 120) 0 calc(var(--u) * 130);
+  }
+  .plot-picker .picker-intro {
+    margin-bottom: calc(var(--u) * 48);
+  }
+  .plot-picker .picker-filters {
+    grid-template-columns: minmax(250px, 2fr) 1fr 1fr 1fr 1.1fr;
+    padding: 22px 26px 24px;
+    margin-bottom: 18px;
+  }
+  .plot-picker .picker-filters .text-reset {
+    grid-column: 1/-1;
+    margin-top: -4px;
+  }
+  .plot-picker .picker-grid {
+    grid-template-columns: minmax(330px, 380px) minmax(0, 1fr);
+    gap: 18px;
+    height: max(600px, var(--u) * 700);
+  }
+  .plot-picker .selected-card {
+    right: 16px;
+    bottom: 62px;
+    width: 300px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .plot-picker .selected-card {
+    animation: none;
+  }
+  .plot-picker .map-viewport svg,
+  .plot-picker .plot .parcel {
+    transition: none;
+  }
+}
+
+/*# sourceMappingURL=plot-picker.css.map */

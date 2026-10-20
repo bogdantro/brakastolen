@@ -2,7 +2,7 @@ import re
 
 from django import forms
 
-from .models import Inquiry
+from .models import Inquiry, Plot
 from .spam import make_form_token, spam_reason
 
 
@@ -17,7 +17,7 @@ class InquiryForm(forms.ModelForm):
 
     class Meta:
         model = Inquiry
-        fields = ['name', 'email', 'phone', 'interest', 'message', 'consent']
+        fields = ['name', 'email', 'phone', 'interest', 'message', 'consent', 'plot']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Kari Nordmann', 'autocomplete': 'name'}),
             'email': forms.EmailInput(attrs={'class': 'input', 'placeholder': 'F.eks. kari@epost.no', 'autocomplete': 'email'}),
@@ -25,6 +25,8 @@ class InquiryForm(forms.ModelForm):
                 'class': 'input', 'placeholder': 'F.eks. 482 58 000', 'autocomplete': 'tel', 'inputmode': 'tel', 'type': 'tel',
             }),
             'interest': forms.Select(attrs={'class': 'input'}),
+            # Filled in by the plot picker on the homepage; empty on the normal contact page
+            'plot': forms.HiddenInput,
             'message': forms.Textarea(attrs={
                 'class': 'input', 'rows': 5,
                 'placeholder': 'F.eks. Vi er interessert i en tomt med utsikt og vil gjerne komme på visning i juni.',
@@ -38,6 +40,9 @@ class InquiryForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['consent'].required = True
+        # Only plots a visitor can actually see may be attached to an inquiry
+        self.fields['plot'].queryset = Plot.objects.public()
+        self.fields['plot'].required = False
         self.fields['consent'].error_messages['required'] = 'Du må godta personvernerklæringen for å sende skjemaet.'
         # A bound form shown again with errors keeps the posted token
         self.initial['form_ts'] = make_form_token()

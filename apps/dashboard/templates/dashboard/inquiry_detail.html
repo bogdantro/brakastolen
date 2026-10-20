@@ -4,7 +4,7 @@
 {% block content %}
 <p><a href="{% url 'dashboard_inquiries' %}">← Alle henvendelser</a></p>
 <h1>{{ inquiry.name }}</h1>
-<p>Mottatt {{ inquiry.created_at|date:'d.m.Y \k\l. H:i' }} · Interessert i: <strong>{{ inquiry.get_interest_display }}</strong></p>
+<p>Mottatt {{ inquiry.created_at|date:'d.m.Y \k\l. H:i' }} · Interessert i: <strong>{{ inquiry.get_interest_display }}</strong>{% if inquiry.plot %} · Gjelder <a href="{% url 'dashboard_plot_edit' inquiry.plot.pk %}"><strong>{{ inquiry.plot }}</strong></a>{% endif %}</p>
 {% if inquiry.is_spam %}<p class="message warning">Merket som spam{% if inquiry.spam_reason %} ({{ inquiry.spam_reason }}){% endif %}. Er dette en ekte kunde? Trykk «Ikke spam».</p>{% endif %}
 
 <section class="panel">

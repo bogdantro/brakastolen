@@ -1,0 +1,51 @@
+{% comment %}
+    The plot picker's illustrative map (not to scale), from the Webiser design prototype,
+    recoloured to the site palette. Plots are drawn into <g data-plot-layer> by JavaScript,
+    using each plot's map_x / map_y / map_rotation (units of this 960 × 760 drawing).
+    Used on the homepage (plot-picker.js) and in the dashboard's plot form (dashboard.js).
+    Parameter: map_id – id for the <svg> element.
+{% endcomment %}
+<svg id="{{ map_id }}" class="site-map" viewBox="0 0 960 760" role="img" aria-label="Illustrativt kart over tomtene på Brakastølen">
+  <defs>
+    <pattern id="{{ map_id }}-speckle" width="110" height="110" patternUnits="userSpaceOnUse">
+      <circle cx="8" cy="20" r="2" fill="#93A58C" opacity=".25"/><circle cx="75" cy="54" r="1.5" fill="#93A58C" opacity=".23"/><circle cx="42" cy="90" r="2" fill="#93A58C" opacity=".23"/>
+    </pattern>
+    <pattern id="{{ map_id }}-woods" width="55" height="55" patternUnits="userSpaceOnUse">
+      <path d="M9 17l8-15 9 15zM34 44l9-18 9 18z" fill="#6F8A6A" opacity=".2"/>
+    </pattern>
+  </defs>
+  <rect width="960" height="760" fill="#E6E3D3"/>
+  <path d="M-30 20Q140 70 175 140T244 300Q120 390-30 362Z" fill="#D8DCC6"/>
+  <path d="M0 540Q160 475 300 567T603 760H0Z" fill="#D2D8C0"/>
+  <path d="M525-30Q655 100 960 72V-30Z" fill="#D6DBC4"/>
+  <path d="M733 285Q845 237 980 330V620Q883 562 810 602Z" fill="#D8DCC6"/>
+  <path d="M-50 190Q85 94 183 153T383 100L358 258Q260 318 155 286T-30 321Z" fill="url(#{{ map_id }}-woods)"/>
+  <path d="M580 450Q725 390 928 486L1000 675 716 760 610 606Z" fill="url(#{{ map_id }}-woods)"/>
+  <rect width="960" height="760" fill="url(#{{ map_id }}-speckle)"/>
+  <g fill="none" stroke="#B6BFA6" stroke-width="1.3" opacity=".6">
+    <path d="M-40 120Q190 50 285 126T595 65 986 140"/><path d="M-30 140Q192 72 275 149T596 91 987 162"/>
+    <path d="M-30 162Q180 97 265 178T595 118 985 183"/><path d="M-50 580Q170 530 300 623T635 615 1020 664"/>
+    <path d="M-45 605Q180 550 305 641T632 643 1020 691"/><path d="M-45 636Q180 581 295 672T631 670 1020 725"/>
+  </g>
+  <path d="M-28 485Q105 423 141 378T269 280 414 282 556 197 780 203 981 135" stroke="#B9CBC6" stroke-width="22" fill="none"/>
+  <path d="M-28 485Q105 423 141 378T269 280 414 282 556 197 780 203 981 135" stroke="#E7EFEC" stroke-width="8" fill="none"/>
+  <g stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M58 767Q80 635 200 571T375 474 460 338 600 267 722 168 860-20" stroke="#C3B9A3" stroke-width="23"/>
+    <path d="M58 767Q80 635 200 571T375 474 460 338 600 267 722 168 860-20" stroke="#F5F0E5" stroke-width="16"/>
+    <path d="M-20 345Q85 363 163 338T327 332 505 410 780 384 981 422" stroke="#C3B9A3" stroke-width="19"/>
+    <path d="M-20 345Q85 363 163 338T327 332 505 410 780 384 981 422" stroke="#F5F0E5" stroke-width="13"/>
+    <path d="M185 755Q265 661 396 621T630 544 831 502 978 510" stroke="#C3B9A3" stroke-width="17"/>
+    <path d="M185 755Q265 661 396 621T630 544 831 502 978 510" stroke="#F5F0E5" stroke-width="11"/>
+  </g>
+  <g opacity=".85" fill="#5E7D5A" font-size="12" font-family="Newsreader, Georgia, serif" letter-spacing="1.5">
+    <text transform="translate(710 141) rotate(-43)">ØYEVEGEN</text>
+    <text transform="translate(785 370) rotate(4)">ULSETBEKKVEGEN</text>
+    <text transform="translate(300 648) rotate(-19)">BRAKASTØLVEGEN</text>
+  </g>
+  <g data-plot-layer></g>
+  <g transform="translate(87 110)" opacity=".6">
+    <path d="M0 25V-15M-20 5H20" stroke="#002223" stroke-width="1.4"/><path d="M0-20l-5 10h10z" fill="#002223"/>
+    <text text-anchor="middle" y="-30" font-size="14" font-family="Newsreader, Georgia, serif" font-weight="600" fill="#002223">N</text>
+  </g>
+  <text x="72" y="733" font-family="DM Serif Display, Georgia, serif" font-size="27" opacity=".28" fill="#002223">Vaset · Valdres</text>
+</svg>

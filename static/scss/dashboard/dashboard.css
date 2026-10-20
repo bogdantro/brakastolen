@@ -437,6 +437,51 @@ form.inline {
   margin: 12vh auto;
 }
 
+.plot-placer .placer-map {
+  max-width: 760px;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  cursor: crosshair;
+}
+.plot-placer .placer-map svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.plot-placer .placer-other path {
+  fill: #D6CFBF;
+  stroke: #fff;
+  stroke-width: 2;
+}
+.plot-placer .placer-other text {
+  font-size: 12px;
+  fill: #8C8577;
+}
+.plot-placer .placer-current path {
+  fill: #002223;
+  stroke: #fff;
+  stroke-width: 3;
+}
+.plot-placer .placer-current text {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #fff;
+}
+.plot-placer .placer-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: 14px;
+}
+.plot-placer .placer-controls .field {
+  margin: 0;
+  max-width: 220px;
+}
+.plot-placer .placer-status {
+  margin: 0;
+  color: #4E6B4A;
+}
+
 @media (max-width: 1139px) {
   body.dashboard {
     flex-direction: column;

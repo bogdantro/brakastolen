@@ -32,6 +32,7 @@ def inquiry_text(inquiry):
         f'E-post: {inquiry.email}',
         f'Telefon: {inquiry.phone or "–"}',
         f'Interessert i: {inquiry.get_interest_display()}',
+        f'Tomt: {inquiry.plot}' if inquiry.plot else 'Tomt: –',
         f'Mottatt: {received}',
         '',
         inquiry.message or '(ingen beskjed)',

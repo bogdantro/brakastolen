@@ -44,6 +44,9 @@ class Inquiry(models.Model):
     interest = models.CharField('Interessert i', max_length=20, choices=INTEREST_CHOICES, default='plot')
     message = models.TextField('Beskjed', blank=True)
     consent = models.BooleanField('Godtok personvernerklæringen', default=False)
+    # Set when the inquiry was sent from a plot in the plot picker on the homepage
+    plot = models.ForeignKey('Plot', verbose_name='Tomt', related_name='inquiries',
+                             null=True, blank=True, on_delete=models.SET_NULL)
     status = models.CharField('Status', max_length=20, choices=STATUS_CHOICES, default='new')
     is_read = models.BooleanField('Lest', default=False)
     is_archived = models.BooleanField('Arkivert', default=False)
@@ -242,6 +245,11 @@ class Plot(models.Model):
     price = models.PositiveIntegerField('Pris (kr)', null=True, blank=True)
     altitude = models.PositiveSmallIntegerField('Høyde (moh.)', null=True, blank=True)
     note = models.CharField('Merknad', max_length=200, blank=True)
+    # Where the plot sits in the plot picker's map (units of its 960 × 760 drawing).
+    # Set by clicking on the map in the dashboard; plots without a position are only listed.
+    map_x = models.FloatField('Plassering i kartet (x)', null=True, blank=True)
+    map_y = models.FloatField('Plassering i kartet (y)', null=True, blank=True)
+    map_rotation = models.FloatField('Rotasjon i kartet (grader)', default=-20)
     order = models.PositiveIntegerField('Rekkefølge', default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -266,3 +274,24 @@ class Plot(models.Model):
     def area_display(self):
         """1400 -> '1 400 m²'."""
         return f'{format_number(self.area_m2)} m²' if self.area_m2 else ''
+
+    @property
+    def is_on_map(self):
+        return self.map_x is not None and self.map_y is not None
+
+    def as_picker_data(self):
+        """What the plot picker on the homepage needs, as plain JSON-friendly values."""
+        return {
+            'id': self.pk,
+            'number': self.number,
+            'group': self.project.title if self.project else '',
+            'status': self.status,
+            'statusLabel': self.get_status_display(),
+            'area': self.area_m2,
+            'price': self.price,
+            'altitude': self.altitude,
+            'note': self.note,
+            'x': self.map_x,
+            'y': self.map_y,
+            'rotation': self.map_rotation,
+        }
