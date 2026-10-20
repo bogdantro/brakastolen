@@ -94,7 +94,7 @@
     z-index: 2;
   }
   .nav .logo img {
-    width: 44px;
+    width: 52px;
   }
   .nav .logo-name {
     font-size: 21px;
@@ -190,7 +190,7 @@
     gap: calc(var(--u) * 22);
   }
   .nav .logo img {
-    width: calc(var(--u) * 60);
+    width: max(46px, var(--u) * 78);
   }
   .nav .logo-name {
     font-size: max(19px, var(--u) * 29);

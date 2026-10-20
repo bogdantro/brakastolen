@@ -117,7 +117,7 @@
       z-index: 2;
 
       img {
-        width: 44px;
+        width: 52px;
       }
     }
 
@@ -231,7 +231,7 @@
       gap: u(22);
 
       img {
-        width: u(60);
+        width: max(46px, u(78));
       }
     }
 
