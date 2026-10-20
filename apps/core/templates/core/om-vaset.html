@@ -10,44 +10,97 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'scss/store/om-vaset.css' %}">
 
-{% include 'core/page-header.html' with title="Om Vaset" lead="Et av de mest attraktive hytteområdene i Valdres – med spennende aktiviteter både sommer og vinter." image="images/projects/leve-hytte-utsikt-til-syndin.jpg" image_alt="Utsikt mot Syndin og fjellene rundt Vaset" %}
+{% include 'core/page-header.html' with title="Om Vaset" lead="Et av de mest attraktive hytteområdene i Valdres – høyt og fritt ved Panoramavegen, med utsyn mot Jotunheimen." image="images/projects/leve-hytte-utsikt-til-syndin.jpg" image_alt="Utsikt mot Syndin og fjellene rundt Vaset" %}
 
-<section class="section">
+<section class="area-intro section" aria-labelledby="area-title">
   <div class="content split">
     <div class="split-head">
-      <h2>Brakastølen</h2>
+      <h2 id="area-title">En naturperle i Vestre Slidre</h2>
       <span class="copper-rule" aria-hidden="true"></span>
     </div>
     <div class="prose large">
       <p>Brakastølen – Vaset i Valdres ligger høyt og flott ved Panoramavegen mellom Valdres og Hemsedal.</p>
-      <p>Området er en naturperle og byr på et flott og variert fjellterreng med et levende stølsmiljø, varierte aktiviteter, butikker og hyggelige serveringssteder.</p>
-      <p>Her er det åpent og vilt landskap med flott utsyn mot den ville Jotunheimen.</p>
+      <p>Området byr på et flott og variert fjellterreng med et levende stølsmiljø, varierte aktiviteter, butikker og hyggelige serveringssteder.</p>
     </div>
   </div>
 </section>
 
-<section class="section location-section">
-  <div class="content split">
-    <div class="split-head">
-      <h2>Beliggenhet</h2>
-      <span class="copper-rule" aria-hidden="true"></span>
+<section class="route-section section" aria-labelledby="route-title">
+  <div class="content">
+    <div class="section-head">
+      <h2 id="route-title">Slik kommer du hit</h2>
       <a href="{{ business.maps_url }}" class="text-link" target="_blank" rel="noopener">Se Brakastølen på kartet</a>
     </div>
-    <div>
-      <div class="prose large">
-        <p>Vaset ligger i Vestre Slidre kommune og grenser mot Hemsedal, ca. 18 km nord-vest for regionsenteret Fagernes og 200 km fra Oslo. Panoramavegen over til Hemsedal gjør tilgjengeligheten til Vaset god, også mot vest, samtidig som en kjøretur langs denne legendariske veien er en opplevelse i seg selv.</p>
-      </div>
-      <dl class="distances">
-        <div><dt>Fagernes</dt><dd>{{ business.distances.Fagernes }}</dd></div>
-        <div><dt>Oslo</dt><dd>{{ business.distances.Oslo }}</dd></div>
-        <div><dt>Kommune</dt><dd>{{ business.municipality }}</dd></div>
-      </dl>
-    </div>
+    <ol class="route">
+      <li>
+        <span class="stop">Oslo</span>
+        <span class="note">Ca. 200 km til Vaset</span>
+      </li>
+      <li>
+        <span class="distance">ca. 200 km</span>
+        <span class="stop">Fagernes</span>
+        <span class="note">Regionsenteret i Valdres</span>
+      </li>
+      <li class="is-here">
+        <span class="distance">ca. 18 km</span>
+        <span class="stop">Vaset · Brakastølen</span>
+        <span class="note">Nordvest for Fagernes, i Vestre Slidre</span>
+      </li>
+      <li>
+        <span class="distance">Panoramavegen</span>
+        <span class="stop">Hemsedal</span>
+        <span class="note">Vaset grenser mot Hemsedal – og veien dit er en opplevelse i seg selv</span>
+      </li>
+    </ol>
+    <p class="route-text">Panoramavegen over til Hemsedal gjør tilgjengeligheten til Vaset god, også mot vest, samtidig som en kjøretur langs denne legendariske veien er en opplevelse i seg selv.</p>
   </div>
 </section>
 
-<figure class="wide-photo">
+<figure class="quote-photo">
   <img src="{% static 'images/hero/hero-1-tranberg-utvikling-vaset.jpg' %}" alt="Flyfoto over Brakastølen og Vaset med fjellene i bakgrunnen" loading="lazy">
+  <figcaption>Her er det åpent og vilt landskap med flott utsyn mot den ville Jotunheimen.</figcaption>
 </figure>
 
+<section class="area-cards section" aria-labelledby="area-cards-title">
+  <div class="content">
+    <div class="section-head">
+      <h2 id="area-cards-title">I området</h2>
+    </div>
+    <ul class="area-grid">
+      <li>
+        <img src="{% static 'images/projects/tinde-hytte-05-12031243.jpg' %}" alt="Hytte med torvtak i det åpne fjellandskapet" loading="lazy">
+        <h3>Levende stølsmiljø</h3>
+        <p>Åpent og variert fjellterreng, der stølstradisjonen fortsatt lever.</p>
+      </li>
+      <li>
+        <img src="{% static 'images/misc/vaset-vinter-svarthvit.jpg' %}" alt="Vinterfjellet ved Vaset" loading="lazy">
+        <h3>Butikker og servering</h3>
+        <p>Butikker og hyggelige serveringssteder på Vaset – blant annet Intersport.</p>
+      </li>
+      <li>
+        <a href="{% url 'aktiviteter' %}">
+          <img src="{% static 'images/misc/kiting-pa-vaset.jpg' %}" alt="Snøkiting på Vaset" loading="lazy">
+          <h3>Aktiviteter hele året</h3>
+          <p>Alpint, ca. 120 km langrennsløyper og et eldorado for sykling.</p>
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="facts-section section" aria-labelledby="facts-title">
+  <div class="content split">
+    <div class="split-head">
+      <h2 id="facts-title">Kort fortalt</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+    </div>
+    <dl class="rows">
+      <div><dt>Kommune</dt><dd>{{ business.municipality }}, Valdres</dd></div>
+      <div><dt>Høyde</dt><dd>Tomtene ligger 900–1050 moh.</dd></div>
+      <div><dt>Avstand</dt><dd>Ca. 18 km til Fagernes, ca. 200 km til Oslo</dd></div>
+      <div><dt>Vei</dt><dd>Panoramavegen mellom Valdres og Hemsedal</dd></div>
+      <div><dt>Utsikt</dt><dd>Mot den ville Jotunheimen</dd></div>
+    </dl>
+  </div>
+</section>
 {% endblock %}

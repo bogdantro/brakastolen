@@ -1,96 +1,146 @@
-// Hytter: the two suppliers as photo + cream card stepping into the photo, then partners.
+// Hytter: intro, how a cabin gets built (steps), the two suppliers with photo mosaics,
+// cabins on Brakastølen and the partners as a grid.
 @use '../global/variables' as *;
 
-.supplier {
-  position: relative;
+.build-steps {
+  background: $card;
 
-  .supplier-photo img {
+  .head-note {
+    color: $mutedText;
+  }
+}
+
+.supplier {
+  border-top: 1px solid $border;
+
+  .supplier-main {
     width: 100%;
-    height: 100%;
+    aspect-ratio: 16 / 10;
     object-fit: cover;
   }
 
-  .supplier-text {
-    background: $background;
+  .mosaic {
+    margin-top: 10px;
+  }
 
-    .tagline {
-      margin-top: 8px;
-      font-size: 20px;
-      color: $sageDeep;
-    }
+  .supplier-kicker {
+    color: $sageDeep;
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
 
-    .copper-rule {
-      margin: 24px 0 20px;
-    }
+  h2 {
+    font-size: clamp(40px, 4vw, 68px);
+  }
 
-    p {
-      color: $mutedText;
-    }
+  .tagline {
+    margin-top: 10px;
+    font-family: $fontDisplay;
+    font-size: clamp(20px, 1.6vw, 26px);
+    color: $sageDeep;
+  }
 
-    .text-link {
-      margin-top: 20px;
-    }
+  .copper-rule {
+    margin: 26px 0 22px;
+  }
 
-    .credit {
-      margin-top: 18px;
-      font-size: 14px;
+  .supplier-text p:not(.supplier-kicker):not(.tagline):not(.credit) {
+    color: $mutedText;
+    max-width: 30em;
+
+    & + p {
+      margin-top: 1em;
     }
+  }
+
+  .text-link {
+    margin-top: 22px;
+  }
+
+  .credit {
+    margin-top: 14px;
+    font-size: 14px;
+    color: $mutedText;
   }
 }
 
 .partners-section {
   background: $card;
 
-  .rows dt {
-    font-family: $fontBody;
-    font-size: 16px;
-    color: $sageDeep;
-    font-weight: 500;
-    padding-top: 6px;
+  .head-note {
+    color: $mutedText;
+  }
+}
+
+.partner-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: $border;
+  border: 1px solid $border;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: $background;
+    padding: 26px 24px 28px;
   }
 
-  .rows dd {
+  .role {
+    font-size: 14px;
+    color: $sageDeep;
+  }
+
+  .name {
     font-family: $fontDisplay;
-    font-size: clamp(22px, 1.6vw, 27px);
-    line-height: 1.25;
+    font-size: clamp(21px, 1.6vw, 26px);
+    line-height: 1.2;
     color: $heroText;
+  }
+
+  a.name {
+    text-decoration: underline;
+    text-decoration-color: $sage;
+    text-underline-offset: 5px;
   }
 }
 
 @media (max-width: 1139px) {
   .supplier {
-    .supplier-photo { height: 52vh; min-height: 300px; max-height: 540px; }
+    padding: 64px 0;
 
-    .supplier-text {
-      position: relative;
-      margin: -64px 20px 0 0;
-      padding: 30px 20px 64px;
+    .supplier-grid {
+      display: grid;
+      gap: 32px;
     }
+  }
+
+  .partner-grid {
+    grid-template-columns: 1fr;
   }
 }
 
 @media only screen and (min-width: 1140px) {
-  // Photo from the hero's photo line; the cream card overlaps its lower-left corner
   .supplier {
-    height: u(760);
+    padding: u(130) 0;
 
-    .supplier-photo {
-      position: absolute;
-      inset: 0 0 0 u(495);
+    .supplier-grid {
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      gap: u(100);
+      align-items: center;
     }
 
-    .supplier-text {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: u(740);
-      padding: u(72) u(80) u(84) u(116);
+    // Mirrored: text first, photos second
+    &.is-flipped .supplier-photos {
+      order: 2;
     }
+  }
 
-    // Mirrored: photo on the left, card from the right
-    &.is-flipped {
-      .supplier-photo { inset: 0 u(495) 0 0; }
-      .supplier-text { left: auto; right: 0; padding: u(72) u(89) u(84) u(80); }
-    }
+  .partner-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }

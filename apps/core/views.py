@@ -97,14 +97,15 @@ def hjemme(request):
     })
 
 
+@never_cache  # the plot picker's viewing form carries a CSRF token, which must never be stale
 def tomter(request):
-    groups = Project.objects.public().filter(category='hyttegrend').prefetch_related('plots')
     plots = Plot.objects.public().select_related('project')
     return render(request, 'core/tomter.html', {
-        'groups': groups,
+        'groups': Project.objects.public().filter(category='hyttegrend'),
         'plots': plots,
         'available_plots': plots.filter(status='available').count(),
-        'faq': FAQ,
+        'faq': FAQ[:4],
+        **plot_picker_context(),
     })
 
 

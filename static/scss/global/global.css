@@ -1,7 +1,13 @@
 :root {
   --u: calc(min(100vw, 2200px) / 1672);
+  --sticky-top: 40px;
 }
 
+@media only screen and (min-width: 1140px) {
+  :root:has(.site-header.is-sticky.is-shown) {
+    --sticky-top: calc(max(64px, var(--u) * 78) + 32px);
+  }
+}
 *, *::before, *::after {
   box-sizing: border-box;
 }

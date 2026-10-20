@@ -2,7 +2,7 @@
 {% load static seo %}
 
 {% block head %}
-{% include 'core/seo.html' with title="Hyttetomter på Vaset – fra 900 000 kr | Brakastølen" description="Hyttetomter på Brakastølen, Vaset: 900–1050 moh., 180 graders utsikt og sol fra morgen til kveld. Ingen byggeklausul. Se ledige tomter og tomtekart." %}
+{% include 'core/seo.html' with title="Hyttetomter på Vaset – fra 900 000 kr | Brakastølen" description="Hyttetomter på Brakastølen, Vaset: 900–1050 moh., 180 graders utsikt og sol fra morgen til kveld. Ingen byggeklausul. Finn ledig tomt i kartet." %}
 {% endblock %}
 
 {% block schema %}{% schema_plots plots %}{% endblock %}
@@ -10,89 +10,107 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'scss/store/tomter.css' %}">
 
-{% include 'core/page-header.html' with title="Hyttetomter på Brakastølen" lead="Spektakulær utsikt i 180 grader og sol fra morgen til kveld. Det er ikke byggeklausul på tomtene." image="images/hero/hero-1-tranberg-utvikling-vaset.jpg" image_alt="Flyfoto over hyttegrendene på Brakastølen" %}
+{% include 'core/page-header.html' with title="Hyttetomter på Brakastølen" lead="Spektakulær utsikt i 180 grader og sol fra morgen til kveld – i mindre hyttegrender 900–1050 meter over havet. Det er ingen byggeklausul på tomtene." image="images/hero/hero-1-tranberg-utvikling-vaset.jpg" image_alt="Flyfoto over hyttegrendene på Brakastølen" %}
 
-<section class="section">
+<section class="plots-intro section" aria-labelledby="plots-intro-title">
   <div class="content split">
     <div class="split-head">
-      <h2>Mindre hyttegrender, høyt og fritt</h2>
+      <h2 id="plots-intro-title">Velg tomt – bygg som du vil</h2>
       <span class="copper-rule" aria-hidden="true"></span>
     </div>
     <div class="prose large">
       <p>Tomtene i Brakastølen fordeler seg på mindre hyttegrender. Alle tomtene ligger på 900–1050 m.o.h. med fantastisk utsikt og unike solforhold fra morgen til kveld.</p>
-      <p>Det er ingen byggeklausul på tomtene, men vi bistår gjerne med et nøkkelferdig hytteprosjekt, hvis det er ønskelig.</p>
-      <p>Nye prospekt – ta kontakt for prospekt på nye tomter og prosjekterte nøkkelferdige hytter.</p>
+      <p>Det er ingen byggeklausul på tomtene, men vi bistår gjerne med et nøkkelferdig hytteprosjekt, hvis det er ønskelig. <a href="{% url 'hytter' %}">Les om hyttene</a>.</p>
     </div>
   </div>
 
-  <dl class="content fact-strip">
-    <div><dt>Pris</dt><dd>Fra {{ business.price_from_display }}</dd></div>
-    <div><dt>Høyde</dt><dd>{{ business.altitude }}</dd></div>
-    <div><dt>Sol</dt><dd>Morgen til kveld</dd></div>
-    <div><dt>Byggeklausul</dt><dd>Ingen</dd></div>
-  </dl>
+  <div class="content plots-stats">
+    <ul class="stat-row">
+      <li><strong>{{ business.price_from_display }}</strong><span>Laveste tomtepris, pluss omkostninger</span></li>
+      <li><strong>900–1050 <small>moh.</small></strong><span>Alle tomtene ligger høyt, med åpen utsikt</span></li>
+      <li><strong>180°</strong><span>Utsikt mot fjellet – og sol fra morgen til kveld</span></li>
+      <li><strong>{% if available_plots %}{{ available_plots }}{% else %}–{% endif %}</strong><span>{% if available_plots %}Ledige tomter akkurat nå{% else %}Ta kontakt for ledige tomter{% endif %}</span></li>
+    </ul>
+  </div>
 </section>
 
-<section class="section plot-section" id="ledige-tomter">
+{% include 'core/plot-picker.html' %}
+
+<section class="buy-steps section" aria-labelledby="buy-steps-title">
   <div class="content">
     <div class="section-head">
-      <h2>Tomter</h2>
-      {% if available_plots %}<p class="count">{{ available_plots }} ledig{{ available_plots|pluralize:"e" }} akkurat nå</p>{% endif %}
+      <h2 id="buy-steps-title">Slik kjøper du tomt</h2>
+      <p class="head-note">Fra første telefon til egen tomt på fjellet.</p>
     </div>
-    {% if plots %}
-    <table class="data-table">
-      <thead>
-        <tr><th scope="col">Tomt</th><th scope="col">Hyttegrend</th><th scope="col">Areal</th><th scope="col">Høyde</th><th scope="col">Pris</th><th scope="col">Status</th></tr>
-      </thead>
-      <tbody>
-        {% for plot in plots %}
-        <tr>
-          <td class="plot-number">{{ plot.number }}</td>
-          <td data-label="Hyttegrend">{{ plot.project.title|default:"–" }}</td>
-          <td data-label="Areal">{{ plot.area_display|default:"–" }}</td>
-          <td data-label="Høyde">{% if plot.altitude %}{{ plot.altitude }} moh.{% else %}–{% endif %}</td>
-          <td data-label="Pris">{{ plot.price_display|default:"Ta kontakt" }}</td>
-          <td class="plot-status status-{{ plot.status }}">{{ plot.get_status_display }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% else %}
-    <p class="notice">Oversikten over ledige tomter oppdateres. Ta kontakt for prospekt og pris på tomtene som er ledige nå – ring <a href="tel:{{ business.phone }}">{{ business.phone_display }}</a>.</p>
-    {% endif %}
+    <ol class="steps">
+      <li>
+        <h3>Ta kontakt</h3>
+        <p>Ring grunneier og utbygger på <a href="tel:{{ business.phone }}">{{ business.phone_display }}</a>, send e-post, eller velg en tomt i kartet over.</p>
+      </li>
+      <li>
+        <h3>Få prospekt</h3>
+        <p>Du får prospekt med pris på de ledige tomtene og de prosjekterte nøkkelferdige hyttene.</p>
+      </li>
+      <li>
+        <h3>Personlig visning</h3>
+        <p>Vi viser deg rundt på Brakastølen, så du ser utsikten og solforholdene selv.</p>
+      </li>
+      <li>
+        <h3>Kjøp og oppgjør</h3>
+        <p>Oppgjøret gjøres av EIE Fjellmegleren Fagernes. Finansiering kan ordnes med SpareBank 1 Hallingdal Valdres.</p>
+      </li>
+      <li>
+        <h3>Bygg drømmehytta</h3>
+        <p>Ingen byggeklausul: bygg med egne tegninger, eller velg en nøkkelferdig hytte fra våre leverandører.</p>
+      </li>
+    </ol>
+  </div>
+</section>
 
-    {% if groups %}
-    <ul class="project-list groups">
+{% if groups %}
+<section class="groups-section section" aria-labelledby="groups-title">
+  <div class="content">
+    <div class="section-head">
+      <h2 id="groups-title">Hyttegrendene</h2>
+      <a href="{% url 'prosjekter' %}?kategori=hyttegrend" class="text-link">Alle hyttegrender</a>
+    </div>
+    <ul class="project-list">
       {% for project in groups %}
       <li>{% include 'core/project-card.html' %}</li>
       {% endfor %}
     </ul>
-    {% endif %}
   </div>
 </section>
+{% endif %}
 
-<section class="section map-section" id="tomtekart">
-  <div class="content">
-    <div class="section-head">
-      <h2>Tomtekart</h2>
-      <a href="{% static 'images/misc/tomtekart-2022-02-01.png' %}" class="text-link" target="_blank" rel="noopener">Åpne kartet i full størrelse</a>
+<section class="map-section section" id="tomtekart" aria-labelledby="map-title">
+  <div class="content map-grid">
+    <div class="map-text">
+      <h2 id="map-title">Tomtekartet</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+      <p>Det offisielle tomtekartet viser byggetrinnene, hyttegrendene og nummereringen av tomtene. Kartet er per 1. februar 2022 – den oppdaterte statusen ser du i tomtevelgeren over.</p>
+      <a href="{% static 'images/misc/tomtekart-2022-02-01.png' %}" class="circle-link" target="_blank" rel="noopener"><span class="circle" aria-hidden="true">{% include 'core/arrow.svg' %}</span>Åpne kartet i full størrelse</a>
     </div>
     <figure class="map">
-      <img src="{% static 'images/misc/tomtekart-2022-02-01.png' %}" alt="Tomtekart over Brakastølen med hyttegrender og nummererte tomter (per 1. februar 2022)" loading="lazy">
-      <figcaption>Tomtekart per 1. februar 2022. Ta kontakt for oppdatert oversikt.</figcaption>
+      <a href="{% static 'images/misc/tomtekart-2022-02-01.png' %}" target="_blank" rel="noopener">
+        <img src="{% static 'images/misc/tomtekart-2022-02-01.png' %}" alt="Tomtekart over Brakastølen med byggetrinn, hyttegrender og nummererte tomter (per 1. februar 2022)" loading="lazy">
+      </a>
     </figure>
   </div>
 </section>
 
-<section class="section faq-section">
+<section class="section faq-section" aria-labelledby="tomter-faq-title">
   <div class="content split">
     <div class="split-head">
-      <h2>Spørsmål om tomtene</h2>
+      <h2 id="tomter-faq-title">Spørsmål om tomtene</h2>
       <span class="copper-rule" aria-hidden="true"></span>
-      <p>For visning, kontakt grunneier og utbygger på <a href="tel:{{ business.phone }}" class="text-link">{{ business.phone_display }}</a>.</p>
+      <div class="faq-contact">
+        <p>Finner du ikke svaret?</p>
+        <a href="tel:{{ business.phone }}" class="faq-phone">{{ business.phone_display }}</a>
+        <a href="mailto:{{ business.email }}" class="text-link">{{ business.email }}</a>
+      </div>
     </div>
-    {% include 'core/faq-list.html' with faq=faq|slice:":4" %}
+    {% include 'core/faq-list.html' %}
   </div>
 </section>
-
 {% endblock %}

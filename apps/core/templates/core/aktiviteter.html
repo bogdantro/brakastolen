@@ -10,49 +10,102 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'scss/store/aktiviteter.css' %}">
 
-{% include 'core/page-header.html' with title="Aktiviteter" lead="Alpint, langrenn og sykkel – rett utenfor hytteveggen, sommer som vinter." image="images/misc/langrenn-vaset.jpg" image_alt="Preparerte langrennsløyper på snaufjellet ved Vaset" %}
+{% include 'core/page-header.html' with title="Aktiviteter" lead="Alpint, langrenn og sykkel – rett utenfor hytteveggen, sommer som vinter." image="images/misc/langrenn-vaset.jpg" image_alt="Preparerte langrennsløyper over snaufjellet ved Vaset" %}
 
-<section class="activity" id="alpint">
+<section class="activities-intro section" aria-labelledby="activities-intro-title">
+  <div class="content split">
+    <div class="split-head">
+      <h2 id="activities-intro-title">Et av de mest attraktive hytteområdene i Valdres</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+    </div>
+    <div class="prose large">
+      <p>Vaset kan tilby spennende aktiviteter både sommer og vinter. Om vinteren venter skiheisene og ca. 120 km preparerte løyper; om sommeren er området et eldorado for syklister i alle aldre.</p>
+    </div>
+  </div>
+
+  <div class="content activity-stats">
+    <ul class="stat-row">
+      <li><strong>9</strong><span>Nedfarter i Vaset skiheiser</span></li>
+      <li><strong>120 <small>km</small></strong><span>Preparerte langrennsløyper (ca.)</span></li>
+      <li><strong>1137 <small>moh.</small></strong><span>Toppen av fjellet «Syni», med ski helt opp</span></li>
+      <li><strong>4,5 <small>m</small></strong><span>Bredde på løypemaskinene – to klassiske spor og skøytetrasé</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="activity" id="alpint" aria-labelledby="alpint-title">
   <div class="content activity-grid">
     <figure class="activity-photo">
       <img src="{% static 'images/misc/kiting-pa-vaset.jpg' %}" alt="Snøkiting på fjellet ved Vaset" loading="lazy">
+      <figcaption class="photo-fact"><strong>9</strong> nedfarter</figcaption>
     </figure>
     <div class="activity-text">
       <p class="season">Vinter</p>
-      <h2>Alpint</h2>
+      <h2 id="alpint-title">Alpint</h2>
       <span class="copper-rule" aria-hidden="true"></span>
       <p>Vaset skiheiser har 9 nedfarter i ulike vanskelighetsgrader. Vaset er et flott alternativ for barnefamilier og de som vil øve seg på rails eller hopp.</p>
-      <p class="fact"><strong>9</strong> nedfarter</p>
+      <ul class="fact-list">
+        <li>Nedfarter i ulike vanskelighetsgrader</li>
+        <li>Flott for barnefamilier</li>
+        <li>Rails og hopp for de som vil øve</li>
+      </ul>
     </div>
   </div>
 </section>
 
-<section class="activity is-flipped" id="langrenn">
+<section class="activity is-flipped" id="langrenn" aria-labelledby="langrenn-title">
   <div class="content activity-grid">
     <figure class="activity-photo">
-      <img src="{% static 'images/misc/vaset-vinter-svarthvit.jpg' %}" alt="Skiløyper over snaufjellet ved Vaset" loading="lazy">
+      <img src="{% static 'images/misc/langrenn-vaset.jpg' %}" alt="Preparerte langrennsløyper på snaufjellet ved Vaset" loading="lazy">
+      <figcaption class="photo-fact"><strong>120 km</strong> løyper</figcaption>
     </figure>
     <div class="activity-text">
       <p class="season">Vinter</p>
-      <h2>Langrenn</h2>
+      <h2 id="langrenn-title">Langrenn</h2>
       <span class="copper-rule" aria-hidden="true"></span>
-      <p>Løypenettet på Vaset er på ca. 120 kilometer, og prepareres av Vasetløypene SA med to store løypemaskiner med en bredde på 4,5 meter. Løypemaskinene lager to klassiske spor og skøytetrasé i midten.</p>
-      <p>Løypenettet varierer fra lysløype som ligger i granskog, til løypene på snaufjellet innenfor Gomobu. Her kan en oppleve skiturer på slake vidder, men også mulighet for å komme opp på fjellet «Syni» på 1137 moh.</p>
-      <p class="fact"><strong>120</strong> km løyper</p>
+      <p>Løypenettet på Vaset er på ca. 120 kilometer, og prepareres av Vasetløypene SA med to store løypemaskiner med en bredde på 4,5 meter. Maskinene lager to klassiske spor med skøytetrasé i midten.</p>
+      <p>Løypene varierer fra lysløype i granskog, til løypene på snaufjellet innenfor Gomobu. Her kan du gå skiturer på slake vidder – og helt opp på fjellet «Syni» på 1137 moh.</p>
+      <ul class="fact-list">
+        <li>Preparert av Vasetløypene SA</li>
+        <li>Klassisk og skøyting i samme trasé</li>
+        <li>Lysløype i granskog</li>
+        <li>Snaufjellet innenfor Gomobu</li>
+      </ul>
     </div>
   </div>
 </section>
 
-<section class="activity" id="sykkel">
-  <div class="content activity-grid no-photo">
+<section class="activity" id="sykkel" aria-labelledby="sykkel-title">
+  <div class="content activity-grid">
+    <figure class="activity-photo">
+      <img src="{% static 'images/projects/tinde-hytte-04-12031241.jpg' %}" alt="Hytte med torvtak i sommerfjellet ved Vaset" loading="lazy">
+      <figcaption class="photo-fact is-word"><strong>Mjølkevegen</strong> nasjonal sykkelrute</figcaption>
+    </figure>
     <div class="activity-text">
       <p class="season">Sommer</p>
-      <h2>Sykkel</h2>
+      <h2 id="sykkel-title">Sykkel</h2>
       <span class="copper-rule" aria-hidden="true"></span>
-      <p>Vaset ligger midt i et eldorado for syklister i alle aldre og på alle nivåer. Sykkelmiljøet i Valdres har vokst de siste årene, med Valdresrittet og Offroad Valdres som beintøffe ritt og familievennlige sykkelturer som en del av den nasjonale sykkelruta «Mjølkevegen».</p>
+      <p>Vaset ligger midt i et eldorado for syklister i alle aldre og på alle nivåer. Sykkelmiljøet i Valdres har vokst de siste årene, med beintøffe ritt og familievennlige turer langs den nasjonale sykkelruta «Mjølkevegen».</p>
       <p>Fra Gomobu finnes det flere titalls flotte og merkede sykkelløyper som passer for hele familien.</p>
+      <ul class="fact-list">
+        <li>Merkede løyper fra Gomobu</li>
+        <li>Nasjonal sykkelrute «Mjølkevegen»</li>
+        <li>Valdresrittet og Offroad Valdres</li>
+      </ul>
     </div>
   </div>
 </section>
 
+<section class="live-here section" aria-labelledby="live-here-title">
+  <div class="content split">
+    <div class="split-head">
+      <h2 id="live-here-title">Bo midt i det</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+    </div>
+    <div>
+      <p class="live-lead">Langrennssporet går rett forbi Ulven hyttegrend, og alle tomtene på Brakastølen ligger 900–1050 moh. midt i fjellterrenget.</p>
+      <a href="{% url 'tomter' %}#tomtevelger" class="circle-link"><span class="circle" aria-hidden="true">{% include 'core/arrow.svg' %}</span>Finn din tomt i kartet</a>
+    </div>
+  </div>
+</section>
 {% endblock %}

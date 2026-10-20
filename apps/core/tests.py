@@ -163,12 +163,12 @@ class PageTests(MediaTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['category'], '')
 
-    def test_plots_in_published_groups_show_on_tomter(self):
+    def test_tomter_has_the_plot_picker_with_published_plots(self):
         Plot.objects.create(project=self.project, number='T10', price=900000, area_m2=1400)
         response = self.client.get(reverse('tomter'))
-        self.assertContains(response, 'T10')
-        self.assertContains(response, '900 000 kr')
-        self.assertContains(response, '1 400 m²')
+        self.assertContains(response, 'id="tomtevelger"')
+        self.assertEqual([p['number'] for p in response.context['picker_plots']], ['T10'])
+        self.assertIn('no-cache', response['Cache-Control'])
 
     def test_plots_in_draft_groups_are_hidden(self):
         draft = make_project(title='Utkastfelt', is_published=False)

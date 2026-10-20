@@ -4,6 +4,14 @@
 :root {
   // 1 px of the 1672 px design reference. Capped so very wide screens don't blow up the type.
   --u: calc(min(100vw, 2200px) / #{$designWidth});
+  // Where sticky columns stop. Moves down while the sticky nav is showing, so it never covers them.
+  --sticky-top: 40px;
+}
+
+@media only screen and (min-width: #{$desktopMin}) {
+  :root:has(.site-header.is-sticky.is-shown) {
+    --sticky-top: calc(max(64px, var(--u) * 78) + 32px);
+  }
 }
 
 *, *::before, *::after {

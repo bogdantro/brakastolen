@@ -312,12 +312,14 @@
 
   .article-aside {
     position: sticky;
-    top: 40px;
+    top: var(--sticky-top);
+    transition: top 0.35s ease;
   }
 
   .article-figure.is-portrait {
     position: sticky;
-    top: 40px;
+    top: var(--sticky-top);
+    transition: top 0.35s ease;
     max-width: u(400);
   }
 

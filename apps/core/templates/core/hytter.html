@@ -12,51 +12,98 @@
 
 {% include 'core/page-header.html' with title="Hytter skreddersydd for din familie" lead="Velg tomt og hyttemodell – vi tar oss av hele byggeprosessen frem til hytta står ferdig." image="images/projects/tinde-vaset-3992.jpg" image_alt="Spisestue og stue med fjellutsikt i Tinde-hytte på Vaset" %}
 
-<section class="section">
+<section class="cabins-intro section" aria-labelledby="cabins-intro-title">
   <div class="content split">
     <div class="split-head">
-      <h2>Nøkkelferdig, eller dine egne tegninger</h2>
+      <h2 id="cabins-intro-title">Nøkkelferdig, eller dine egne tegninger</h2>
       <span class="copper-rule" aria-hidden="true"></span>
     </div>
     <div class="prose large">
-      <p>På tomtene i Brakastølen kan man velge blant flere norske kvalitetsleverandører av hytter. Vi vil kunne levere nøkkelferdige hytteprosjekter sammen med våre utvalgte samarbeidspartnere.</p>
-      <p>Dersom kunden har egne tegninger, så benytter vi lokalt byggemesterfirma til gjennomføringen. Det er bare for kunden å velge seg ut tomt og hyttemodell, og vi vil ta oss av hele byggeprosessen frem til hytta står ferdig.</p>
+      <p>På tomtene i Brakastølen kan man velge blant flere norske kvalitetsleverandører av hytter. Vi kan levere nøkkelferdige hytteprosjekter sammen med våre utvalgte samarbeidspartnere.</p>
+      <p>Har du egne tegninger, bruker vi et lokalt byggmesterfirma til gjennomføringen. Det er bare for deg å velge tomt og hyttemodell – vi tar oss av hele byggeprosessen frem til hytta står ferdig.</p>
     </div>
   </div>
 </section>
 
-<section class="supplier" id="tinde">
-  <div class="supplier-photo">
-    <img src="{% static 'images/projects/tinde-vaset-3939.jpg' %}" alt="Stue med store vinduer og fjellutsikt i Tinde-hytte på Vaset" loading="lazy">
-  </div>
-  <div class="supplier-text">
-    <h2>Tinde Hytter</h2>
-    <p class="tagline">Stedet for dine beste stunder</p>
-    <span class="copper-rule" aria-hidden="true"></span>
-    <p>Tinde Hytter vet at det finnes like mange tinder som det er mennesker. Derfor har Tinde utviklet gode serier av kvalitetshytter – alle med hver sine særtrekk og egenskaper. Tinde bygger din hytte spesielt for deg og dine, slik blir den et sted der du kan dyrke de gode opplevelser i livet.</p>
-    <a href="https://www.tindehytter.no" class="text-link" target="_blank" rel="noopener">tindehytter.no</a>
-    <p class="credit">Foto: Pål Harald Uthus, Uthus Photography</p>
+<section class="build-steps section" aria-labelledby="build-steps-title">
+  <div class="content">
+    <div class="section-head">
+      <h2 id="build-steps-title">Slik bygger vi hytta di</h2>
+      <p class="head-note">Vi tar oss av hele byggeprosessen frem til hytta står ferdig.</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <h3>Velg tomt</h3>
+        <p>Finn tomten med utsikten og solforholdene du ønsker i <a href="{% url 'tomter' %}#tomtevelger">tomtevelgeren</a>.</p>
+      </li>
+      <li>
+        <h3>Velg hyttemodell</h3>
+        <p>Tinde Hytter, Leve Hytter og de andre leverandørene i FAUN Gruppen – eller dine egne tegninger.</p>
+      </li>
+      <li>
+        <h3>Planlegging og byggesak</h3>
+        <p>Plan og Oppmåling Valdres planlegger hytta på tomta. Byggesaken behandles av Vestre Slidre kommune.</p>
+      </li>
+      <li>
+        <h3>Tomt og grunnmur</h3>
+        <p>VA Entreprenør opparbeider tomten og støper grunnmuren.</p>
+      </li>
+      <li>
+        <h3>Hytta står ferdig</h3>
+        <p>Leverandøren eller et lokalt byggmesterfirma bygger hytta – nøkkelferdig, klar til bruk.</p>
+      </li>
+    </ol>
   </div>
 </section>
 
-<section class="supplier is-flipped" id="leve">
-  <div class="supplier-photo">
-    <img src="{% static 'images/projects/leve-hytte-utsikt-til-syndin.jpg' %}" alt="Utsikt til Syndin gjennom vinduet i en Leve-hytte" loading="lazy">
+<section class="supplier" id="tinde" aria-labelledby="tinde-title">
+  <div class="content supplier-grid">
+    <div class="supplier-photos">
+      <img class="supplier-main" src="{% static 'images/projects/tinde-vaset-3939.jpg' %}" alt="Stue med store vinduer og fjellutsikt i Tinde-hytte på Vaset" loading="lazy">
+      <div class="mosaic">
+        <img src="{% static 'images/projects/tinde-hytte-04-12031241.jpg' %}" alt="Hytte med torvtak i sommerfjellet" loading="lazy">
+        <img src="{% static 'images/projects/tinde-vaset-4030.jpg' %}" alt="Soverom med utsikt i Tinde-hytte" loading="lazy">
+      </div>
+    </div>
+    <div class="supplier-text">
+      <p class="supplier-kicker">Hytteleverandør</p>
+      <h2 id="tinde-title">Tinde Hytter</h2>
+      <p class="tagline">Stedet for dine beste stunder</p>
+      <span class="copper-rule" aria-hidden="true"></span>
+      <p>Tinde Hytter vet at det finnes like mange tinder som det er mennesker. Derfor har Tinde utviklet gode serier av kvalitetshytter – alle med hver sine særtrekk og egenskaper.</p>
+      <p>Tinde bygger din hytte spesielt for deg og dine, slik blir den et sted der du kan dyrke de gode opplevelsene i livet.</p>
+      <a href="https://www.tindehytter.no" class="text-link" target="_blank" rel="noopener">tindehytter.no</a>
+      <p class="credit">Foto: Pål Harald Uthus, Uthus Photography</p>
+    </div>
   </div>
-  <div class="supplier-text">
-    <h2>Leve Hytter</h2>
-    <p class="tagline">Tidløst design og solid håndverk</p>
-    <span class="copper-rule" aria-hidden="true"></span>
-    <p>Leve Hytter lager moderne kvalitetshytter med god arkitektur. Ei hytte skal vare i mange generasjoner. Derfor er Leve Hytter opptatt av at den skal fremstå som tidløs, i motsetning til gammaldags. Hytteserien heter Vy, og er utviklet i samarbeid med en av Norges fremste arkitekter. Den kommer i flere grunnmodeller og størrelser, med gode valgmuligheter.</p>
-    <a href="https://www.levehytter.no" class="text-link" target="_blank" rel="noopener">levehytter.no</a>
+</section>
+
+<section class="supplier is-flipped" id="leve" aria-labelledby="leve-title">
+  <div class="content supplier-grid">
+    <div class="supplier-photos">
+      <img class="supplier-main" src="{% static 'images/projects/leve-hytter-vy-overblikk.jpg' %}" alt="Leve Hytter Vy i vinterlandskap med skiløpere" loading="lazy">
+      <div class="mosaic">
+        <img src="{% static 'images/projects/leve-hytter-interior.jpg' %}" alt="Lyst interiør fra Leve Hytter" loading="lazy">
+        <img src="{% static 'images/projects/leve-hytter-ildsted-hellerud.jpg' %}" alt="Ildsted i Leve-hytte" loading="lazy">
+      </div>
+    </div>
+    <div class="supplier-text">
+      <p class="supplier-kicker">Hytteleverandør</p>
+      <h2 id="leve-title">Leve Hytter</h2>
+      <p class="tagline">Tidløst design og solid håndverk</p>
+      <span class="copper-rule" aria-hidden="true"></span>
+      <p>Leve Hytter lager moderne kvalitetshytter med god arkitektur. Ei hytte skal vare i mange generasjoner – derfor skal den fremstå som tidløs, i motsetning til gammaldags.</p>
+      <p>Hytteserien Vy er utviklet i samarbeid med en av Norges fremste arkitekter, og kommer i flere grunnmodeller og størrelser med gode valgmuligheter.</p>
+      <a href="https://www.levehytter.no" class="text-link" target="_blank" rel="noopener">levehytter.no</a>
+    </div>
   </div>
 </section>
 
 {% if cabins %}
-<section class="section">
+<section class="section cabins-list" aria-labelledby="cabins-list-title">
   <div class="content">
     <div class="section-head">
-      <h2>Hytter på Brakastølen</h2>
+      <h2 id="cabins-list-title">Hytter på Brakastølen</h2>
       <a href="{% url 'prosjekter' %}" class="text-link">Alle prosjekter</a>
     </div>
     <ul class="project-list">
@@ -68,19 +115,20 @@
 </section>
 {% endif %}
 
-<section class="section partners-section">
-  <div class="content split">
-    <div class="split-head">
-      <h2>Våre samarbeidspartnere</h2>
-      <span class="copper-rule" aria-hidden="true"></span>
-      <p>Fra tomt og grunnmur til finansiering og oppgjør.</p>
+<section class="section partners-section" aria-labelledby="partners-title">
+  <div class="content">
+    <div class="section-head">
+      <h2 id="partners-title">Våre samarbeidspartnere</h2>
+      <p class="head-note">Fra tomt og grunnmur til finansiering og oppgjør.</p>
     </div>
-    <dl class="rows">
+    <ul class="partner-grid">
       {% for role, name, url in partners %}
-      <div><dt>{{ role }}</dt><dd>{% if url %}<a href="{{ url }}" target="_blank" rel="noopener">{{ name }}</a>{% else %}{{ name }}{% endif %}</dd></div>
+      <li>
+        <span class="role">{{ role }}</span>
+        {% if url %}<a href="{{ url }}" target="_blank" rel="noopener" class="name">{{ name }}</a>{% else %}<span class="name">{{ name }}</span>{% endif %}
+      </li>
       {% endfor %}
-    </dl>
+    </ul>
   </div>
 </section>
-
 {% endblock %}

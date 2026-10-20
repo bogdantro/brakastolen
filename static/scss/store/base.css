@@ -702,7 +702,8 @@ h3 {
   }
   .split-head {
     position: sticky;
-    top: 40px;
+    top: var(--sticky-top);
+    transition: top 0.35s ease;
   }
   .section-head {
     margin-bottom: calc(var(--u) * 56);

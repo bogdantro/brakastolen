@@ -1,36 +1,123 @@
-.location-section {
+.route-section {
   background: #E7DFCE;
 }
+.route-section .route-text {
+  margin-top: 48px;
+  color: #5C5956;
+  max-width: 40em;
+}
 
-.distances {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  margin: 48px 0 0;
-  border-top: 1px solid rgba(20, 22, 22, 0.16);
+.quote-photo {
+  position: relative;
+  margin: 0;
 }
-.distances > div {
-  padding: 20px 16px 0 0;
+.quote-photo img {
+  width: 100%;
+  object-fit: cover;
 }
-.distances dt {
-  color: #5E7D5A;
-  font-size: 15px;
-}
-.distances dd {
-  margin: 4px 0 0;
+.quote-photo figcaption {
+  background: #F1EBDF;
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
-  font-size: clamp(24px, 2vw, 34px);
+  color: #0D1716;
+  line-height: 1.22;
+}
+.quote-photo figcaption::before {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 2px;
+  background: #5E7D5A;
+  margin-bottom: 20px;
+}
+
+.area-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+.area-grid a {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.area-grid a:hover h3 {
+  color: #5E7D5A;
+}
+.area-grid img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  background: #DDD2BD;
+}
+.area-grid h3 {
+  margin-top: 18px;
+  transition: color 0.25s ease;
+}
+.area-grid p {
+  margin-top: 8px;
+  color: #5C5956;
+  font-size: 17px;
+}
+
+.facts-section {
+  background: #E7DFCE;
+}
+.facts-section .rows dt {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #5E7D5A;
+  padding-top: 6px;
+}
+.facts-section .rows dd {
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+  font-size: clamp(22px, 1.6vw, 27px);
+  line-height: 1.25;
   color: #0D1716;
 }
 
-.wide-photo {
-  margin: 0;
+@media (max-width: 1139px) {
+  .quote-photo img {
+    height: 56vh;
+    min-height: 300px;
+    max-height: 520px;
+  }
+  .quote-photo figcaption {
+    position: relative;
+    margin: -64px 20px 0 0;
+    padding: 26px 20px 28px;
+    font-size: 24px;
+  }
+  .area-grid {
+    gap: 40px;
+  }
 }
-.wide-photo img {
-  width: 100%;
-  height: 72vh;
-  min-height: 320px;
-  max-height: 820px;
-  object-fit: cover;
+@media only screen and (min-width: 1140px) {
+  .route-section .section-head {
+    margin-bottom: calc(var(--u) * 80);
+  }
+  .quote-photo {
+    height: calc(var(--u) * 720);
+  }
+  .quote-photo img {
+    position: absolute;
+    inset: 0 0 0 calc(var(--u) * 495);
+    width: auto;
+    height: 100%;
+  }
+  .quote-photo figcaption {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: calc(var(--u) * 780);
+    padding: calc(var(--u) * 60) calc(var(--u) * 80) calc(var(--u) * 64) calc(var(--u) * 116);
+    font-size: calc(var(--u) * 42);
+  }
+  .area-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: calc(var(--u) * 44);
+  }
 }
 
 /*# sourceMappingURL=om-vaset.css.map */

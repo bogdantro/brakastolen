@@ -1,29 +1,45 @@
-.plot-section {
-  background: #E7DFCE;
-}
-.plot-section .count {
-  color: #5E7D5A;
-  font-weight: 500;
-}
-.plot-section .groups {
-  margin-top: 72px;
+.plots-stats {
+  margin-top: 56px;
 }
 
+.buy-steps {
+  border-top: 1px solid rgba(20, 22, 22, 0.16);
+}
+.buy-steps .head-note {
+  color: #5C5956;
+}
+
+.groups-section {
+  background: #E7DFCE;
+}
+
+.map-section {
+  border-top: 1px solid rgba(20, 22, 22, 0.16);
+}
+.map-section .map-text p {
+  color: #5C5956;
+  max-width: 28em;
+}
+.map-section .map-text .copper-rule {
+  margin: 26px 0 22px;
+}
+.map-section .map-text .circle-link {
+  margin-top: 30px;
+}
 .map-section .map {
   margin: 0;
   background: #fff;
   border: 1px solid rgba(20, 22, 22, 0.16);
-  padding: 24px;
+  padding: 20px;
+}
+.map-section .map a {
+  display: block;
+  cursor: zoom-in;
 }
 .map-section .map img {
   width: 100%;
-  max-height: 1100px;
+  max-height: 900px;
   object-fit: contain;
-}
-.map-section .map figcaption {
-  margin-top: 14px;
-  font-size: 15px;
-  color: #5C5956;
 }
 
 .faq-section {
@@ -31,13 +47,28 @@
 }
 
 @media (max-width: 1139px) {
+  .map-section .map-grid {
+    display: grid;
+    gap: 32px;
+  }
   .map-section .map {
     padding: 10px;
   }
 }
 @media only screen and (min-width: 1140px) {
-  .plot-section .groups {
+  .plots-stats {
     margin-top: calc(var(--u) * 96);
+  }
+  .map-section .map-grid {
+    display: grid;
+    grid-template-columns: 4fr 7fr;
+    gap: calc(var(--u) * 100);
+    align-items: start;
+  }
+  .map-section .map-text {
+    position: sticky;
+    top: var(--sticky-top);
+    transition: top 0.35s ease;
   }
 }
 
