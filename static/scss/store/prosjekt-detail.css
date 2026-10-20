@@ -56,7 +56,7 @@
   display: block;
   overflow: hidden;
   aspect-ratio: 3/2;
-  background: #E6DDCB;
+  background: #DDD2BD;
 }
 .gallery img {
   width: 100%;
@@ -69,7 +69,7 @@
 }
 
 .more-projects {
-  background: #EEE8DA;
+  background: #E7DFCE;
 }
 
 @media (max-width: 1139px) {

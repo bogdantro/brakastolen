@@ -546,49 +546,6 @@ h3 {
 }
 
 // ------------------------------------------------------------
-// Call to action on the brand green
-// ------------------------------------------------------------
-.cta-band {
-  background: $primaryColor;
-  color: $white;
-
-  h2 {
-    color: $white;
-    max-width: 14em;
-  }
-
-  p {
-    color: rgba(246, 243, 233, 0.78);
-    margin-top: 18px;
-    font-size: 20px;
-  }
-
-  .cta-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 18px 32px;
-    margin-top: 40px;
-  }
-
-  .button {
-    background: $sage;
-    color: $primaryColor;
-
-    &:hover {
-      background: $white;
-    }
-  }
-
-  .phone {
-    color: $white;
-    text-decoration: underline;
-    text-decoration-color: $sage;
-    text-underline-offset: 6px;
-  }
-}
-
-// ------------------------------------------------------------
 // Tables (plots)
 // ------------------------------------------------------------
 .data-table {
@@ -850,10 +807,6 @@ h3 {
     padding: 24px 0;
   }
 
-  .cta-band {
-    padding: 72px 0;
-  }
-
   .data-table {
     // Phones: each plot becomes a small block instead of a wide table row
     thead {
@@ -1032,13 +985,6 @@ h3 {
     }
   }
 
-  .cta-band {
-    padding: u(150) 0;
-
-    h2 {
-      font-size: u(84);
-    }
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1050,5 +996,207 @@ h3 {
 
   .faq-list details p {
     animation: none;
+  }
+}
+
+// ------------------------------------------------------------
+// Shared content sections for the inner pages
+// ------------------------------------------------------------
+
+// Numbered steps – only for things that really happen in order (buying a plot, building a cabin)
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  counter-reset: step;
+
+  li {
+    position: relative;
+    counter-increment: step;
+    border-top: 1px solid $heroText;
+    padding-top: 22px;
+
+    &::before {
+      content: counter(step, decimal-leading-zero);
+      display: block;
+      font-family: $fontDisplay;
+      font-size: 44px;
+      line-height: 1;
+      color: $sageDeep;
+      margin-bottom: 18px;
+    }
+  }
+
+  h3 {
+    font-size: clamp(22px, 1.6vw, 27px);
+  }
+
+  p {
+    margin-top: 10px;
+    color: $mutedText;
+    font-size: 17px;
+  }
+
+  a {
+    color: $primaryColor;
+    text-decoration-color: $sage;
+    text-underline-offset: 3px;
+  }
+}
+
+// A row of big real numbers with small labels
+.stat-row {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+
+  li {
+    border-top: 1px solid $border;
+    padding-top: 18px;
+  }
+
+  strong {
+    display: block;
+    font-family: $fontDisplay;
+    font-weight: 400;
+    font-size: clamp(40px, 4.4vw, 76px);
+    line-height: 1;
+    color: $primaryColor;
+    letter-spacing: -0.02em;
+
+    small {
+      font-family: $fontBody;
+      font-size: 0.32em;
+      color: $sageDeep;
+      letter-spacing: 0;
+    }
+  }
+
+  span {
+    display: block;
+    margin-top: 10px;
+    color: $mutedText;
+    font-size: 16px;
+    max-width: 16em;
+  }
+}
+
+// Small photo mosaic beside a supplier or an area
+.mosaic {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: $sand;
+  }
+
+  .is-tall {
+    grid-row: span 2;
+
+    img { aspect-ratio: auto; }
+  }
+}
+
+// Route diagram (Om Vaset): stops on a line, distances between them
+.route {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+
+  li {
+    position: relative;
+  }
+
+  .stop {
+    display: block;
+    font-family: $fontDisplay;
+    font-size: clamp(26px, 2.4vw, 40px);
+    line-height: 1.1;
+    color: $heroText;
+  }
+
+  .note {
+    display: block;
+    margin-top: 6px;
+    color: $mutedText;
+    font-size: 16px;
+  }
+
+  .distance {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 4px 10px;
+    background: $primaryColor;
+    color: $white;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .is-here .stop {
+    color: $sageDeep;
+  }
+}
+
+@media (max-width: 1139px) {
+  .steps {
+    gap: 34px;
+  }
+
+  .stat-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 16px;
+  }
+
+  .route {
+    gap: 28px;
+    border-left: 1px solid $heroText;
+    padding-left: 22px;
+  }
+}
+
+@media only screen and (min-width: 1140px) {
+  .steps {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: u(36);
+  }
+
+  .stat-row {
+    grid-template-columns: repeat(4, 1fr);
+    gap: u(36);
+  }
+
+  // Stops side by side on one line, like a road
+  .route {
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid $heroText;
+
+    li {
+      padding: 34px u(30) 0 0;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -7px;
+        left: 0;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: $background;
+        border: 1px solid $heroText;
+      }
+
+      &.is-here::before {
+        background: $sageDeep;
+        border-color: $sageDeep;
+      }
+    }
   }
 }

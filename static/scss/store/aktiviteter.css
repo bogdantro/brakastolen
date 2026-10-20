@@ -2,7 +2,7 @@
   border-top: 1px solid rgba(20, 22, 22, 0.16);
 }
 .activity:nth-of-type(even) {
-  background: #EEE8DA;
+  background: #E7DFCE;
 }
 .activity .activity-photo {
   margin: 0;

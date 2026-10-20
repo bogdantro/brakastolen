@@ -1,5 +1,5 @@
 .plot-picker {
-  background: #EEE8DA;
+  background: #E7DFCE;
   scroll-margin-top: 64px;
 }
 .plot-picker .picker-intro {
@@ -96,7 +96,7 @@
   right: 0;
 }
 .plot-picker .dual-range .range-rail {
-  background: #E6DDCB;
+  background: #DDD2BD;
 }
 .plot-picker .dual-range .range-fill {
   background: #002223;
@@ -205,7 +205,7 @@
   flex: 1;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: #E6DDCB transparent;
+  scrollbar-color: #DDD2BD transparent;
 }
 .plot-picker .lot-card {
   position: relative;

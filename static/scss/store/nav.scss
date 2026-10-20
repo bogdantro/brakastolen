@@ -287,9 +287,60 @@
   }
 }
 
+// ------------------------------------------------------------
+// Sticky on scroll up (nav.js): hidden while scrolling down, back as soon as you scroll up
+// ------------------------------------------------------------
+.site-header.no-transition,
+.site-header.no-transition .nav {
+  transition: none !important;
+}
+
+@media (max-width: 1139px) {
+  // The bar is always fixed on phones; it only slides away while scrolling down
+  .nav {
+    transition: transform 0.35s ease;
+  }
+
+  .site-header.is-sticky:not(.is-shown) .nav {
+    transform: translateY(-110%);
+  }
+}
+
+@media only screen and (min-width: 1140px) {
+  // The header has no height of its own (the bar inside is positioned), so the bar itself moves
+  .site-header.is-sticky {
+    position: fixed;
+
+    .nav {
+      transition: transform 0.35s ease;
+    }
+
+    &:not(.is-shown) .nav {
+      transform: translateY(-110%);
+    }
+
+    // Compact, solid green bar
+    .nav {
+      height: max(64px, u(78));
+      background: $primaryColor;
+      box-shadow: 0 10px 30px rgba(0, 20, 20, 0.18);
+
+      .logo img { width: max(38px, u(54)); }
+      .logo-name { font-size: max(18px, u(25)); }
+      .logo-place { display: none; }
+
+      .links a { text-shadow: none; }
+
+      .nav-cta { height: u(46); }
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nav .nav-panel,
-  .nav .menu-icon {
+  .nav .menu-icon,
+  .nav,
+  .site-header.is-sticky .nav {
     transition: none;
   }
 }

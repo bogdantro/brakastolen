@@ -46,10 +46,10 @@
 .article-figure.is-wide img {
   aspect-ratio: 16/9;
   object-fit: cover;
-  background: #E6DDCB;
+  background: #DDD2BD;
 }
 .article-figure.is-portrait {
-  background: #EEE8DA;
+  background: #E7DFCE;
   padding: 16px;
   align-self: start;
 }
@@ -159,7 +159,7 @@
   display: block;
   overflow: hidden;
   aspect-ratio: 3/2;
-  background: #E6DDCB;
+  background: #DDD2BD;
 }
 .more-news .news-card-photo img {
   width: 100%;
