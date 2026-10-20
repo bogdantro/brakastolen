@@ -126,7 +126,7 @@ h3 {
   display: inline-flex;
   align-items: center;
   gap: 24px;
-  color: #141616;
+  color: #5E7D5A;
   text-decoration: none;
   font-weight: 500;
   font-size: 19px;
@@ -137,14 +137,13 @@ h3 {
   flex-shrink: 0;
   width: 64px;
   height: 64px;
-  background: #002223;
+  background: #5E7D5A;
   color: #F6F3E9;
   border-radius: 50%;
   transition: background 0.3s ease, color 0.3s ease;
 }
 .circle-link:hover .circle {
-  background: #90AE8C;
-  color: #002223;
+  background: #002223;
 }
 
 .page-header {
