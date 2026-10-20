@@ -1,0 +1,74 @@
+// Reset, fonts and body only. Page styling comes in the design phase (one file per page in store/).
+@use 'variables' as *;
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: $background;
+  color: $black;
+  font-family: $fontBody;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+h1, h2, h3, h4 {
+  font-family: $fontDisplay;
+  line-height: 1.15;
+}
+
+a {
+  color: inherit;
+}
+
+// Accessibility helpers
+.skip-link {
+  position: absolute;
+  left: -9999px;
+
+  &:focus {
+    left: 16px;
+    top: 16px;
+    z-index: 1000;
+    background: $white;
+    padding: 8px 16px;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+// The contact form's honeypot must stay invisible to people even before the design phase
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

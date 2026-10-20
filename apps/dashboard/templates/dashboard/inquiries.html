@@ -1,0 +1,50 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Henvendelser{% endblock %}
+
+{% block content %}
+<h1>Henvendelser</h1>
+
+<nav class="tabs" aria-label="Mapper">
+  {% for b in boxes %}
+  <a href="?box={{ b.key }}" {% if box == b.key %}aria-current="page"{% endif %}>{{ b.label }} ({{ b.count }})</a>
+  {% endfor %}
+</nav>
+
+<nav class="tabs small" aria-label="Status">
+  <a href="?box={{ box }}" {% if not status %}aria-current="page"{% endif %}>Alle</a>
+  {% for p in pipeline %}
+  <a href="?box={{ box }}&status={{ p.key }}" {% if status == p.key %}aria-current="page"{% endif %}>{{ p.label }} ({{ p.count }})</a>
+  {% endfor %}
+</nav>
+
+<form method="get" class="toolbar">
+  <input type="hidden" name="box" value="{{ box }}">
+  {% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
+  <label for="q" class="visually-hidden">Søk</label>
+  <input type="search" id="q" name="q" value="{{ q }}" class="input" placeholder="Søk i navn, e-post, telefon eller beskjed">
+  <button type="submit" class="button">Søk</button>
+  <a href="?{{ export_query }}&export=csv" class="button secondary">Last ned som Excel (CSV)</a>
+</form>
+
+<table class="table">
+  <thead>
+    <tr><th scope="col">Navn</th><th scope="col">Interessert i</th><th scope="col">Status</th><th scope="col">Mottatt</th></tr>
+  </thead>
+  <tbody>
+    {% for inquiry in inquiries %}
+    <tr class="{% if not inquiry.is_read %}unread{% endif %}">
+      <td>
+        <a href="{% url 'dashboard_inquiry_detail' inquiry.pk %}">{% if not inquiry.is_read %}<span class="dot" aria-label="Ulest">●</span> {% endif %}{{ inquiry.name }}</a>
+        <br><small>{{ inquiry.email }}{% if inquiry.phone %} · {{ inquiry.phone }}{% endif %}</small>
+        {% if inquiry.is_spam %}<br><small>Spam-grunn: {{ inquiry.spam_reason|default:'ukjent' }}</small>{% endif %}
+      </td>
+      <td>{{ inquiry.get_interest_display }}</td>
+      <td><span class="status-label status-{{ inquiry.status }}">{{ inquiry.get_status_display }}</span></td>
+      <td>{{ inquiry.created_at|date:'d.m.Y H:i' }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">{% if q %}Ingen treff på «{{ q }}».{% else %}Ingen henvendelser her.{% endif %}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

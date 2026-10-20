@@ -1,0 +1,13 @@
+// nyheter – styled in the design phase. Palette and fonts: global/_variables.scss
+@use '../global/variables' as *;
+
+// Mobile and tablet
+@media (max-width: 1139px) {
+}
+
+// Desktop
+@media only screen and (min-width: 1140px) {
+}
+
+@media (prefers-reduced-motion: reduce) {
+}

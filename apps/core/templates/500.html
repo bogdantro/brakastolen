@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block head %}
+{% include 'core/seo.html' with title="Noe gikk galt | Brakastølen" description="Det oppstod en feil på nettsiden. Prøv igjen om litt, eller ring oss." noindex=True %}
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'scss/store/error.css' %}">
+
+<section class="error-page">
+  <p class="code">500</p>
+  <h1>Noe gikk galt hos oss</h1>
+  <p>Feilen er ikke din. Prøv å laste siden på nytt om litt.</p>
+  {% include 'core/error-links.html' %}
+</section>
+{% endblock %}

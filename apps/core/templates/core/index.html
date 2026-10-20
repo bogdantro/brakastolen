@@ -1,0 +1,125 @@
+{% extends 'core/base.html' %}
+{% load static seo %}
+
+{% block head %}
+{% include 'core/seo.html' with title="Hyttetomter på Vaset i Valdres – sol og utsikt | Brakastølen" description="Hyttetomter på Brakastølen, Vaset i Valdres. 900–1050 moh., utsikt mot Jotunheimen og sol fra morgen til kveld. Tomter fra 900 000 kr, uten byggeklausul." %}
+{% endblock %}
+
+{% block schema %}{% schema_home featured_projects %}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'scss/store/home.css' %}">
+
+{% comment %} Hero – laid out 1:1 after docs/design-reference-hero.png in the design phase. {% endcomment %}
+<section class="hero">
+  <p class="counter" aria-hidden="true"><span>01</span> / <span>03</span></p>
+  <p class="vertical-label">Vaset · Valdres</p>
+  <p class="coordinates">61,0° N · 9,0° Ø</p>
+
+  <div class="text">
+    <h1>Din plass i fjellet.</h1>
+    <p class="place">Brakastølen, Vaset · Valdres</p>
+    <p class="lead">Storslått natur. Egen hyttedrøm.<br>Noen steder føles bare riktige.</p>
+    <a href="{% url 'tomter' %}" class="arrow-link"><span aria-hidden="true">→</span> Se ledige tomter</a>
+  </div>
+
+  <div class="images">
+    {% for url in hero_images %}
+    <img src="{{ url }}" alt="Utsikt over Brakastølen og Vaset i Valdres" {% if not forloop.first %}loading="lazy"{% else %}fetchpriority="high"{% endif %}>
+    {% endfor %}
+  </div>
+
+  <aside class="price-card">
+    <p class="eyebrow">Tomter fra</p>
+    <p class="price">{{ business.price_from_display }}</p>
+    <p class="costs">+ omk.</p>
+  </aside>
+
+  <p class="script" aria-hidden="true">Mer enn et sted.</p>
+  <ul class="values">
+    <li>Fjell</li>
+    <li>Natur</li>
+    <li>Frihet</li>
+    <li>Hele året</li>
+  </ul>
+  <p class="sun">Sol fra morgen til kveld</p>
+</section>
+
+<section class="intro">
+  <h2>Høyt og fritt ved Panoramavegen</h2>
+  <p>Brakastølen – Vaset i Valdres ligger høyt og flott ved Panoramavegen mellom Valdres og Hemsedal.</p>
+  <p>Området er en naturperle og byr på et flott og variert fjellterreng med et levende stølsmiljø, varierte aktiviteter, butikker og hyggelige serveringssteder.</p>
+  <p>Her er det åpent og vilt landskap med flott utsyn mot den ville Jotunheimen.</p>
+</section>
+
+<section class="plots-teaser">
+  <h2>Tomter</h2>
+  <p>Alle tomtene ligger på 900–1050 moh. med fantastisk utsikt og unike solforhold fra morgen til kveld. Tomtene fordeler seg på mindre hyttegrender, og det er ingen byggeklausul.</p>
+  <p>Tomtene har pris fra {{ business.price_from_display }} + omk.{% if available_plots %} Akkurat nå er {{ available_plots }} tomt{{ available_plots|pluralize:"er" }} ledig{{ available_plots|pluralize:"e" }}.{% endif %}</p>
+  <a href="{% url 'tomter' %}">Se tomtene</a>
+</section>
+
+<section class="cabins-teaser">
+  <h2>Hytter</h2>
+  <p>Prosjekterte hytter skreddersydd for den enkelte familie. Velg tomt og hyttemodell – vi tar oss av hele byggeprosessen frem til hytta står ferdig.</p>
+  <a href="{% url 'hytter' %}">Les om hyttene</a>
+</section>
+
+<section class="projects">
+  <h2>Prosjekter på Brakastølen</h2>
+  <ul>
+    {% for project in featured_projects %}
+    <li>
+      <a href="{% url 'prosjekt_detail' project.slug %}">
+        <img src="{{ project.image.url }}" alt="{{ project.title }}" loading="lazy">
+        <h3>{{ project.title }}</h3>
+        <p>{{ project.get_category_display }} · {{ project.get_status_display }}</p>
+      </a>
+    </li>
+    {% empty %}
+    <li>Nye prosjekter kommer snart.</li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'prosjekter' %}">Se alle prosjekter</a>
+</section>
+
+<section class="activities-teaser">
+  <h2>Aktiviteter hele året</h2>
+  <p>Vaset er et av de mest attraktive hytteområdene i Valdres, med alpint, ca. 120 km langrennsløyper og et eldorado for syklister.</p>
+  <a href="{% url 'aktiviteter' %}">Se aktivitetene</a>
+</section>
+
+<section class="news">
+  <h2>Nyheter</h2>
+  <ul>
+    {% for post in latest_posts %}
+    <li>
+      <a href="{{ post.get_absolute_url }}">
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.excerpt }}</p>
+        <time datetime="{{ post.created_at|date:'Y-m-d' }}">{{ post.created_at|date:'j. F Y' }}</time>
+      </a>
+    </li>
+    {% empty %}
+    <li>Ingen nyheter ennå.</li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section class="faq">
+  <h2>Ofte stilte spørsmål</h2>
+  {% for item in faq %}
+  <details>
+    <summary>{{ item.question }}</summary>
+    <p>{{ item.answer }}</p>
+  </details>
+  {% endfor %}
+</section>
+
+<section class="cta">
+  <h2>Vil du oppfylle din hyttedrøm?</h2>
+  <p>Ta kontakt for en personlig visning av Brakastølen.</p>
+  <a href="{% url 'kontakt' %}?interesse=viewing" class="button">Avtal visning</a>
+  <p>Eller ring <a href="tel:{{ business.phone }}">{{ business.phone_display }}</a></p>
+</section>
+{% endblock %}

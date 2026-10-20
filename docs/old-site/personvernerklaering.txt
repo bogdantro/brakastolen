@@ -1,0 +1,37 @@
+# Personvernerklæring
+Retningslinjer for personvern
+Disse retningslinjene gjelder behandlingen av personopplysninger som er innhentet på denne nettsiden og behandles av Tranberg Utvikling AS, org nr 925 233 498 , Tranbergvegen 31 2819 GJØVIK, (heretter «Tranberg-gruppen» eller «vi»).
+Vi er behandlingsansvarlig for behandlingen av dine personopplysninger. Vi bryr oss om ditt personvern og er forpliktet til å beskytte dine personopplysninger. Disse retningslinjene redegjør for hvilken informasjon vi samler inn, vår behandling av dine personopplysninger og dine rettigheter.
+Svarthaug Media vil drifte denne nettsiden, og vil behandle dine personopplysninger på våre vegne. De er dermed vår databehandler.
+Hva er formålet med behandlingen?
+Nettsiden promoterer et utbyggingsprosjekt, med mål om å spre informasjon om prosjektet, formidle kontaktforespørsler og registrere mulige interessenter for oppdragsgiver. Vårt formål med å behandle dine personopplysninger er å kunne tilby deg relevant informasjon, samt å kunne kontakte deg. Vi vil ikke benytte dine personopplysninger til andre formål med mindre du samtykker til det.
+Hvilken informasjon samles inn og behandles?
+Informasjonen som samles inn og behandles om deg er den informasjonen som du selv velger å dele med oss ved å fylle ut og sende inn for eksempel kontaktskjema, påmelding til nyhetsbrev eller hvis du registrerer deg som interessent for en hytte eller et prosjekt.
+Denne informasjonen kan inkludere ditt navn, adresse, postnummer, poststed, e-postadresse, telefonnummer, kommentarer, samtykker, hytten(e) du er interessert i og lignende.
+Hva er behandlingsgrunnlaget?
+Det er frivillig for de som besøker nettsiden å oppgi personopplysninger i forbindelse med tjenester som å motta nyhetsbrev, melde sin interesse for et prosjekt eller en bolig osv. Vårt behandlingsgrunnlag for behandlingen av dine personopplysninger er ditt samtykke (GDPR art. 6.1.a), at behandlingen er nødvendig for å oppfylle en avtale med deg (GDPR art. 6.1.b) eller at behandlingen er i nødvendig for formål knyttet til våre berettigede interesser (GDPR art. 6.1.f).
+All bruk av våre tjenester er frivillig. Du kan på ethvert tidspunkt trekke tilbake ditt samtykke ved at du tar kontakt med oss eller Marketer gjennom kontaktopplysningene oppgitt i denne erklæringen. Slik tilbaketrekking kan eventuelt begrenses til kun å gjelde deler av behandlingen, for eksempel det som gjelder mottakelse av nyhetsbrev.
+Hvordan oppbevares og deles dine personopplysninger?
+Vi behandler dine personopplysninger så lenge vi er pålagt ved lov, frem til du trekker tilbake ditt samtykke, eller til det ikke lenger er nødvendig for formålene som nevnt ovenfor. Oppbevaring utover dette vil kun forekomme der dette er pålagt oss etter lov eller vedtak fra offentlig myndighet.
+I tillegg til Svarthaug Media (som drifter denne nettsiden) vil vi eller Svarthaug Media kunne engasjere tredjeparter for å kunne levere tjenester til deg, f.eks. til å sende ut nyhetsbrev og prospekter. I slike tilfeller vil det inngås databehandleravtaler med tredjepartene hvor det sørges for at deres behandling av dine personopplysninger skjer i tråd med disse retningslinjene og det til enhver tid gjeldene personvernregelverk.
+Dine personopplysninger vil også deles og benyttes internt i vår selskapskjede, dvs. i Tranberg-gruppen.
+Dine personopplysninger vil også deles med tredjeparter i den grad dette er pålagt oss etter loven eller vedtak fra offentlig myndighet.
+Denne nettsiden deler personopplysninger med følgende tjenester:
+### Google Web Fonts
+For å sikre en lik visning av fonter på alle enheter, benytter dette nettstedet fonter tilpasset for nettbruk levert fra Google. Når du åpner en side hos oss, vil nettleseren din laste inn fontene du trenger for å vise sida skikkelig til mellomlagringen din. For å kunne gjøre dette må nettleseren din etablere en kontakt med Google sine serverer. Gjennom dette vil Google få beskjed om at din IP-adresse har besøkt nettstedet vårt. Dette er ikke informasjon som vi har tilgang til. Vi benytter Google Web Fonts for å sørge for en lik visning av teksten på siden vår, i tillegg til estetiske årsaker. Dersom nettleseren din ikke støtter nett-fonter, så blir en standard-font fra enheten din benyttet av din nettleser.
+Les mer om Google Web Font sin håndtering av data her: 
+[https://developers.google.com/fonts/faq] https://developers.google.com/fonts/faq
+Og hvordan Google generelt håndterer data her: 
+[https://policies.google.com/privacy] https://policies.google.com/privacy
+### Kontakt oss
+Nettsiden bruker Contact Form 7 sitt kontaktskjema. Når besøkende bruker kontaktskjema sendes informasjonen gitt inn i kontaktskjemaet som en e-post til en postboks med begrenset adgang. Navn på avsender, e-postadresse, emne og innhold er informasjonen som fremkommer i e-posten. I tillegg lagres tidsstempel, IP-adressen til den besøkende og den besøkendes nettleserversjon på passordbeskyttet område for å kunne ivareta sikker drift av nettsiden og kunne feilsøke evt avvik.
+Hvilke rettigheter har den registrerte og hvilket lands lovverk gjelder?
+I den grad vi behandler personopplysninger om deg har du rett på innsyn i egne opplysninger, og til å kreve begrenset eller motsette deg visse former for behandling. Du har også rett til å motta dine personopplysninger i et strukturert, alminnelig anvendt og maskinleselig format, og til å overføre personopplysningene dine til en annen behandlingsansvarlig (dataportabilitet). Dersom personopplysningene er uriktige, ufullstendige eller det ikke er adgang til å behandle dem, kan du også be oss om å rette eller slette opplysningene. Du har også rett til å klage til Datatilsynet på behandling i strid med reglene.
+Hvordan sikres opplysningene?
+Vi tilstreber at all kommunikasjon og lagring skjer i tråd med etablerte standarder og praksiser for sikkerhet, blant annet ved bruk av SSL-kryptering der dette er støttet, samt å kun benytte anerkjente underleverandører som ivaretar våre krav til sikkerhet og inngå databehandleravtaler der dette er nødvendig eller hensiktsmessig.
+Dersom et (mulig) brudd på personvernreglene oppdages vil vi kontakte de berørte, samt Datatilsynet, i den grad slik varsling er påkrevd etter personopplysningslovigvningen.
+Kontaktinformasjon
+Hvis du ønsker å få innsyn, rette eller slette dine personopplysninger, utøve dine rettigheter eller har andre spørsmål knyttet til behandlingen av personopplysninger, ta kontakt med Svarthaug Media på 
+[mailto:media@svarthaug.com] media@svarthaug.com
+.
+UTBYGGER

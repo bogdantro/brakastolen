@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+{% load static seo %}
+
+{% block head %}
+{% include 'core/seo.html' with title="Om utbygger Tranberg Utvikling AS | Brakastølen" description="Brakastølen utvikles av Tranberg Utvikling AS, grunneier og utbygger på Vaset. Vi samarbeider med lokale og nasjonale aktører fra tomt til ferdig hytte." %}
+{% endblock %}
+
+{% block schema %}{% schema_about %}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'scss/store/om-oss.css' %}">
+
+<section class="page-intro">
+  <h1>Om oss</h1>
+  <p>Brakastølen utvikles av {{ business.company }}, som er grunneier og utbygger av hyttefeltet på Vaset.</p>
+</section>
+
+<section class="company">
+  <h2>Utbygger</h2>
+  <dl>
+    <dt>Selskap</dt><dd>{{ business.company }}</dd>
+    <dt>Org.nr.</dt><dd>{{ business.org_number_display }}</dd>
+    <dt>{{ business.manager_title }}</dt><dd>{{ business.manager }}</dd>
+    <dt>Adresse</dt><dd>{{ business.street }}, {{ business.postal_code }} {{ business.city }}</dd>
+    <dt>Telefon</dt><dd><a href="tel:{{ business.phone }}">{{ business.phone_display }}</a></dd>
+    <dt>E-post</dt><dd><a href="mailto:{{ business.email }}">{{ business.email }}</a></dd>
+  </dl>
+</section>
+
+<section class="partners">
+  <h2>Våre samarbeidspartnere på Brakastølen</h2>
+  <dl>
+    {% for role, name, url in partners %}
+    <dt>{{ role }}</dt>
+    <dd>{% if url %}<a href="{{ url }}" target="_blank" rel="noopener">{{ name }}</a>{% else %}{{ name }}{% endif %}</dd>
+    {% endfor %}
+  </dl>
+</section>
+
+<section class="cta">
+  <h2>Ta kontakt</h2>
+  <p>Er du interessert i ei unik tomt, og/eller et hytteprosjekt på Brakastølen?</p>
+  <a href="{% url 'kontakt' %}" class="button">Kontakt oss</a>
+</section>
+{% endblock %}

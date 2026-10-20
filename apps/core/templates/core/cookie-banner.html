@@ -1,0 +1,18 @@
+{% load static %}{% comment %}
+    Only shown when GA_MEASUREMENT_ID is set. Analytics loads after "Godta alle" (cookie-banner.js).
+{% endcomment %}
+{% if ga_id %}
+<link rel="stylesheet" href="{% static 'scss/store/cookie-banner.css' %}">
+
+<div id="cookieBanner" role="dialog" aria-labelledby="cookieBannerTitle" aria-live="polite" data-ga-id="{{ ga_id }}" data-cookie-name="{{ cookie_consent_name }}" hidden>
+  <h2 id="cookieBannerTitle">Vi bruker informasjonskapsler</h2>
+  <p>Vi bruker nødvendige informasjonskapsler for at nettsiden skal fungere. Med ditt samtykke bruker vi også Google Analytics for å se hvordan nettsiden brukes, slik at vi kan gjøre den bedre.</p>
+  <div class="actions">
+    <button type="button" class="button" data-consent="all">Godta alle</button>
+    <button type="button" class="button secondary" data-consent="necessary">Kun nødvendige</button>
+  </div>
+  <a href="{% url 'personvern' %}">Les mer i personvernerklæringen</a>
+</div>
+
+<script src="{% static 'js/cookie-banner.js' %}" defer></script>
+{% endif %}

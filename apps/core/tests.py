@@ -1,0 +1,577 @@
+import io
+import json
+import re
+import shutil
+import tempfile
+from unittest import mock
+
+from django.core import mail
+from django.core.cache import cache
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.management import call_command
+from django.test import Client, TestCase, override_settings
+from django.urls import reverse
+from PIL import Image
+
+from apps.blog.models import Blog
+
+from . import notify
+from .models import Inquiry, Plot, Project, ProjectImage
+from .richtext import sanitize_html
+from .seo import BUSINESS
+from .sitemaps import PUBLIC_PAGES
+from .spam import is_trusted, make_form_token, spam_reason, untrusted_link_count
+from .text import format_nok, norwegian_slugify
+
+MEDIA_ROOT = tempfile.mkdtemp()
+
+
+def image_file(name='photo.jpg', size=(40, 30), fmt='JPEG', color=(120, 140, 90)):
+    """A real, tiny image Pillow can open."""
+    buffer = io.BytesIO()
+    mode = 'RGBA' if fmt == 'PNG' else 'RGB'
+    Image.new(mode, size, color).save(buffer, fmt)
+    content_type = 'image/png' if fmt == 'PNG' else 'image/jpeg'
+    return SimpleUploadedFile(name, buffer.getvalue(), content_type=content_type)
+
+
+def make_project(**kwargs):
+    defaults = {
+        'title': 'Ulven hyttegrend',
+        'category': 'hyttegrend',
+        'excerpt': 'Felt med kun 10 tomter.',
+        'description': '<p>Langrennssporet går rett forbi feltet.</p>',
+        'image': image_file(),
+        'is_published': True,
+    }
+    defaults.update(kwargs)
+    return Project.objects.create(**defaults)
+
+
+def make_form_token_in_past():
+    """A signed 'form shown at' token from long ago – a person who took their time."""
+    with mock.patch('apps.core.spam.time.time', return_value=1):
+        return make_form_token()
+
+
+def form_data(**kwargs):
+    """A valid contact form post, filled in by a person a minute ago."""
+    data = {
+        'name': 'Kari Nordmann',
+        'email': 'kari@example.no',
+        'phone': '482 58 000',
+        'interest': 'plot',
+        'message': 'Vi vil gjerne komme på visning.',
+        'consent': 'on',
+        'hp_check': '',
+        'form_ts': make_form_token_in_past(),
+    }
+    data.update(kwargs)
+    return data
+
+
+class MediaTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._media = override_settings(MEDIA_ROOT=MEDIA_ROOT)
+        cls._media.enable()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._media.disable()
+        shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
+    def setUp(self):
+        cache.clear()
+
+
+# ------------------------------------------------------------------
+# Pages
+# ------------------------------------------------------------------
+
+class PageTests(MediaTestCase):
+    def setUp(self):
+        super().setUp()
+        self.project = make_project(is_featured=True)
+
+    def test_every_public_page_loads(self):
+        for name in PUBLIC_PAGES:
+            with self.subTest(page=name):
+                self.assertEqual(self.client.get(reverse(name)).status_code, 200)
+
+    def test_every_page_has_one_h1(self):
+        for name in PUBLIC_PAGES:
+            with self.subTest(page=name):
+                html = self.client.get(reverse(name)).content.decode()
+                self.assertEqual(html.count('<h1'), 1)
+
+    def test_business_phone_comes_from_seo_business(self):
+        response = self.client.get(reverse('kontakt'))
+        self.assertContains(response, BUSINESS['phone_display'])
+        self.assertContains(response, f'tel:{BUSINESS["phone"]}')
+
+    def test_nav_has_the_avtal_visning_button(self):
+        response = self.client.get('/')
+        self.assertContains(response, 'Avtal visning')
+        self.assertContains(response, f'{reverse("kontakt")}?interesse=viewing')
+
+    def test_homepage_shows_hero_text_and_price(self):
+        response = self.client.get('/')
+        self.assertContains(response, 'Din plass i fjellet.')
+        self.assertContains(response, '900 000 kr')
+
+    def test_hero_images_are_read_from_the_folder_in_natural_order(self):
+        from .views import natural_key
+        self.assertEqual(sorted(['hero-10.jpg', 'hero-2.jpg'], key=natural_key), ['hero-2.jpg', 'hero-10.jpg'])
+
+    def test_project_detail_loads(self):
+        response = self.client.get(reverse('prosjekt_detail', args=[self.project.slug]))
+        self.assertContains(response, 'Ulven hyttegrend')
+
+    def test_draft_project_is_404_for_visitors(self):
+        draft = make_project(title='Hemmelig felt', is_published=False)
+        response = self.client.get(reverse('prosjekt_detail', args=[draft.slug]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_trashed_project_is_404_for_visitors(self):
+        from django.utils import timezone
+        trashed = make_project(title='Slettet felt', deleted_at=timezone.now())
+        self.assertEqual(self.client.get(reverse('prosjekt_detail', args=[trashed.slug])).status_code, 404)
+
+    def test_staff_can_preview_a_draft_and_it_is_noindex(self):
+        from django.contrib.auth.models import User
+        draft = make_project(title='Hemmelig felt', is_published=False)
+        self.client.force_login(User.objects.create_user('staff', password='x' * 16, is_staff=True))
+        response = self.client.get(reverse('prosjekt_detail', args=[draft.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'noindex, nofollow')
+
+    def test_project_view_counts_people_but_not_bots(self):
+        url = reverse('prosjekt_detail', args=[self.project.slug])
+        self.client.get(url, HTTP_USER_AGENT='Mozilla/5.0 (iPhone)')
+        self.client.get(url, HTTP_USER_AGENT='Googlebot/2.1')
+        self.client.get(url, HTTP_USER_AGENT='facebookexternalhit/1.1')
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.view_count, 1)
+
+    def test_project_category_filter_ignores_unknown_values(self):
+        response = self.client.get(reverse('prosjekter') + '?kategori=<script>')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['category'], '')
+
+    def test_plots_in_published_groups_show_on_tomter(self):
+        Plot.objects.create(project=self.project, number='T10', price=900000, area_m2=1400)
+        response = self.client.get(reverse('tomter'))
+        self.assertContains(response, 'T10')
+        self.assertContains(response, '900 000 kr')
+        self.assertContains(response, '1 400 m²')
+
+    def test_plots_in_draft_groups_are_hidden(self):
+        draft = make_project(title='Utkastfelt', is_published=False)
+        Plot.objects.create(project=draft, number='X1')
+        self.assertNotContains(self.client.get(reverse('tomter')), 'X1')
+
+    def test_share_image_is_a_1200x630_jpeg(self):
+        response = self.client.get(reverse('prosjekt_share_image', args=[self.project.slug]))
+        self.assertEqual(response['Content-Type'], 'image/jpeg')
+        image = Image.open(io.BytesIO(b''.join(response.streaming_content)))
+        self.assertEqual(image.size, (1200, 630))
+
+    def test_share_preview_hidden_for_drafts(self):
+        draft = make_project(title='Utkast', is_published=False)
+        self.assertEqual(self.client.get(reverse('prosjekt_share_image', args=[draft.slug])).status_code, 404)
+
+
+# ------------------------------------------------------------------
+# Old URLs from the WordPress site
+# ------------------------------------------------------------------
+
+class RedirectTests(TestCase):
+    OLD_URLS = {
+        '/oversiktskart/': '/tomter/',
+        '/vare-finn-annonser/': '/prosjekter/',
+        '/personvernerklaering/': '/personvern/',
+        '/reguleringsplan-vedtatt/': '/nyheter/',
+        '/skogsavvirkning-pabegynt/': '/nyheter/',
+        '/baerar-i-ar/': '/nyheter/',
+        '/category/ukategorisert/': '/nyheter/',
+        '/author/webmaster/': '/nyheter/',
+        '/feed/': '/nyheter/',
+        '/wp-sitemap.xml': '/sitemap.xml',
+        '/wp-sitemap-posts-page-1.xml': '/sitemap.xml',
+        '/portfolio/centered-gallery/': '/prosjekter/',
+        '/portfolio_cat/web/': '/prosjekter/',
+        '/page_category/classic/': '/',
+        '/classic-help-center/': '/',
+        '/page-404-custom/': '/',
+    }
+
+    def test_old_urls_redirect_permanently(self):
+        for old, new in self.OLD_URLS.items():
+            with self.subTest(url=old):
+                response = self.client.get(old)
+                self.assertEqual(response.status_code, 301)
+                self.assertEqual(response['Location'], new)
+
+    def test_redirect_drops_old_query_strings(self):
+        response = self.client.get('/oversiktskart/?fbclid=abc')
+        self.assertEqual(response['Location'], '/tomter/')
+
+
+# ------------------------------------------------------------------
+# SEO files, structured data and headers
+# ------------------------------------------------------------------
+
+@override_settings(SITE_URL='https://www.xn--brakastlen-6cb.no', ALLOW_INDEXING=True)
+class SeoTests(MediaTestCase):
+    def test_robots_allows_ai_crawlers_and_points_to_sitemap(self):
+        text = self.client.get('/robots.txt').content.decode()
+        self.assertIn('User-agent: ClaudeBot', text)
+        self.assertIn('User-agent: GPTBot', text)
+        self.assertIn('Disallow: /dashboard/', text)
+        self.assertIn('Sitemap: https://www.xn--brakastlen-6cb.no/sitemap.xml', text)
+
+    @override_settings(ALLOW_INDEXING=False)
+    def test_staging_blocks_everything(self):
+        self.assertEqual(self.client.get('/robots.txt').content.decode(), 'User-agent: *\nDisallow: /\n')
+        response = self.client.get('/')
+        self.assertEqual(response['X-Robots-Tag'], 'noindex, nofollow')
+        self.assertContains(response, '<meta name="robots" content="noindex, nofollow">')
+
+    @override_settings(ALLOW_INDEXING=True)
+    def test_live_site_is_indexable(self):
+        response = self.client.get('/')
+        self.assertNotIn('X-Robots-Tag', response)
+        self.assertContains(response, 'index, follow, max-image-preview:large')
+
+    def test_canonical_uses_site_url_not_request_host(self):
+        response = self.client.get('/tomter/', HTTP_HOST='localhost')
+        self.assertContains(response, '<link rel="canonical" href="https://www.xn--brakastlen-6cb.no/tomter/">')
+
+    def test_sitemap_uses_site_url_and_lists_projects_and_published_news(self):
+        project = make_project()
+        Blog.objects.create(title='Publisert nyhet', text='<p>Tekst</p>')
+        draft = Blog.objects.create(title='Utkast nyhet', text='<p>Tekst</p>', is_published=False)
+        xml = self.client.get('/sitemap.xml').content.decode()
+        self.assertIn('https://www.xn--brakastlen-6cb.no/tomter/', xml)
+        self.assertIn(f'/prosjekter/{project.slug}/', xml)
+        self.assertIn('publisert-nyhet', xml)
+        self.assertNotIn(draft.slug, xml)
+        self.assertNotIn('example.com', xml)
+
+    def test_every_page_has_business_json_ld(self):
+        html = self.client.get('/').content.decode()
+        blocks = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
+        types = [node.get('@type') for block in blocks for node in json.loads(block)['@graph']]
+        self.assertIn('LocalBusiness', types)
+        self.assertIn('FAQPage', types)
+        self.assertIn('Place', types)
+
+    def test_json_ld_escapes_closing_tags(self):
+        make_project(title='Felt </script><script>alert(1)</script>')
+        html = self.client.get(reverse('prosjekter')).content.decode()
+        self.assertNotIn('</script><script>alert(1)', html)
+        self.assertIn('<\\/script>', html)
+
+    def test_llms_txt_has_contact_facts_and_faq(self):
+        text = self.client.get('/llms.txt').content.decode()
+        self.assertIn(BUSINESS['phone_display'], text)
+        self.assertIn(BUSINESS['org_number_display'], text)
+        self.assertIn('Er det byggeklausul på tomtene?', text)
+
+    def test_llms_full_txt_has_the_text_of_the_pages(self):
+        project = make_project()
+        cache.clear()
+        text = self.client.get('/llms-full.txt').content.decode()
+        self.assertIn('Kilde: https://www.xn--brakastlen-6cb.no/tomter/', text)
+        self.assertIn('Panoramavegen', text)
+        self.assertIn(project.title, text)
+
+    def test_security_headers_are_set(self):
+        response = self.client.get('/')
+        self.assertIn("default-src 'self'", response['Content-Security-Policy'])
+        self.assertIn('camera=()', response['Permissions-Policy'])
+        self.assertEqual(response['X-Frame-Options'], 'DENY')
+        self.assertEqual(response['X-Content-Type-Options'], 'nosniff')
+
+    def test_no_analytics_and_no_cookie_banner_without_ga_id(self):
+        html = self.client.get('/').content.decode()
+        self.assertNotIn('googletagmanager', html)
+        self.assertNotIn('cookieBanner', html)
+
+    @override_settings(GA_MEASUREMENT_ID='G-TEST123')
+    def test_cookie_banner_and_consent_defaults_with_ga_id(self):
+        response = self.client.get('/')
+        self.assertContains(response, 'cookieBanner')
+        self.assertContains(response, "analytics_storage: 'denied'")
+
+
+# ------------------------------------------------------------------
+# Contact form
+# ------------------------------------------------------------------
+
+class ContactFormTests(MediaTestCase):
+    url = reverse('kontakt')
+
+    def test_valid_inquiry_is_saved_and_redirects_with_thank_you(self):
+        response = self.client.post(self.url, form_data(), follow=True)
+        self.assertRedirects(response, self.url)
+        self.assertContains(response, 'Takk for henvendelsen')
+        inquiry = Inquiry.objects.get()
+        self.assertEqual(inquiry.name, 'Kari Nordmann')
+        self.assertTrue(inquiry.consent)
+        self.assertFalse(inquiry.is_spam)
+
+    def test_phone_is_optional(self):
+        self.client.post(self.url, form_data(phone=''))
+        self.assertEqual(Inquiry.objects.get().phone, '')
+
+    def test_invalid_phone_is_rejected_in_norwegian(self):
+        response = self.client.post(self.url, form_data(phone='ring meg'))
+        self.assertContains(response, 'Skriv inn et gyldig telefonnummer')
+        self.assertFalse(Inquiry.objects.exists())
+
+    def test_consent_is_required(self):
+        data = form_data()
+        del data['consent']
+        response = self.client.post(self.url, data)
+        self.assertContains(response, 'Du må godta personvernerklæringen')
+        self.assertFalse(Inquiry.objects.exists())
+
+    def test_form_shown_again_keeps_what_was_typed(self):
+        response = self.client.post(self.url, form_data(email='ikke-en-epost'))
+        self.assertContains(response, 'Vi vil gjerne komme på visning.')
+
+    def test_interest_is_prefilled_from_the_link(self):
+        response = self.client.get(self.url + '?interesse=viewing')
+        self.assertEqual(response.context['form'].initial['interest'], 'viewing')
+
+    def test_unknown_interest_in_the_link_is_ignored(self):
+        response = self.client.get(self.url + '?interesse=hack')
+        self.assertNotIn('interest', response.context['form'].initial)
+
+    def test_contact_page_is_never_cached(self):
+        self.assertIn('no-cache', self.client.get(self.url)['Cache-Control'])
+
+    def test_honeypot_marks_spam_but_looks_successful(self):
+        response = self.client.post(self.url, form_data(hp_check='spam'), follow=True)
+        self.assertContains(response, 'Takk for henvendelsen')
+        inquiry = Inquiry.objects.get()
+        self.assertTrue(inquiry.is_spam)
+        self.assertEqual(inquiry.spam_reason, 'honeypot')
+
+    def test_missing_token_marks_spam(self):
+        self.client.post(self.url, form_data(form_ts=''))
+        self.assertEqual(Inquiry.objects.get().spam_reason, 'missing token')
+
+    def test_forged_token_marks_spam(self):
+        self.client.post(self.url, form_data(form_ts='123:forged'))
+        self.assertTrue(Inquiry.objects.get().is_spam)
+
+    def test_submitted_too_fast_marks_spam(self):
+        with mock.patch('apps.core.spam.time.time', return_value=1_000_000):
+            token = make_form_token()
+        with mock.patch('apps.core.spam.time.time', return_value=1_000_001):
+            self.client.post(self.url, form_data(form_ts=token))
+        self.assertEqual(Inquiry.objects.get().spam_reason, 'too fast')
+
+    def test_one_soft_signal_alone_is_fine(self):
+        self.client.post(self.url, form_data(message='Hei! Vi vurderer en tomt. https://example.com https://test.com'))
+        self.assertFalse(Inquiry.objects.get().is_spam)
+
+    def test_two_soft_signals_mark_spam(self):
+        self.client.post(self.url, form_data(
+            name='Cheap SEO https://spam.example',
+            message='Best SEO backlinks https://a.example https://b.example',
+        ))
+        self.assertTrue(Inquiry.objects.get().is_spam)
+
+    def test_rate_limit_alone_is_fine(self):
+        with mock.patch('apps.core.views.over_rate_limit', return_value=True):
+            self.client.post(self.url, form_data())
+        self.assertFalse(Inquiry.objects.get().is_spam)
+
+    def test_csrf_failure_gives_the_form_back_with_the_text(self):
+        client = Client(enforce_csrf_checks=True)
+        response = client.post(self.url, form_data(message='Teksten min skal ikke forsvinne'))
+        self.assertEqual(response.status_code, 403)
+        self.assertContains(response, 'Teksten min skal ikke forsvinne', status_code=403)
+        self.assertContains(response, 'trykk «Send» én gang til', status_code=403)
+        self.assertContains(response, 'csrfmiddlewaretoken', status_code=403)
+
+    def test_spam_never_sends_email(self):
+        with mock.patch('apps.core.views.notify.send_inquiry') as send:
+            self.client.post(self.url, form_data(hp_check='x'))
+        send.assert_not_called()
+
+
+class SpamRuleTests(TestCase):
+    def test_missing_space_after_full_stop_is_fine(self):
+        self.assertEqual(untrusted_link_count('Fin tomt.Har dere visning?'), 0)
+
+    def test_initial_in_name_is_not_a_link(self):
+        self.assertEqual(untrusted_link_count('Ola N.Nordmann'), 0)
+
+    def test_finn_and_own_site_links_do_not_count(self):
+        self.assertEqual(untrusted_link_count('https://www.finn.no/realestate/123 www.brakastolen.no'), 0)
+
+    def test_lookalike_domain_is_not_trusted(self):
+        self.assertFalse(is_trusted('https://evilfinn.no/x'))
+        self.assertFalse(is_trusted('https://finn.no.evil.com/x'))
+
+    def test_html_links_always_count(self):
+        self.assertEqual(untrusted_link_count('<a href="https://finn.no">x</a>'), 1)
+
+    def test_foreign_script_alone_is_fine(self):
+        data = {'name': 'Олена', 'message': 'Добрий день, цікавить ділянка'}
+        self.assertEqual(spam_reason(data, make_form_token_in_past()), '')
+
+
+# ------------------------------------------------------------------
+# E-mail notice
+# ------------------------------------------------------------------
+
+class NotifyTests(MediaTestCase):
+    def make_inquiry(self):
+        return Inquiry.objects.create(name='Kari Nordmann', email='kari@example.no', interest='viewing')
+
+    @override_settings(EMAIL_HOST='', INQUIRY_NOTIFY_EMAILS=['post@brakastolen.no'])
+    def test_no_email_without_mail_server(self):
+        with self.captureOnCommitCallbacks(execute=True) as callbacks:
+            notify.send_inquiry(self.make_inquiry())
+        self.assertEqual(callbacks, [])
+
+    @override_settings(EMAIL_HOST='smtp.example.no', INQUIRY_NOTIFY_EMAILS=['post@brakastolen.no'],
+                       EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    def test_email_has_every_field_and_a_dashboard_link(self):
+        inquiry = self.make_inquiry()
+        with mock.patch('apps.core.notify.close_old_connections'):
+            notify.send_now(inquiry.pk)
+        self.assertEqual(len(mail.outbox), 1)
+        body = mail.outbox[0].body
+        self.assertIn('Kari Nordmann', body)
+        self.assertIn('Visning', body)
+        self.assertIn(reverse('dashboard_inquiry_detail', args=[inquiry.pk]), body)
+
+    @override_settings(EMAIL_HOST='smtp.example.no', INQUIRY_NOTIFY_EMAILS=['post@brakastolen.no'])
+    def test_broken_mail_server_is_logged_not_raised(self):
+        inquiry = self.make_inquiry()
+        with mock.patch('apps.core.notify.send_mail', side_effect=OSError('down')), \
+                mock.patch('apps.core.notify.close_old_connections'), \
+                self.assertLogs('apps.core.notify', level='ERROR'):
+            notify.send_now(inquiry.pk)
+
+
+# ------------------------------------------------------------------
+# Images, rich text and helpers
+# ------------------------------------------------------------------
+
+class ImageTests(MediaTestCase):
+    def test_new_project_photo_is_stored_as_webp(self):
+        project = make_project(image=image_file('stort.jpg', size=(2600, 1800)))
+        self.assertTrue(project.image.name.endswith('.webp'))
+        with Image.open(project.image.path) as image:
+            self.assertLessEqual(max(image.size), 2000)
+
+    def test_existing_photo_is_not_recompressed_on_edit(self):
+        project = make_project()
+        name = project.image.name
+        project.title = 'Nytt navn'
+        project.save()
+        project.refresh_from_db()
+        self.assertEqual(project.image.name, name)
+
+    def test_gallery_photo_is_stored_as_webp(self):
+        image = ProjectImage.objects.create(project=make_project(), image=image_file('galleri.png', fmt='PNG'))
+        self.assertTrue(image.image.name.endswith('.webp'))
+
+
+class RichTextTests(TestCase):
+    def test_scripts_and_their_content_are_removed(self):
+        self.assertEqual(sanitize_html('<p>Hei<script>alert(1)</script></p>'), '<p>Hei</p>')
+
+    def test_javascript_links_are_dropped(self):
+        self.assertNotIn('javascript', sanitize_html('<a href="javascript:alert(1)">x</a>'))
+
+    def test_external_links_open_safely(self):
+        self.assertIn('rel="noopener nofollow"', sanitize_html('<a href="https://finn.no">Finn</a>'))
+
+    def test_bold_becomes_strong(self):
+        self.assertEqual(sanitize_html('<b>fet</b>'), '<strong>fet</strong>')
+
+    def test_empty_editor_gives_empty_string(self):
+        self.assertEqual(sanitize_html('<p><br></p>'), '')
+
+
+class HelperTests(MediaTestCase):
+    def test_norwegian_slugify_keeps_ae_oe_aa(self):
+        self.assertEqual(norwegian_slugify('Hytte på Brakastølen'), 'hytte-pa-brakastolen')
+
+    def test_format_nok(self):
+        self.assertEqual(format_nok(900000), '900 000 kr')
+        self.assertEqual(format_nok(None), '')
+
+    def test_duplicate_titles_get_numbered_slugs(self):
+        first, second = make_project(), make_project()
+        self.assertEqual(first.slug, 'ulven-hyttegrend')
+        self.assertEqual(second.slug, 'ulven-hyttegrend-2')
+
+    def test_hand_set_slug_is_kept(self):
+        self.assertEqual(make_project(slug='eget-navn').slug, 'eget-navn')
+
+    def test_plots_left_counts_only_available(self):
+        project = make_project()
+        Plot.objects.create(project=project, number='1')
+        Plot.objects.create(project=project, number='2', status='sold')
+        self.assertEqual(project.plots_left, 1)
+
+
+# ------------------------------------------------------------------
+# Error pages
+# ------------------------------------------------------------------
+
+@override_settings(DEBUG=False)
+class ErrorPageTests(TestCase):
+    def test_404_helps_the_visitor_on(self):
+        response = self.client.get('/finnes-ikke/')
+        self.assertEqual(response.status_code, 404)
+        self.assertContains(response, 'Vi fant ikke siden', status_code=404)
+        self.assertContains(response, BUSINESS['phone_display'], status_code=404)
+
+    def test_500_page_renders(self):
+        from django.test import RequestFactory
+        from .views import custom_500
+        request = RequestFactory().get('/')
+        request.user = mock.Mock(is_authenticated=False)
+        response = custom_500(request)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn('Noe gikk galt', response.content.decode())
+
+    def test_500_falls_back_when_full_page_breaks(self):
+        from django.test import RequestFactory
+        from .views import custom_500
+        with mock.patch('apps.core.views.render', side_effect=RuntimeError('broken template')), \
+                self.assertLogs('apps.core.views', level='ERROR'):
+            response = custom_500(RequestFactory().get('/'))
+        self.assertEqual(response.status_code, 500)
+        self.assertIn(BUSINESS['phone_display'], response.content.decode())
+
+
+# ------------------------------------------------------------------
+# Seed command
+# ------------------------------------------------------------------
+
+class SeedProjectsTests(MediaTestCase):
+    def test_seed_creates_projects_with_gallery_and_is_idempotent(self):
+        call_command('seed_projects', stdout=io.StringIO())
+        call_command('seed_projects', stdout=io.StringIO())
+        self.assertEqual(Project.objects.count(), 3)
+        tinde = Project.objects.get(title='Tinde Hytter på Brakastølen')
+        self.assertEqual(tinde.gallery_images.count(), 11)
+        self.assertEqual(tinde.status, 'to_order')
+
+    def test_dry_run_changes_nothing(self):
+        call_command('seed_projects', '--dry-run', stdout=io.StringIO())
+        self.assertFalse(Project.objects.exists())

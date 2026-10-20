@@ -1,0 +1,88 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}{{ inquiry.name }}{% endblock %}
+
+{% block content %}
+<p><a href="{% url 'dashboard_inquiries' %}">← Alle henvendelser</a></p>
+<h1>{{ inquiry.name }}</h1>
+<p>Mottatt {{ inquiry.created_at|date:'d.m.Y \k\l. H:i' }} · Interessert i: <strong>{{ inquiry.get_interest_display }}</strong></p>
+{% if inquiry.is_spam %}<p class="message warning">Merket som spam{% if inquiry.spam_reason %} ({{ inquiry.spam_reason }}){% endif %}. Er dette en ekte kunde? Trykk «Ikke spam».</p>{% endif %}
+
+<section class="panel">
+  <h2>Kontakt</h2>
+  <ul class="actions">
+    {% if phone_clean %}
+    <li><a href="tel:{{ phone_clean }}" class="button">Ring {{ inquiry.phone }}</a></li>
+    <li><a href="sms:{{ phone_clean }}" class="button secondary">Send SMS</a></li>
+    {% endif %}
+    <li><a href="{{ mailto_url }}" class="button secondary">Svar på e-post</a></li>
+  </ul>
+  <dl>
+    <dt>E-post</dt><dd>{{ inquiry.email }}</dd>
+    <dt>Telefon</dt><dd>{{ inquiry.phone|default:'Ikke oppgitt' }}</dd>
+    <dt>Personvern</dt><dd>{{ inquiry.consent|yesno:'Godtatt,Ikke godtatt' }}</dd>
+  </dl>
+  <h3>Beskjed</h3>
+  <p class="pre">{{ inquiry.message|default:'(ingen beskjed)' }}</p>
+</section>
+
+<section class="panel">
+  <h2>Status</h2>
+  <form method="post" class="inline">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="status">
+    <label for="status" class="visually-hidden">Status</label>
+    <select name="status" id="status" class="input">
+      {% for key, label in statuses %}<option value="{{ key }}" {% if inquiry.status == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    <button type="submit" class="button">Lagre status</button>
+  </form>
+
+  <div class="actions">
+    <form method="post" class="inline">
+      {% csrf_token %}
+      {% if inquiry.is_archived %}
+      <button name="action" value="unarchive" class="button secondary">Flytt til innboks</button>
+      {% else %}
+      <button name="action" value="archive" class="button secondary">Arkiver</button>
+      {% endif %}
+      {% if inquiry.is_spam %}
+      <button name="action" value="not_spam" class="button secondary">Ikke spam</button>
+      {% else %}
+      <button name="action" value="spam" class="button secondary">Merk som spam</button>
+      {% endif %}
+    </form>
+    <form method="post" class="inline" data-confirm="Slette henvendelsen fra {{ inquiry.name }} for godt?">
+      {% csrf_token %}
+      <button name="action" value="delete" class="button danger">Slett</button>
+    </form>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Interne notater</h2>
+  <form method="post" class="stack">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="add_note">
+    <label for="{{ note_form.text.id_for_label }}">{{ note_form.text.label }}</label>
+    {{ note_form.text }}
+    {{ note_form.text.errors }}
+    <button type="submit" class="button">Lagre notat</button>
+  </form>
+  <ul class="rows">
+    {% for note in notes %}
+    <li>
+      <p class="pre">{{ note.text }}</p>
+      <small>{{ note.author.get_full_name|default:note.author.username|default:'Ukjent' }}, {{ note.created_at|date:'d.m.Y H:i' }}</small>
+      <form method="post" class="inline" data-confirm="Slette notatet?">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="delete_note">
+        <input type="hidden" name="note_id" value="{{ note.pk }}">
+        <button type="submit" class="link-button">Slett notat</button>
+      </form>
+    </li>
+    {% empty %}
+    <li>Ingen notater ennå.</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

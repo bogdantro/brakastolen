@@ -1,0 +1,31 @@
+// ------------------------------------------------------------
+// Brakastølen palette and fonts – one place, @use'd by every file.
+// Sampled from the design reference (docs/design-reference-hero.png) and
+// the current website's theme CSS (brakastølen.no, Uncode theme).
+// ------------------------------------------------------------
+
+// Main palette (same names as every project)
+$primaryColor: #AC742C;   // accent: copper line under headings, links, small details (design reference)
+$secondColor: #002223;    // dark sections and footer: the current site's deep teal background
+$black: #141616;          // text and headings (design reference)
+$white: #F6F3E9;          // text on dark, light button background (design reference)
+$background: #F1EBDF;     // page background: warm cream (design reference)
+
+// Supporting colours
+$heroText: #0D0C0B;       // the big "Din plass i fjellet." heading
+$mutedText: #5C5956;      // body text and lead paragraphs
+$card: #EEE8DA;           // price card and panels on the cream background
+$scriptColor: #756353;    // the handwritten "Mer enn et sted."
+$navGlass: rgba(61, 70, 77, 0.55); // frosted nav bar over the hero photo (#3D464D)
+$sage: #90AE8C;           // the current site's button colour – kept for recognition, optional
+$border: rgba(0, 0, 0, 0.15);
+
+// Fonts (candidates matching the design reference – confirm in the design phase)
+$fontDisplay: 'Playfair Display', Georgia, 'Times New Roman', serif;  // headings, nav, price
+$fontBody: 'Abhaya Libre', Georgia, serif;                           // body text (the current site's heading font)
+$fontScript: 'Mrs Saint Delafield', cursive;                        // "Mer enn et sted."
+$fontUi: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;  // dashboard
+
+// Breakpoints (two blocks per file: mobile/tablet and desktop)
+$mobileMax: 1139px;
+$desktopMin: 1140px;

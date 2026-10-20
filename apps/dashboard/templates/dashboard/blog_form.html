@@ -1,0 +1,29 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}{% if post %}{{ post.title }}{% else %}Ny nyhet{% endif %}{% endblock %}
+
+{% block content %}
+<p><a href="{% url 'dashboard_blog' %}">← Alle nyheter</a></p>
+<div class="page-head">
+  <h1>{% if post %}{{ post.title }}{% else %}Ny nyhet{% endif %}</h1>
+  {% if post %}<a href="{{ post.get_absolute_url }}" target="_blank" rel="noopener" class="button secondary">Se på nettsiden</a>{% endif %}
+</div>
+
+<form method="post" enctype="multipart/form-data" class="stack" novalidate>
+  {% csrf_token %}
+  {% if form.errors %}<p class="message error" role="alert">Noe må rettes før nyheten kan lagres – se feltene merket under.</p>{% endif %}
+  {% include 'dashboard/_field.html' with field=form.title %}
+  {% include 'dashboard/_field.html' with field=form.author %}
+  {% include 'dashboard/_field.html' with field=form.excerpt %}
+  {% include 'dashboard/_field.html' with field=form.text %}
+  {% if post and post.image %}<img src="{{ post.image.url }}" alt="Nåværende bilde" width="240">{% endif %}
+  {% include 'dashboard/_field.html' with field=form.image %}
+  {% include 'dashboard/_field.html' with field=form.image_alt %}
+  <label class="checkbox">{{ form.is_published }} {{ form.is_published.label }}</label>
+  <details>
+    <summary>Google og deling (valgfritt)</summary>
+    {% include 'dashboard/_field.html' with field=form.meta_title %}
+    {% include 'dashboard/_field.html' with field=form.meta_description %}
+  </details>
+  <button type="submit" class="button">Lagre</button>
+</form>
+{% endblock %}

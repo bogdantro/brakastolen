@@ -1,0 +1,25 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Nyheter{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Nyheter</h1>
+  <a href="{% url 'dashboard_blog_create' %}" class="button">Ny nyhet</a>
+</div>
+
+<ul class="rows">
+  {% for post in posts %}
+  <li>
+    <a href="{% url 'dashboard_blog_edit' post.pk %}"><strong>{{ post.title }}</strong></a>
+    <span class="status-label {% if post.is_published %}status-won{% else %}status-new{% endif %}">{{ post.is_published|yesno:'Publisert,Utkast' }}</span>
+    <time>{{ post.created_at|date:'d.m.Y' }}</time>
+    <form method="post" action="{% url 'dashboard_blog_delete' post.pk %}" class="inline" data-confirm="Slette «{{ post.title }}» for godt?">
+      {% csrf_token %}
+      <button type="submit" class="link-button">Slett</button>
+    </form>
+  </li>
+  {% empty %}
+  <li>Ingen nyheter ennå.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

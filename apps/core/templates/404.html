@@ -1,0 +1,26 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block head %}
+{% include 'core/seo.html' with title="Fant ikke siden | Brakastølen" description="Siden du lette etter finnes ikke lenger. Se ledige hyttetomter på Brakastølen, Vaset, eller ta kontakt." noindex=True %}
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'scss/store/error.css' %}">
+
+<section class="error-page">
+  <p class="code">404</p>
+  <h1>Vi fant ikke siden</h1>
+  <p>Siden kan ha blitt flyttet da vi fikk ny nettside. Her er noen steder å fortsette:</p>
+  {% include 'core/error-links.html' %}
+
+  {% if featured_projects %}
+  <h2>Prosjekter på Brakastølen</h2>
+  <ul>
+    {% for project in featured_projects %}
+    <li><a href="{% url 'prosjekt_detail' project.slug %}">{{ project.title }}</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</section>
+{% endblock %}

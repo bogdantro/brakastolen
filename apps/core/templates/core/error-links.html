@@ -1,0 +1,10 @@
+{% comment %}
+    Links that help a visitor on from an error page. No parameters.
+{% endcomment %}
+<ul class="error-links">
+  <li><a href="/">Forsiden</a></li>
+  <li><a href="{% url 'tomter' %}">Ledige tomter</a></li>
+  <li><a href="{% url 'hytter' %}">Hytter</a></li>
+  <li><a href="{% url 'kontakt' %}">Kontakt oss</a></li>
+</ul>
+<p>Eller ring oss på <a href="tel:{{ business.phone }}">{{ business.phone_display }}</a>.</p>

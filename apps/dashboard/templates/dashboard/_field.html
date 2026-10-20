@@ -1,0 +1,10 @@
+{% comment %}
+    One form field with label, help text and errors.
+    Parameter: field – a bound form field.
+{% endcomment %}
+<div class="field{% if field.errors %} has-error{% endif %}">
+  <label for="{{ field.id_for_label }}">{{ field.label }}{% if not field.field.required %} <span class="optional">(valgfritt)</span>{% endif %}</label>
+  {{ field }}
+  {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+  {{ field.errors }}
+</div>

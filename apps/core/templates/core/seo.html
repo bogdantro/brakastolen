@@ -1,0 +1,37 @@
+{% load static %}{% comment %}
+    Shared SEO tags. Use in {% block head %}:
+    {% include 'core/seo.html' with title="..." description="..." image=... type="article" noindex=True %}
+    - title: full page title, "Topic – benefit | Brakastølen" (aim for 50–60 characters)
+    - description: 120–155 characters
+    - image: optional full or /static/ URL for sharing previews (1200x630 works best)
+    - image_alt: optional description of that image
+{% endcomment %}
+<title>{{ title }}</title>
+<meta name="description" content="{{ description }}">
+{% if noindex or not allow_indexing %}
+<meta name="robots" content="noindex, nofollow">
+{% else %}
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+{% endif %}
+<link rel="canonical" href="{{ site_url }}{{ request.path }}">
+
+<!-- Open Graph (Facebook, LinkedIn, Messenger, Slack) -->
+<meta property="og:type" content="{{ type|default:'website' }}">
+<meta property="og:locale" content="nb_NO">
+<meta property="og:site_name" content="{{ business.name }}">
+<meta property="og:title" content="{{ og_title|default:title }}">
+<meta property="og:description" content="{{ description }}">
+<meta property="og:url" content="{{ site_url }}{{ request.path }}">
+{% if image %}
+<meta property="og:image" content="{% if image|slice:':4' == 'http' %}{{ image }}{% else %}{{ site_url }}{{ image }}{% endif %}">
+{% else %}
+<meta property="og:image" content="{{ site_url }}{% static 'images/og/og-default.jpg' %}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+{% endif %}
+<meta property="og:image:alt" content="{{ image_alt|default:'Utsikt over Brakastølen og Vaset i Valdres' }}">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ og_title|default:title }}">
+<meta name="twitter:description" content="{{ description }}">

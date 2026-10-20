@@ -1,0 +1,22 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Aktivitet{% endblock %}
+
+{% block content %}
+<h1>Aktivitet</h1>
+<p>{{ failed_logins }} mislykkede innloggingsforsøk de siste 7 dagene.</p>
+
+<table class="table">
+  <thead><tr><th scope="col">Tid</th><th scope="col">Hvem</th><th scope="col">Hva</th></tr></thead>
+  <tbody>
+    {% for entry in entries %}
+    <tr>
+      <td>{{ entry.created_at|date:'d.m.Y H:i' }}</td>
+      <td>{{ entry.user.get_full_name|default:entry.user.username|default:'System' }}</td>
+      <td>{{ entry.action }} {% if entry.url %}<a href="{{ entry.url }}">{{ entry.target }}</a>{% else %}{{ entry.target }}{% endif %}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3">Ingen aktivitet ennå.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+{% load static seo richtext %}
+
+{% block head %}
+{% with title=post.meta_title|default:post.title %}
+{% include 'core/seo.html' with title=title|add:" | Brakastølen" description=post.meta_description|default:post.excerpt type="article" image=post_image image_alt=post.image_alt noindex=is_draft %}
+{% endwith %}
+{% endblock %}
+
+{% block schema %}{% schema_blog_post post %}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'scss/store/nyheter.css' %}">
+
+{% if not post.is_published %}<p class="draft-notice" role="status">Utkast – bare synlig for innloggede.</p>{% endif %}
+
+<article class="post">
+  <header>
+    <p class="eyebrow"><a href="{% url 'nyheter' %}">Nyheter</a></p>
+    <h1>{{ post.title }}</h1>
+    <p class="meta">
+      <time datetime="{{ post.created_at|date:'Y-m-d' }}">{{ post.created_at|date:'j. F Y' }}</time>
+      · {{ minutes }} min lesetid{% if post.author %} · {{ post.author }}{% endif %}
+    </p>
+    {% if post.image %}<img src="{{ post.image.url }}" alt="{{ post.image_alt|default:post.title }}" fetchpriority="high">{% endif %}
+  </header>
+  {% if post.excerpt %}<p class="lead">{{ post.excerpt }}</p>{% endif %}
+  <div class="text">{{ post.text|rich }}</div>
+</article>
+
+<section class="more">
+  <h2>Flere nyheter</h2>
+  <ul>
+    {% for other in more_posts %}
+    <li><a href="{{ other.get_absolute_url }}">{{ other.title }}</a></li>
+    {% empty %}
+    <li><a href="{% url 'nyheter' %}">Alle nyheter</a></li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section class="cta">
+  <h2>Interessert i en tomt?</h2>
+  <a href="{% url 'kontakt' %}?interesse=prospectus" class="button">Be om prospekt</a>
+</section>
+{% endblock %}

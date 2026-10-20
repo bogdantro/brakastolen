@@ -1,0 +1,38 @@
+{% load static %}
+<footer class="site-footer">
+  <div class="content">
+    <div class="brand">
+      <img src="{% static 'images/logo/logo-brakastolen-hvit.png' %}" alt="{{ business.name }} – {{ business.tagline }}" width="120" height="120" loading="lazy">
+      <p>{{ business.description }}</p>
+    </div>
+
+    <div class="contact">
+      <h2>Utbygger</h2>
+      <p>{{ business.company }}</p>
+      <p><a href="tel:{{ business.phone }}">Tlf. {{ business.phone_display }}</a></p>
+      <p><a href="mailto:{{ business.email }}">{{ business.email }}</a></p>
+      <p>{{ business.street }}, {{ business.postal_code }} {{ business.city }}</p>
+      <p>Org.nr. {{ business.org_number_display }}</p>
+    </div>
+
+    <nav class="links" aria-label="Bunnmeny">
+      <h2>Snarveier</h2>
+      <ul>
+        <li><a href="{% url 'tomter' %}">Tomter</a></li>
+        <li><a href="{% url 'hytter' %}">Hytter</a></li>
+        <li><a href="{% url 'prosjekter' %}">Prosjekter</a></li>
+        <li><a href="{% url 'om_vaset' %}">Om Vaset</a></li>
+        <li><a href="{% url 'aktiviteter' %}">Aktiviteter</a></li>
+        <li><a href="{% url 'nyheter' %}">Nyheter</a></li>
+        <li><a href="{% url 'om_oss' %}">Om oss</a></li>
+        <li><a href="{% url 'kontakt' %}">Kontakt</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="bottom">
+    <p>© {% now "Y" %} {{ business.company }}</p>
+    <a href="{% url 'personvern' %}">Personvern</a>
+    {% if ga_id %}<button type="button" class="cookie-settings" data-cookie-settings>Informasjonskapsler</button>{% endif %}
+  </div>
+</footer>

@@ -1,0 +1,25 @@
+{% load static %}{% comment %}
+    Main navigation. Matches the design reference (docs/design-reference-hero.png):
+    logo with "Vaset · Valdres", five links and the "Avtal visning" button.
+{% endcomment %}
+<header class="site-header">
+  <nav class="nav" aria-label="Hovedmeny">
+    <a href="/" class="logo">
+      <img src="{% static 'images/logo/logo-brakastolen-hvit.png' %}" alt="{{ business.name }} – til forsiden" width="60" height="60">
+      <span class="logo-name">{{ business.name }}</span>
+      <span class="logo-place">Vaset · Valdres</span>
+    </a>
+
+    <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="nav-links">Meny</button>
+
+    <ul class="links" id="nav-links">
+      <li><a href="{% url 'tomter' %}">Tomter</a></li>
+      <li><a href="{% url 'hytter' %}">Hytter</a></li>
+      <li><a href="{% url 'om_vaset' %}">Om Vaset</a></li>
+      <li><a href="{% url 'aktiviteter' %}">Aktiviteter</a></li>
+      <li><a href="{% url 'kontakt' %}">Kontakt</a></li>
+    </ul>
+
+    <a href="{% url 'kontakt' %}?interesse=viewing" class="button cta">Avtal visning <span aria-hidden="true">→</span></a>
+  </nav>
+</header>

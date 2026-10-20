@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+{% load static seo %}
+
+{% block head %}
+{% include 'core/seo.html' with title="Om Vaset i Valdres – hytteliv ved Panoramavegen | Brakastølen" description="Vaset ligger i Vestre Slidre, ca. 18 km fra Fagernes og 200 km fra Oslo. Åpent fjellandskap, levende stølsmiljø og utsikt mot Jotunheimen." %}
+{% endblock %}
+
+{% block schema %}{% schema_breadcrumbs "Om Vaset" "/om-vaset/" %}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'scss/store/om-vaset.css' %}">
+
+<section class="page-intro">
+  <h1>Om Vaset</h1>
+  <p>Vaset er et av de mest attraktive hytteområdene i Valdres og kan tilby spennende aktiviteter både sommer og vinter.</p>
+</section>
+
+<section class="location">
+  <h2>Beliggenhet</h2>
+  <p>Vaset ligger i Vestre Slidre kommune og grenser mot Hemsedal, ca. 18 km nord-vest for regionsenteret Fagernes og 200 km fra Oslo. Panoramavegen over til Hemsedal gjør tilgjengeligheten til Vaset god, også mot vest, samtidig som en kjøretur langs denne legendariske veien er en opplevelse i seg selv.</p>
+  <dl>
+    <dt>Fagernes</dt><dd>{{ business.distances.Fagernes }}</dd>
+    <dt>Oslo</dt><dd>{{ business.distances.Oslo }}</dd>
+    <dt>Kommune</dt><dd>{{ business.municipality }}</dd>
+  </dl>
+  <a href="{{ business.maps_url }}" target="_blank" rel="noopener">Se Brakastølen på kartet</a>
+</section>
+
+<section class="nature">
+  <h2>Brakastølen</h2>
+  <p>Brakastølen – Vaset i Valdres ligger høyt og flott ved Panoramavegen mellom Valdres og Hemsedal.</p>
+  <p>Området er en naturperle og byr på et flott og variert fjellterreng med et levende stølsmiljø, varierte aktiviteter, butikker og hyggelige serveringssteder.</p>
+  <p>Her er det åpent og vilt landskap med flott utsyn mot den ville Jotunheimen.</p>
+  <img src="{% static 'images/hero/hero-1-tranberg-utvikling-vaset.jpg' %}" alt="Flyfoto over Brakastølen og Vaset med fjellene i bakgrunnen" loading="lazy">
+</section>
+
+<section class="cta">
+  <h2>Opplev området selv</h2>
+  <a href="{% url 'kontakt' %}?interesse=viewing" class="button">Avtal visning</a>
+  <a href="{% url 'aktiviteter' %}">Se aktivitetene på Vaset</a>
+</section>
+{% endblock %}

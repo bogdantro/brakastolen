@@ -1,0 +1,17 @@
+db.sqlite3
+
+# Secrets – settings.py reads everything from these, never commit them.
+.env
+
+# Static/media collected or uploaded at runtime, not source.
+/staticfiles/
+/media/
+
+__pycache__/
+*.pyc
+
+# Full-size source images (not served)
+originals/
+
+# Local virtual environment
+.venv/

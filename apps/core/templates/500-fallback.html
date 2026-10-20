@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="nb-NO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Noe gikk galt | Brakastølen</title>
+  {% comment %} Standalone on purpose: no includes, no context processors, no static files –
+  this is shown when rendering the full 500 page failed. {% endcomment %}
+  <style>
+    body { margin: 0; font-family: Georgia, serif; background: #f1ebdf; color: #141616; }
+    main { max-width: 560px; margin: 15vh auto; padding: 0 20px; }
+    a { color: #ac742c; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Noe gikk galt hos oss</h1>
+    <p>Nettsiden har en midlertidig feil. Prøv igjen om litt.</p>
+    <p>Du når oss på telefon <a href="tel:{{ business.phone|default:'+4748258000' }}">{{ business.phone_display|default:'482 58 000' }}</a>
+      eller e-post <a href="mailto:{{ business.email|default:'post@brakastolen.no' }}">{{ business.email|default:'post@brakastolen.no' }}</a>.</p>
+  </main>
+</body>
+</html>

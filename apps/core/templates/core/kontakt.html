@@ -1,0 +1,89 @@
+{% extends 'core/base.html' %}
+{% load static seo %}
+
+{% block head %}
+{% include 'core/seo.html' with title="Kontakt oss – prospekt og visning | Brakastølen" description="Be om prospekt på tomter og hytter på Brakastølen, eller avtal en personlig visning. Ring 482 58 000 eller send e-post til post@brakastolen.no." %}
+{% endblock %}
+
+{% block schema %}{% schema_contact %}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'scss/store/kontakt.css' %}">
+
+<section class="page-intro">
+  <h1>Kontakt</h1>
+  <p>Er du interessert i ei unik tomt, og/eller et hytteprosjekt på Brakastølen? Be om prospekt for de ulike tomte- og hytteområdene, eller avtal en personlig visning.</p>
+  <p>Send oss en e-post på <a href="mailto:{{ business.email }}">{{ business.email }}</a>, ring oss på <a href="tel:{{ business.phone }}">{{ business.phone_display }}</a> eller fyll ut skjemaet nedenfor.</p>
+</section>
+
+<section class="form-section">
+  {% if csrf_expired %}
+  <p class="notice" role="alert">Skjemaet hadde ligget åpent en stund, så vi måtte fornye det av sikkerhetshensyn. Teksten din er tatt vare på – trykk «Send» én gang til.</p>
+  {% endif %}
+
+  <form method="post" action="{% url 'kontakt' %}" id="inquiry-form" novalidate>
+    {% csrf_token %}
+    {{ form.form_ts }}
+    {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
+
+    <div class="field">
+      <label for="{{ form.name.id_for_label }}">Navn <span class="required" aria-hidden="true">*</span></label>
+      {{ form.name }}
+      {{ form.name.errors }}
+    </div>
+    <div class="field">
+      <label for="{{ form.email.id_for_label }}">E-post <span class="required" aria-hidden="true">*</span></label>
+      {{ form.email }}
+      {{ form.email.errors }}
+    </div>
+    <div class="field">
+      <label for="{{ form.phone.id_for_label }}">Telefon <span class="optional">(valgfritt)</span></label>
+      {{ form.phone }}
+      {{ form.phone.errors }}
+    </div>
+    <div class="field">
+      <label for="{{ form.interest.id_for_label }}">Jeg er interessert i</label>
+      {{ form.interest }}
+      {{ form.interest.errors }}
+    </div>
+    <div class="field">
+      <label for="{{ form.message.id_for_label }}">Beskjed <span class="optional">(valgfritt)</span></label>
+      {{ form.message }}
+      {{ form.message.errors }}
+    </div>
+
+    {% comment %} Honeypot – hidden from people with CSS and aria-hidden, filled in by bots. {% endcomment %}
+    <div class="hp-field" aria-hidden="true">
+      <label for="{{ form.hp_check.id_for_label }}">Ikke fyll ut dette feltet</label>
+      {{ form.hp_check }}
+    </div>
+
+    <div class="field checkbox">
+      {{ form.consent }}
+      <label for="{{ form.consent.id_for_label }}">Jeg godtar <a href="{% url 'personvern' %}" target="_blank">personvernerklæringen</a> <span class="required" aria-hidden="true">*</span></label>
+      {{ form.consent.errors }}
+    </div>
+
+    <button type="submit" class="button">Send</button>
+  </form>
+</section>
+
+<section class="contact-info">
+  <h2>Utbygger</h2>
+  <p>{{ business.company }}</p>
+  <p><a href="tel:{{ business.phone }}">Tlf. {{ business.phone_display }}</a></p>
+  <p><a href="mailto:{{ business.email }}">{{ business.email }}</a></p>
+</section>
+
+<section class="faq">
+  <h2>Ofte stilte spørsmål</h2>
+  {% for item in faq %}
+  <details>
+    <summary>{{ item.question }}</summary>
+    <p>{{ item.answer }}</p>
+  </details>
+  {% endfor %}
+</section>
+{% endblock %}
+
+{% block scripts %}<script src="{% static 'js/contact.js' %}" defer></script>{% endblock %}

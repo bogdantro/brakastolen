@@ -1,0 +1,41 @@
+{% extends 'core/base.html' %}
+{% load static seo %}
+
+{% block head %}
+{% include 'core/seo.html' with title="Hyttegrender og hytter på Vaset – prosjekter | Brakastølen" description="Se hyttegrendene og hyttene på Brakastølen, Vaset i Valdres – fra Ulven hyttegrend til nøkkelferdige hytter fra Tinde Hytter og Leve Hytter." %}
+{% endblock %}
+
+{% block schema %}{% schema_projects projects %}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'scss/store/prosjekter.css' %}">
+
+<section class="page-intro">
+  <h1>Prosjekter</h1>
+  <p>Hyttegrender og hytter på Brakastølen.</p>
+</section>
+
+<nav class="filter" aria-label="Filtrer prosjekter">
+  <a href="{% url 'prosjekter' %}" {% if not category %}aria-current="page"{% endif %}>Alle</a>
+  {% for key, label in categories %}
+  <a href="{% url 'prosjekter' %}?kategori={{ key }}" {% if category == key %}aria-current="page"{% endif %}>{{ label }}</a>
+  {% endfor %}
+</nav>
+
+<section class="list">
+  <ul>
+    {% for project in projects %}
+    <li>
+      <a href="{% url 'prosjekt_detail' project.slug %}">
+        <img src="{{ project.image.url }}" alt="{{ project.title }}" loading="lazy">
+        <h2>{{ project.title }}</h2>
+        <p>{{ project.get_category_display }} · {{ project.get_status_display }}</p>
+        <p>{{ project.excerpt }}</p>
+      </a>
+    </li>
+    {% empty %}
+    <li>Ingen prosjekter her ennå.</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

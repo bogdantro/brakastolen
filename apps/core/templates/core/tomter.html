@@ -1,0 +1,96 @@
+{% extends 'core/base.html' %}
+{% load static seo %}
+
+{% block head %}
+{% include 'core/seo.html' with title="Hyttetomter på Vaset – fra 900 000 kr | Brakastølen" description="Hyttetomter på Brakastølen, Vaset: 900–1050 moh., 180 graders utsikt og sol fra morgen til kveld. Ingen byggeklausul. Se ledige tomter og tomtekart." %}
+{% endblock %}
+
+{% block schema %}{% schema_plots plots %}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'scss/store/tomter.css' %}">
+
+<section class="page-intro">
+  <h1>Hyttetomter på Brakastølen</h1>
+  <p>Vi har stort utvalg i fantastiske tomter. Alle tomtene har spektakulær utsikt i 180 grader, samt sol fra morgen til kveld. Det er ikke byggeklausul på tomtene.</p>
+</section>
+
+<section class="facts">
+  <h2>Kort fortalt</h2>
+  <dl>
+    <dt>Pris</dt><dd>Fra {{ business.price_from_display }} + omk.</dd>
+    <dt>Høyde</dt><dd>{{ business.altitude }}</dd>
+    <dt>Sol</dt><dd>Fra morgen til kveld</dd>
+    <dt>Byggeklausul</dt><dd>Nei</dd>
+  </dl>
+</section>
+
+<section class="about">
+  <h2>Mindre hyttegrender</h2>
+  <p>Tomtene i Brakastølen fordeler seg på mindre hyttegrender. Alle tomtene ligger på 900–1050 m.o.h. med fantastisk utsikt og unike solforhold fra morgen til kveld.</p>
+  <p>Det er ingen byggeklausul på tomtene, men vi bistår gjerne med et nøkkelferdig hytteprosjekt, hvis det er ønskelig.</p>
+  <p>Nye prospekt – ta kontakt for prospekt på nye tomter og prosjekterte nøkkelferdige hytter.</p>
+</section>
+
+<section class="groups">
+  <h2>Hyttegrender</h2>
+  {% for group in groups %}
+  <article>
+    <h3><a href="{% url 'prosjekt_detail' group.slug %}">{{ group.title }}</a></h3>
+    <p>{{ group.excerpt }}</p>
+    {% if group.plot_count %}<p>{{ group.plot_count }} tomter i feltet</p>{% endif %}
+  </article>
+  {% empty %}
+  <p>Ta kontakt for oversikt over hyttegrendene.</p>
+  {% endfor %}
+</section>
+
+<section class="plot-list">
+  <h2>Ledige tomter</h2>
+  {% if plots %}
+  <table>
+    <thead>
+      <tr><th scope="col">Tomt</th><th scope="col">Hyttegrend</th><th scope="col">Areal</th><th scope="col">Høyde</th><th scope="col">Pris</th><th scope="col">Status</th></tr>
+    </thead>
+    <tbody>
+      {% for plot in plots %}
+      <tr>
+        <td>{{ plot.number }}</td>
+        <td>{{ plot.project.title|default:"–" }}</td>
+        <td>{{ plot.area_display|default:"–" }}</td>
+        <td>{% if plot.altitude %}{{ plot.altitude }} moh.{% else %}–{% endif %}</td>
+        <td>{{ plot.price_display|default:"Ta kontakt" }}</td>
+        <td>{{ plot.get_status_display }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>Oversikten over ledige tomter oppdateres. Ta kontakt for prospekt og pris på tomtene som er ledige nå.</p>
+  {% endif %}
+</section>
+
+<section class="map" id="tomtekart">
+  <h2>Tomtekart</h2>
+  <a href="{% static 'images/misc/tomtekart-2022-02-01.png' %}">
+    <img src="{% static 'images/misc/tomtekart-2022-02-01.png' %}" alt="Tomtekart over Brakastølen med hyttegrender og tomter (per 1. februar 2022)" loading="lazy">
+  </a>
+  <p>Tomtekart per 1. februar 2022. Ta kontakt for oppdatert oversikt.</p>
+</section>
+
+<section class="viewing">
+  <h2>Visninger</h2>
+  <p>For visning, kontakt grunneier/utbygger på <a href="tel:{{ business.phone }}">{{ business.phone_display }}</a>.</p>
+  <a href="{% url 'kontakt' %}?interesse=prospectus" class="button">Be om prospekt</a>
+</section>
+
+<section class="faq">
+  <h2>Spørsmål om tomtene</h2>
+  {% for item in faq|slice:":4" %}
+  <details>
+    <summary>{{ item.question }}</summary>
+    <p>{{ item.answer }}</p>
+  </details>
+  {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Papirkurv{% endblock %}
+
+{% block content %}
+<p><a href="{% url 'dashboard_projects' %}">← Alle prosjekter</a></p>
+<h1>Papirkurv</h1>
+<p>Prosjekter her vises ikke på nettsiden. Gjenopprett dem, eller slett dem for godt (bildene slettes også).</p>
+
+<ul class="rows">
+  {% for project in projects %}
+  <li>
+    <strong>{{ project.title }}</strong> – slettet {{ project.deleted_at|date:'d.m.Y H:i' }}
+    <form method="post" action="{% url 'dashboard_project_restore' project.pk %}" class="inline">
+      {% csrf_token %}
+      <button type="submit" class="button secondary">Gjenopprett</button>
+    </form>
+    <form method="post" action="{% url 'dashboard_project_purge' project.pk %}" class="inline" data-confirm="Slette «{{ project.title }}» og alle bildene for godt? Dette kan ikke angres.">
+      {% csrf_token %}
+      <button type="submit" class="button danger">Slett for godt</button>
+    </form>
+  </li>
+  {% empty %}
+  <li>Papirkurven er tom.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

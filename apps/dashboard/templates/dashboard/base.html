@@ -1,0 +1,49 @@
+{% load static %}<!DOCTYPE html>
+<html lang="nb-NO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{% block title %}Dashbord{% endblock %} – {{ business.name }}</title>
+  <link rel="icon" href="{% static 'images/favicon/favicon-32.png' %}" sizes="32x32" type="image/png">
+  <link rel="stylesheet" href="{% static 'scss/dashboard/dashboard.css' %}">
+</head>
+<body class="dashboard">
+  {% if user.is_authenticated and user.is_staff %}
+  <aside class="sidebar">
+    <a href="{% url 'dashboard_home' %}" class="brand">{{ business.name }}</a>
+    <nav aria-label="Dashbord-meny">
+      <ul>
+        <li><a href="{% url 'dashboard_home' %}" {% if request.resolver_match.url_name == 'dashboard_home' %}aria-current="page"{% endif %}>Oversikt</a></li>
+        <li>
+          <a href="{% url 'dashboard_inquiries' %}" {% if 'inquir' in request.resolver_match.url_name %}aria-current="page"{% endif %}>Henvendelser</a>
+          {% if sidebar_unread %}<span class="badge" aria-label="{{ sidebar_unread }} uleste">{{ sidebar_unread }}</span>{% endif %}
+        </li>
+        <li><a href="{% url 'dashboard_plots' %}" {% if 'plot' in request.resolver_match.url_name %}aria-current="page"{% endif %}>Tomter</a></li>
+        <li><a href="{% url 'dashboard_projects' %}" {% if 'project' in request.resolver_match.url_name %}aria-current="page"{% endif %}>Prosjekter</a></li>
+        <li><a href="{% url 'dashboard_blog' %}" {% if 'blog' in request.resolver_match.url_name %}aria-current="page"{% endif %}>Nyheter</a></li>
+        <li><a href="{% url 'dashboard_activity' %}" {% if request.resolver_match.url_name == 'dashboard_activity' %}aria-current="page"{% endif %}>Aktivitet</a></li>
+      </ul>
+    </nav>
+    <div class="account">
+      <a href="/" target="_blank" rel="noopener">Se nettsiden</a>
+      <form method="post" action="{% url 'dashboard_logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="link-button">Logg ut ({{ user.get_full_name|default:user.username }})</button>
+      </form>
+    </div>
+  </aside>
+  {% endif %}
+
+  <main class="main" id="main">
+    {% if messages %}
+    <div class="messages" role="status">
+      {% for message in messages %}<p class="message {{ message.tags }}">{{ message }}</p>{% endfor %}
+    </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="{% static 'js/dashboard.js' %}" defer></script>
+</body>
+</html>

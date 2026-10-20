@@ -1,0 +1,66 @@
+{% extends 'core/base.html' %}
+{% load static seo %}
+
+{% block head %}
+{% include 'core/seo.html' with title="Nøkkelferdige hytter på Vaset – Tinde og Leve | Brakastølen" description="Prosjekterte hytter skreddersydd for din familie. Velg tomt og hyttemodell fra Tinde Hytter, Leve Hytter og flere – vi tar oss av hele byggeprosessen." %}
+{% endblock %}
+
+{% block schema %}{% schema_service "Hytter" "Nøkkelferdige hytteprosjekter på Brakastølen, Vaset, sammen med utvalgte norske hytteleverandører." "Nøkkelferdige hytter" %}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'scss/store/hytter.css' %}">
+
+<section class="page-intro">
+  <h1>Hytter</h1>
+  <p>Prosjekterte hytter skreddersydd for den enkelte familie.</p>
+  <p>På tomtene i Brakastølen kan man velge blant flere norske kvalitetsleverandører av hytter. Vi vil kunne levere nøkkelferdige hytteprosjekter sammen med våre utvalgte samarbeidspartnere. Dersom kunden har egne tegninger, så benytter vi lokalt byggemesterfirma til gjennomføringen. Det er bare for kunden å velge seg ut tomt og hyttemodell, og vi vil ta oss av hele byggeprosessen frem til hytta står ferdig.</p>
+</section>
+
+<section class="supplier" id="tinde">
+  <h2>Tinde Hytter – stedet for dine beste stunder</h2>
+  <p>Tinde Hytter vet at det finnes like mange tinder som det er mennesker. Derfor har Tinde utviklet gode serier av kvalitetshytter – alle med hver sine særtrekk og egenskaper. Tinde bygger din hytte spesielt for deg og dine, slik blir den et sted der du kan dyrke de gode opplevelser i livet.</p>
+  <p>Les mer om Tinde Hytter – <a href="https://www.tindehytter.no" target="_blank" rel="noopener">www.tindehytter.no</a></p>
+  <img src="{% static 'images/projects/tinde-vaset-3939.jpg' %}" alt="Stue med store vinduer og fjellutsikt i Tinde-hytte på Vaset" loading="lazy">
+  <p class="credit">Fotos: Pål Harald Uthus, Uthus Photography</p>
+</section>
+
+<section class="supplier" id="leve">
+  <h2>Leve Hytter – tidløst design og solid håndverk</h2>
+  <p>Leve Hytter lager moderne kvalitetshytter med god arkitektur. Ei hytte skal vare i mange generasjoner. Derfor er Leve Hytter opptatt av at den skal fremstå som tidløs, i motsetning til gammaldags. Leve Hytter sin hytteserie heter Vy, og er utviklet i samarbeid med en av Norges fremste arkitekter. Den kommer i flere grunnmodeller og størrelser, med gode valgmuligheter. Du får ei gjennomtenkt hytte, akkurat tilpasset deg.</p>
+  <p>Les mer om Leve Hytter – <a href="https://www.levehytter.no" target="_blank" rel="noopener">www.levehytter.no</a></p>
+  <img src="{% static 'images/projects/leve-hytter-vy-overblikk.jpg' %}" alt="Leve Hytter Vy i vinterlandskap" loading="lazy">
+</section>
+
+<section class="cabins">
+  <h2>Hytter på Brakastølen</h2>
+  <ul>
+    {% for cabin in cabins %}
+    <li>
+      <a href="{% url 'prosjekt_detail' cabin.slug %}">
+        <img src="{{ cabin.image.url }}" alt="{{ cabin.title }}" loading="lazy">
+        <h3>{{ cabin.title }}</h3>
+        <p>{{ cabin.excerpt }}</p>
+      </a>
+    </li>
+    {% empty %}
+    <li>Ta kontakt for prospekt på prosjekterte nøkkelferdige hytter.</li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section class="partners">
+  <h2>Våre samarbeidspartnere på Brakastølen</h2>
+  <dl>
+    {% for role, name, url in partners %}
+    <dt>{{ role }}</dt>
+    <dd>{% if url %}<a href="{{ url }}" target="_blank" rel="noopener">{{ name }}</a>{% else %}{{ name }}{% endif %}</dd>
+    {% endfor %}
+  </dl>
+</section>
+
+<section class="cta">
+  <h2>Velg tomt og hyttemodell</h2>
+  <p>Ta kontakt for prospekt på tomter og prosjekterte nøkkelferdige hytter.</p>
+  <a href="{% url 'kontakt' %}?interesse=plot_and_cabin" class="button">Be om prospekt</a>
+</section>
+{% endblock %}

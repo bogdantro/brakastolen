@@ -1,0 +1,180 @@
+// Dashboard: plain and readable. Status colours always come with a text label.
+@use '../global/variables' as *;
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body.dashboard {
+  margin: 0;
+  font-family: $fontUi;
+  font-size: 15px;
+  line-height: 1.5;
+  color: $black;
+  background: #F7F6F2;
+  display: flex;
+  min-height: 100vh;
+}
+
+a { color: $secondColor; }
+
+.sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  background: $secondColor;
+  color: $white;
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  a { color: $white; text-decoration: none; }
+  .brand { font-family: $fontDisplay; font-size: 22px; }
+  ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  li { display: flex; align-items: center; justify-content: space-between; }
+  li a { display: block; padding: 7px 10px; border-radius: 4px; flex: 1; }
+  li a[aria-current="page"], li a:hover { background: rgba(255, 255, 255, 0.12); }
+  .badge { background: $primaryColor; border-radius: 10px; padding: 0 8px; font-size: 12px; }
+  .account { margin-top: auto; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+  .link-button { color: $white; }
+}
+
+.main {
+  flex: 1;
+  padding: 28px 36px 60px;
+  max-width: 1200px;
+}
+
+h1 { margin: 0 0 18px; font-size: 26px; }
+h2 { font-size: 18px; margin: 0 0 12px; }
+
+.page-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+
+.panel, fieldset {
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: 4px;
+  padding: 18px 20px;
+  margin: 0 0 20px;
+}
+legend { font-weight: 600; padding: 0 6px; }
+
+.input, input[type="text"], input[type="email"], input[type="number"], input[type="url"], input[type="search"],
+input[type="password"], select, textarea {
+  font: inherit;
+  width: 100%;
+  max-width: 640px;
+  padding: 8px 10px;
+  border: 1px solid $border;
+  border-radius: 3px;
+  background: #fff;
+}
+input[type="checkbox"] { width: auto; }
+
+.stack { display: flex; flex-direction: column; gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.field.has-error .input { border-color: #B3261E; }
+.optional, small, .counter { color: #6b6b6b; font-size: 13px; }
+.checkbox { display: flex; align-items: center; gap: 8px; }
+.errorlist { color: #B3261E; margin: 2px 0 0; padding-left: 18px; }
+
+.button {
+  display: inline-block;
+  font: inherit;
+  cursor: pointer;
+  background: $secondColor;
+  color: $white;
+  border: 1px solid $secondColor;
+  border-radius: 3px;
+  padding: 8px 14px;
+  text-decoration: none;
+
+  &.secondary { background: #fff; color: $secondColor; }
+  &.danger { background: #B3261E; border-color: #B3261E; }
+}
+.link-button { background: none; border: 0; padding: 0; font: inherit; color: $secondColor; text-decoration: underline; cursor: pointer; }
+
+form.inline { display: inline-flex; gap: 8px; align-items: center; margin: 0 6px 6px 0; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; .input { width: auto; } }
+.actions { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+
+.messages .message, .message {
+  padding: 10px 14px;
+  border-radius: 3px;
+  background: #E7F1E6;
+  border-left: 4px solid $sage;
+  margin: 0 0 12px;
+
+  &.error { background: #FBEAEA; border-left-color: #B3261E; }
+  &.warning { background: #FFF6E5; border-left-color: $primaryColor; }
+}
+
+.stats {
+  list-style: none; padding: 0; margin: 0 0 20px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px;
+  a { display: block; background: #fff; border: 1px solid $border; border-radius: 4px; padding: 14px; text-decoration: none; color: $black; }
+  strong { display: block; font-size: 26px; }
+}
+
+.tabs {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;
+  a { padding: 6px 12px; border: 1px solid $border; border-radius: 20px; text-decoration: none; background: #fff; }
+  a[aria-current="page"] { background: $secondColor; color: $white; }
+  &.small a { font-size: 13px; padding: 4px 10px; }
+}
+
+.table {
+  width: 100%; border-collapse: collapse; background: #fff; border: 1px solid $border;
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid $border; vertical-align: top; }
+  th { font-size: 13px; color: #6b6b6b; }
+  tr.unread td { font-weight: 600; }
+}
+
+.rows {
+  list-style: none; padding: 0; margin: 0;
+  li { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid $border; }
+  img { object-fit: cover; border-radius: 3px; }
+}
+.sortable li[draggable="true"] { cursor: grab; }
+.sortable li.is-dragging { opacity: 0.4; }
+.handle { color: #999; }
+.dot { color: $primaryColor; }
+.pre { white-space: pre-wrap; }
+
+// Status labels: colour plus the text, never colour alone
+.status-label {
+  font-size: 12px; padding: 2px 8px; border-radius: 10px; background: #EEE; color: $black;
+  &.status-new { background: #FFF1D6; }
+  &.status-contacted, &.status-viewing { background: #E3EEF9; }
+  &.status-prospectus_sent { background: #EDE7F6; }
+  &.status-won { background: #E3F1E1; }
+  &.status-lost { background: #F3E3E3; }
+}
+
+.chart {
+  display: grid; grid-template-columns: repeat(12, 1fr); gap: 6px; align-items: end; height: 180px;
+  .bar { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; font-size: 11px; }
+  .fill { width: 100%; background: $sage; border-radius: 2px 2px 0 0; min-height: 2px; }
+  .bar.current .fill { background: $primaryColor; }
+}
+.status-bars {
+  list-style: none; padding: 0; margin: 0;
+  a { display: grid; grid-template-columns: 130px 1fr 40px; gap: 10px; align-items: center; padding: 4px 0; text-decoration: none; color: $black; }
+  .track { background: #EEE; height: 8px; border-radius: 4px; }
+  .track .fill { display: block; height: 100%; background: $secondColor; border-radius: 4px; }
+}
+
+.gallery { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+
+.rich-toolbar { display: flex; flex-wrap: wrap; gap: 4px; max-width: 640px; button { font: inherit; padding: 3px 8px; cursor: pointer; } }
+.rich-editor { min-height: 160px; max-width: 640px; }
+
+.login { max-width: 360px; margin: 12vh auto; }
+
+@media (max-width: 1139px) {
+  body.dashboard { flex-direction: column; }
+  .sidebar { width: auto; }
+  .main { padding: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
