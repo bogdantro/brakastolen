@@ -135,7 +135,8 @@
   }
   .hero .place {
     font-size: 24px;
-    margin-top: 22px;
+    margin-top: 0.3em;
+    padding-top: 0.12em;
   }
   .hero .copper-rule {
     width: 48px;
@@ -253,20 +254,20 @@
   .hero .place {
     font-size: calc(var(--u) * 34);
     line-height: 1;
-    margin-top: calc(var(--u) * 22);
+    margin-top: calc(var(--u) * 52);
     margin-left: calc(var(--u) * 4);
   }
   .hero .copper-rule {
     width: calc(var(--u) * 58);
-    margin: calc(var(--u) * 22) 0 0 calc(var(--u) * 5);
+    margin: calc(var(--u) * 18) 0 0 calc(var(--u) * 5);
   }
   .hero .lead {
     font-size: calc(var(--u) * 19.5);
     line-height: 1.4;
-    margin: calc(var(--u) * 19) 0 0 calc(var(--u) * 5);
+    margin: calc(var(--u) * 14) 0 0 calc(var(--u) * 5);
   }
   .hero .circle-link {
-    margin: calc(var(--u) * 25) 0 0 calc(var(--u) * 5);
+    margin: calc(var(--u) * 18) 0 0 calc(var(--u) * 5);
     gap: calc(var(--u) * 30);
     font-size: calc(var(--u) * 19);
   }

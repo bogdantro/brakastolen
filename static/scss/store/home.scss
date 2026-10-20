@@ -166,7 +166,9 @@
 
     .place {
       font-size: 24px;
-      margin-top: 22px;
+      // Room for the descender of the "j" in "fjellet" above
+      margin-top: 0.3em;
+      padding-top: 0.12em;
     }
 
     .copper-rule {
@@ -291,23 +293,24 @@
     .place {
       font-size: u(34);
       line-height: 1;
-      margin-top: u(22);
+      // Room for the descender of the "j" in "fjellet" above
+      margin-top: u(52);
       margin-left: u(4);
     }
 
     .copper-rule {
       width: u(58);
-      margin: u(22) 0 0 u(5);
+      margin: u(18) 0 0 u(5);
     }
 
     .lead {
       font-size: u(19.5);
       line-height: 1.4;
-      margin: u(19) 0 0 u(5);
+      margin: u(14) 0 0 u(5);
     }
 
     .circle-link {
-      margin: u(25) 0 0 u(5);
+      margin: u(18) 0 0 u(5);
       gap: u(30);
       font-size: u(19);
 
