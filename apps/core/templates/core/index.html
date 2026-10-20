@@ -10,116 +10,170 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'scss/store/home.css' %}">
 
-{% comment %} Hero – laid out 1:1 after docs/design-reference-hero.png in the design phase. {% endcomment %}
-<section class="hero">
-  <p class="counter" aria-hidden="true"><span>01</span> / <span>03</span></p>
-  <p class="vertical-label">Vaset · Valdres</p>
-  <p class="coordinates">61,0° N · 9,0° Ø</p>
-
-  <div class="text">
-    <h1>Din plass i fjellet.</h1>
-    <p class="place">Brakastølen, Vaset · Valdres</p>
-    <p class="lead">Storslått natur. Egen hyttedrøm.<br>Noen steder føles bare riktige.</p>
-    <a href="{% url 'tomter' %}" class="arrow-link"><span aria-hidden="true">→</span> Se ledige tomter</a>
-  </div>
-
-  <div class="images">
+{% comment %}
+  Hero – 1:1 after docs/design-reference-hero.png. On desktop every element is placed on the
+  reference's 1672×941 grid (see home.scss, --u), so it scales with the window and keeps the layout.
+{% endcomment %}
+<section class="hero" data-slideshow>
+  <div class="hero-photo">
     {% for url in hero_images %}
-    <img src="{{ url }}" alt="Utsikt over Brakastølen og Vaset i Valdres" {% if not forloop.first %}loading="lazy"{% else %}fetchpriority="high"{% endif %}>
+    <img src="{{ url }}" alt="{% cycle 'Flyfoto over Brakastølen og Vaset i Valdres' 'Leve-hytte i vinterlandskap med skiløpere' 'Stue med store vinduer og fjellutsikt i Tinde-hytte' %}"
+         class="slide{% if forloop.first %} is-active{% endif %}" {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}>
     {% endfor %}
   </div>
 
-  <aside class="price-card">
-    <p class="eyebrow">Tomter fra</p>
+  {% comment %} Cream blocks that step into the photo behind the heading, and the right-hand column {% endcomment %}
+  <span class="step step-1" aria-hidden="true"></span>
+  <span class="step step-2" aria-hidden="true"></span>
+  <span class="side-column" aria-hidden="true"></span>
+
+  <div class="rail" aria-hidden="true">
+    <p class="counter"><span data-slide-current>01</span><span class="counter-rule"></span><span>{{ hero_images|length|stringformat:"02d" }}</span></p>
+    <span class="rail-line"></span>
+    <p class="rail-label">Vaset · Valdres</p>
+  </div>
+
+  <div class="hero-text">
+    <h1><span class="line">Din</span> <span class="line line-2">plass</span> <span class="line line-3"><span class="green">i fjellet</span>.</span></h1>
+    <p class="place">Brakastølen, Vaset · Valdres</p>
+    <span class="copper-rule" aria-hidden="true"></span>
+    <p class="lead">Storslått natur. Egen hyttedrøm.<br>Noen steder føles bare riktige.</p>
+    <a href="{% url 'tomter' %}" class="circle-link">
+      <span class="circle" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 12h17M14 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></span>
+      Se ledige tomter
+    </a>
+  </div>
+
+  <aside class="price-card" aria-label="Pris">
+    <span class="copper-rule" aria-hidden="true"></span>
+    <p class="label">Tomter fra</p>
     <p class="price">{{ business.price_from_display }}</p>
     <p class="costs">+ omk.</p>
   </aside>
 
-  <p class="script" aria-hidden="true">Mer enn et sted.</p>
-  <ul class="values">
-    <li>Fjell</li>
-    <li>Natur</li>
-    <li>Frihet</li>
-    <li>Hele året</li>
-  </ul>
-  <p class="sun">Sol fra morgen til kveld</p>
+  <div class="side-text">
+    <p class="script">Mer<br>enn et<br>sted.</p>
+  </div>
+
+  <img class="winter" src="{% static 'images/misc/vaset-vinter-svarthvit.jpg' %}" alt="Vinterfjellet ved Vaset med preparerte skiløyper" loading="lazy">
 </section>
 
-<section class="intro">
-  <h2>Høyt og fritt ved Panoramavegen</h2>
-  <p>Brakastølen – Vaset i Valdres ligger høyt og flott ved Panoramavegen mellom Valdres og Hemsedal.</p>
-  <p>Området er en naturperle og byr på et flott og variert fjellterreng med et levende stølsmiljø, varierte aktiviteter, butikker og hyggelige serveringssteder.</p>
-  <p>Her er det åpent og vilt landskap med flott utsyn mot den ville Jotunheimen.</p>
+<section class="intro section">
+  <div class="content split">
+    <div class="split-head">
+      <h2>Høyt og fritt ved Panoramavegen</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+    </div>
+    <div class="prose large">
+      <p>Brakastølen – Vaset i Valdres ligger høyt og flott ved Panoramavegen mellom Valdres og Hemsedal.</p>
+      <p>Området er en naturperle og byr på et flott og variert fjellterreng med et levende stølsmiljø, varierte aktiviteter, butikker og hyggelige serveringssteder.</p>
+      <p>Her er det åpent og vilt landskap med flott utsyn mot den ville Jotunheimen.</p>
+    </div>
+  </div>
+
+  <dl class="content fact-strip">
+    <div><dt>Høyde</dt><dd>900–1050 moh.</dd></div>
+    <div><dt>Utsikt</dt><dd>180 grader</dd></div>
+    <div><dt>Sol</dt><dd>Morgen til kveld</dd></div>
+    <div><dt>Byggeklausul</dt><dd>Ingen</dd></div>
+  </dl>
 </section>
 
-<section class="plots-teaser">
-  <h2>Tomter</h2>
-  <p>Alle tomtene ligger på 900–1050 moh. med fantastisk utsikt og unike solforhold fra morgen til kveld. Tomtene fordeler seg på mindre hyttegrender, og det er ingen byggeklausul.</p>
-  <p>Tomtene har pris fra {{ business.price_from_display }} + omk.{% if available_plots %} Akkurat nå er {{ available_plots }} tomt{{ available_plots|pluralize:"er" }} ledig{{ available_plots|pluralize:"e" }}.{% endif %}</p>
-  <a href="{% url 'tomter' %}">Se tomtene</a>
-</section>
-
-<section class="cabins-teaser">
-  <h2>Hytter</h2>
-  <p>Prosjekterte hytter skreddersydd for den enkelte familie. Velg tomt og hyttemodell – vi tar oss av hele byggeprosessen frem til hytta står ferdig.</p>
-  <a href="{% url 'hytter' %}">Les om hyttene</a>
-</section>
-
-<section class="projects">
-  <h2>Prosjekter på Brakastølen</h2>
-  <ul>
-    {% for project in featured_projects %}
-    <li>
-      <a href="{% url 'prosjekt_detail' project.slug %}">
-        <img src="{{ project.image.url }}" alt="{{ project.title }}" loading="lazy">
-        <h3>{{ project.title }}</h3>
-        <p>{{ project.get_category_display }} · {{ project.get_status_display }}</p>
+<section class="feature plots-feature section">
+  <div class="content feature-grid">
+    <figure class="feature-image map-frame">
+      <a href="{% url 'tomter' %}#tomtekart">
+        <img src="{% static 'images/misc/tomtekart-2022-02-01.png' %}" alt="Tomtekart over Brakastølen med hyttegrender og nummererte tomter" loading="lazy">
       </a>
-    </li>
-    {% empty %}
-    <li>Nye prosjekter kommer snart.</li>
-    {% endfor %}
-  </ul>
-  <a href="{% url 'prosjekter' %}">Se alle prosjekter</a>
+    </figure>
+    <div class="feature-text">
+      <h2>Tomter i mindre hyttegrender</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+      <p>Alle tomtene ligger på 900–1050 moh. med fantastisk utsikt og unike solforhold fra morgen til kveld. Tomtene fordeler seg på mindre hyttegrender, og det er ingen byggeklausul.</p>
+      <p class="price-line">Fra <strong>{{ business.price_from_display }}</strong> + omk.</p>
+      {% if available_plots %}<p class="note">{{ available_plots }} ledig{{ available_plots|pluralize:"e" }} tomt{{ available_plots|pluralize:"er" }} akkurat nå.</p>{% endif %}
+      <a href="{% url 'tomter' %}" class="circle-link"><span class="circle" aria-hidden="true">{% include 'core/arrow.svg' %}</span>Se tomtene</a>
+    </div>
+  </div>
 </section>
 
-<section class="activities-teaser">
-  <h2>Aktiviteter hele året</h2>
-  <p>Vaset er et av de mest attraktive hytteområdene i Valdres, med alpint, ca. 120 km langrennsløyper og et eldorado for syklister.</p>
-  <a href="{% url 'aktiviteter' %}">Se aktivitetene</a>
+<section class="feature cabins-feature">
+  <div class="cabins-photo">
+    <img src="{% static 'images/projects/tinde-vaset-4030.jpg' %}" alt="Soverom med fjellutsikt i Tinde-hytte på Vaset" loading="lazy">
+  </div>
+  <div class="cabins-card">
+    <h2>Hytter skreddersydd for din familie</h2>
+    <span class="copper-rule" aria-hidden="true"></span>
+    <p>Velg tomt og hyttemodell fra Tinde Hytter, Leve Hytter eller en av de andre samarbeidspartnerne – så tar vi oss av hele byggeprosessen frem til hytta står ferdig.</p>
+    <a href="{% url 'hytter' %}" class="circle-link"><span class="circle" aria-hidden="true">{% include 'core/arrow.svg' %}</span>Les om hyttene</a>
+  </div>
 </section>
 
-<section class="news">
-  <h2>Nyheter</h2>
-  <ul>
-    {% for post in latest_posts %}
-    <li>
-      <a href="{{ post.get_absolute_url }}">
-        <h3>{{ post.title }}</h3>
-        <p>{{ post.excerpt }}</p>
-        <time datetime="{{ post.created_at|date:'Y-m-d' }}">{{ post.created_at|date:'j. F Y' }}</time>
-      </a>
-    </li>
-    {% empty %}
-    <li>Ingen nyheter ennå.</li>
-    {% endfor %}
-  </ul>
+<section class="projects-section section">
+  <div class="content">
+    <div class="section-head">
+      <h2>Prosjekter på Brakastølen</h2>
+      <a href="{% url 'prosjekter' %}" class="text-link">Se alle prosjekter</a>
+    </div>
+    <ul class="project-list">
+      {% for project in featured_projects %}
+      <li>{% include 'core/project-card.html' %}</li>
+      {% empty %}
+      <li class="empty">Nye prosjekter kommer snart.</li>
+      {% endfor %}
+    </ul>
+  </div>
 </section>
 
-<section class="faq">
-  <h2>Ofte stilte spørsmål</h2>
-  {% for item in faq %}
-  <details>
-    <summary>{{ item.question }}</summary>
-    <p>{{ item.answer }}</p>
-  </details>
-  {% endfor %}
+<section class="activities-section section">
+  <div class="content split">
+    <div class="split-head">
+      <h2>Aktiviteter hele året</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+      <p>Vaset er et av de mest attraktive hytteområdene i Valdres – sommer og vinter.</p>
+      <a href="{% url 'aktiviteter' %}" class="text-link">Mer om aktivitetene</a>
+    </div>
+    <dl class="rows">
+      <div><dt>Alpint</dt><dd>9 nedfarter i ulike vanskelighetsgrader – et flott alternativ for barnefamilier.</dd></div>
+      <div><dt>Langrenn</dt><dd>Ca. 120 km preparerte løyper, fra lysløype i granskog til snaufjellet innenfor Gomobu.</dd></div>
+      <div><dt>Sykkel</dt><dd>Merkede sykkelløyper for hele familien fra Gomobu, og den nasjonale sykkelruta «Mjølkevegen».</dd></div>
+    </dl>
+  </div>
 </section>
 
-<section class="cta">
-  <h2>Vil du oppfylle din hyttedrøm?</h2>
-  <p>Ta kontakt for en personlig visning av Brakastølen.</p>
-  <a href="{% url 'kontakt' %}?interesse=viewing" class="button">Avtal visning</a>
-  <p>Eller ring <a href="tel:{{ business.phone }}">{{ business.phone_display }}</a></p>
+{% if latest_posts %}
+<section class="news-section section">
+  <div class="content">
+    <div class="section-head">
+      <h2>Nyheter</h2>
+      <a href="{% url 'nyheter' %}" class="text-link">Alle nyheter</a>
+    </div>
+    <ul class="news-list">
+      {% for post in latest_posts %}
+      <li>
+        <a href="{{ post.get_absolute_url }}">
+          <time datetime="{{ post.created_at|date:'Y-m-d' }}">{{ post.created_at|date:'j. F Y' }}</time>
+          <h3>{{ post.title }}</h3>
+          <p>{{ post.excerpt }}</p>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
 </section>
+{% endif %}
+
+<section class="faq-section section">
+  <div class="content split">
+    <div class="split-head">
+      <h2>Ofte stilte spørsmål</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+    </div>
+    {% include 'core/faq-list.html' %}
+  </div>
+</section>
+
+{% include 'core/cta.html' with heading="Vil du oppfylle din hyttedrøm?" text="Ta kontakt for en personlig visning av Brakastølen." interest="viewing" button="Avtal visning" %}
 {% endblock %}
+
+{% block scripts %}<script src="{% static 'js/home.js' %}" defer></script>{% endblock %}

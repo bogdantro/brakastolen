@@ -1,13 +1,90 @@
-// kontakt – styled in the design phase. Palette and fonts: global/_variables.scss
+// Kontakt: the form on a sand panel, direct contact on the green beside it.
 @use '../global/variables' as *;
 
-// Mobile and tablet
+.contact-section {
+  .form-column {
+    background: $card;
+
+    .copper-rule {
+      margin: 22px 0 30px;
+    }
+
+    .notice {
+      margin-bottom: 24px;
+    }
+  }
+
+  .field-row {
+    display: grid;
+    gap: 22px;
+  }
+
+  .contact-info {
+    background: $primaryColor;
+    color: rgba(246, 243, 233, 0.8);
+
+    h2 {
+      color: $white;
+      font-size: clamp(28px, 2.2vw, 38px);
+      margin-bottom: 28px;
+    }
+
+    .big-link {
+      font-family: $fontDisplay;
+      font-size: clamp(26px, 2vw, 34px);
+      line-height: 1.4;
+      color: $white;
+      text-decoration: none;
+      border-bottom: 1px solid $sage;
+      word-break: break-word;
+    }
+
+    .small {
+      margin-top: 28px;
+      font-size: 16px;
+    }
+  }
+}
+
+.faq-section {
+  border-top: 1px solid $border;
+}
+
 @media (max-width: 1139px) {
+  .contact-section {
+    padding-top: 0;
+
+    .contact-grid {
+      display: grid;
+      gap: 0;
+      padding: 0;
+    }
+
+    .form-column,
+    .contact-info {
+      padding: 48px 20px;
+    }
+  }
 }
 
-// Desktop
 @media only screen and (min-width: 1140px) {
-}
+  .contact-section {
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 7fr 4fr;
+      align-items: stretch;
+    }
 
-@media (prefers-reduced-motion: reduce) {
+    .form-column {
+      padding: u(72) u(80);
+    }
+
+    .field-row {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .contact-info {
+      padding: u(72) u(60);
+    }
+  }
 }

@@ -1,13 +1,11 @@
-// legal – styled in the design phase. Palette and fonts: global/_variables.scss
+// Personvern: readable long text.
 @use '../global/variables' as *;
 
-// Mobile and tablet
-@media (max-width: 1139px) {
-}
+.legal .prose {
+  max-width: 46em;
+  margin-left: 0;
 
-// Desktop
-@media only screen and (min-width: 1140px) {
-}
-
-@media (prefers-reduced-motion: reduce) {
+  h2:first-child {
+    margin-top: 0;
+  }
 }

@@ -10,31 +10,50 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'scss/store/aktiviteter.css' %}">
 
-<section class="page-intro">
-  <h1>Aktiviteter</h1>
-  <p>Vaset er et av de mest attraktive hytteområdene i Valdres og kan tilby spennende aktiviteter både sommer og vinter.</p>
-</section>
+{% include 'core/page-header.html' with title="Aktiviteter" lead="Alpint, langrenn og sykkel – rett utenfor hytteveggen, sommer som vinter." image="images/misc/langrenn-vaset.jpg" image_alt="Preparerte langrennsløyper på snaufjellet ved Vaset" label="Vaset · Hele året" %}
 
 <section class="activity" id="alpint">
-  <h2>Alpint</h2>
-  <p>Vaset skiheiser har 9 nedfarter i ulike vanskelighetsgrader. Vaset er et flott alternativ for barnefamilier og de som vil øve seg på rails eller hopp.</p>
-  <img src="{% static 'images/misc/kiting-pa-vaset.jpg' %}" alt="Snøkiting på fjellet ved Vaset" loading="lazy">
+  <div class="content activity-grid">
+    <figure class="activity-photo">
+      <img src="{% static 'images/misc/kiting-pa-vaset.jpg' %}" alt="Snøkiting på fjellet ved Vaset" loading="lazy">
+    </figure>
+    <div class="activity-text">
+      <p class="season">Vinter</p>
+      <h2>Alpint</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+      <p>Vaset skiheiser har 9 nedfarter i ulike vanskelighetsgrader. Vaset er et flott alternativ for barnefamilier og de som vil øve seg på rails eller hopp.</p>
+      <p class="fact"><strong>9</strong> nedfarter</p>
+    </div>
+  </div>
 </section>
 
-<section class="activity" id="langrenn">
-  <h2>Langrenn</h2>
-  <p>Løypenettet på Vaset er på ca. 120 kilometer, og prepareres av Vasetløypene SA. Løypelaget preparerer løypenettet med to store løypemaskiner med en bredde på 4,5 meter. Løypemaskinene lager to klassiske spor og med skøytetrasé i midten. Løypenettet til Vasetløypene varierer fra lysløype som ligger i granskog, til løypene på snaufjellet innenfor Gomobu. Her kan en oppleve skiturer på slake vidder, men også mulighet for å komme opp på fjellet «Syni» på 1137 moh.</p>
-  <img src="{% static 'images/misc/langrenn-vaset.jpg' %}" alt="Preparerte langrennsløyper på snaufjellet ved Vaset" loading="lazy">
+<section class="activity is-flipped" id="langrenn">
+  <div class="content activity-grid">
+    <figure class="activity-photo">
+      <img src="{% static 'images/misc/vaset-vinter-svarthvit.jpg' %}" alt="Skiløyper over snaufjellet ved Vaset" loading="lazy">
+    </figure>
+    <div class="activity-text">
+      <p class="season">Vinter</p>
+      <h2>Langrenn</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+      <p>Løypenettet på Vaset er på ca. 120 kilometer, og prepareres av Vasetløypene SA med to store løypemaskiner med en bredde på 4,5 meter. Løypemaskinene lager to klassiske spor og skøytetrasé i midten.</p>
+      <p>Løypenettet varierer fra lysløype som ligger i granskog, til løypene på snaufjellet innenfor Gomobu. Her kan en oppleve skiturer på slake vidder, men også mulighet for å komme opp på fjellet «Syni» på 1137 moh.</p>
+      <p class="fact"><strong>120</strong> km løyper</p>
+    </div>
+  </div>
 </section>
 
 <section class="activity" id="sykkel">
-  <h2>Sykkel</h2>
-  <p>Vaset ligger midt i et eldorado for syklister i alle aldre og på alle nivåer. Sykkelmiljøet i Valdres har vokst de siste årene, med Valdresrittet og Offroad Valdres som beintøffe ritt og familievennlige sykkelturer som en del av den nasjonale sykkelruta «Mjølkevegen». Fra Gomobu finnes det flere titalls flotte og merkede sykkelløyper som passer for hele familien.</p>
+  <div class="content activity-grid no-photo">
+    <div class="activity-text">
+      <p class="season">Sommer</p>
+      <h2>Sykkel</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+      <p>Vaset ligger midt i et eldorado for syklister i alle aldre og på alle nivåer. Sykkelmiljøet i Valdres har vokst de siste årene, med Valdresrittet og Offroad Valdres som beintøffe ritt og familievennlige sykkelturer som en del av den nasjonale sykkelruta «Mjølkevegen».</p>
+      <p>Fra Gomobu finnes det flere titalls flotte og merkede sykkelløyper som passer for hele familien.</p>
+    </div>
+  </div>
 </section>
 
-<section class="cta">
-  <h2>Bo midt i det</h2>
-  <p>Langrennssporet går rett forbi flere av hyttegrendene på Brakastølen.</p>
-  <a href="{% url 'tomter' %}" class="button">Se ledige tomter</a>
-</section>
+{% include 'core/cta.html' with heading="Bo midt i det" text="Langrennssporet går rett forbi flere av hyttegrendene på Brakastølen." interest="prospectus" button="Be om prospekt" %}
 {% endblock %}

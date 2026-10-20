@@ -1,13 +1,139 @@
-// footer – styled in the design phase. Palette and fonts: global/_variables.scss
+// Footer on the deep brand green, with sage details.
 @use '../global/variables' as *;
 
-// Mobile and tablet
+.site-footer {
+  background: $secondColor;
+  color: rgba(246, 243, 233, 0.78);
+  font-size: 17px;
+
+  a {
+    color: $white;
+    text-decoration: none;
+  }
+
+  h2 {
+    font-family: $fontBody;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: $sage;
+    margin-bottom: 18px;
+  }
+
+  .footer-logo {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 24px;
+
+    img {
+      width: 72px;
+      margin-bottom: 12px;
+    }
+
+    .logo-name {
+      font-size: 30px;
+      line-height: 1;
+    }
+
+    .logo-place {
+      color: $sage;
+      letter-spacing: 0.14em;
+      font-size: 13px;
+    }
+  }
+
+  .footer-brand p {
+    max-width: 24em;
+  }
+
+  .big-link {
+    font-family: $fontDisplay;
+    font-size: clamp(24px, 1.9vw, 32px);
+    line-height: 1.3;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.25s ease;
+
+    &:hover {
+      border-color: $sage;
+    }
+  }
+
+  .company {
+    margin-top: 18px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .footer-links ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    columns: 2;
+    column-gap: 32px;
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    a:hover {
+      color: $sage;
+    }
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    border-top: 1px solid $borderOnDark;
+    font-size: 15px;
+
+    a,
+    .cookie-settings {
+      color: rgba(246, 243, 233, 0.78);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .cookie-settings {
+      background: none;
+      border: 0;
+      padding: 0;
+      font: inherit;
+      cursor: pointer;
+    }
+  }
+}
+
 @media (max-width: 1139px) {
+  .site-footer {
+    .footer-grid {
+      display: grid;
+      gap: 44px;
+      padding-top: 64px;
+      padding-bottom: 48px;
+    }
+
+    .footer-bottom {
+      padding-top: 22px;
+      padding-bottom: 28px;
+    }
+  }
 }
 
-// Desktop
 @media only screen and (min-width: 1140px) {
-}
+  .site-footer {
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 5fr 4fr 3fr;
+      gap: u(80);
+      padding-top: u(110);
+      padding-bottom: u(90);
+    }
 
-@media (prefers-reduced-motion: reduce) {
+    .footer-bottom {
+      padding-top: 26px;
+      padding-bottom: 30px;
+    }
+  }
 }

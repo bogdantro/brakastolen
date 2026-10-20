@@ -10,8 +10,10 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'scss/store/legal.css' %}">
 
-<article class="legal">
-  <h1>Personvernerklæring</h1>
+{% include 'core/page-header.html' with title="Personvernerklæring" lead="Slik behandler vi opplysningene du sender oss via nettsiden." label="Brakastølen · Personvern" %}
+
+<article class="section legal">
+  <div class="content prose">
 
   <h2>Retningslinjer for personvern</h2>
   <p>Disse retningslinjene gjelder behandlingen av personopplysninger som er innhentet på denne nettsiden og behandles av {{ business.company }}, org.nr. {{ business.org_number_display }}, {{ business.street }}, {{ business.postal_code }} {{ business.city }} (heretter «vi»).</p>
@@ -48,5 +50,6 @@
 
   <h2>Kontaktinformasjon</h2>
   <p>Ønsker du innsyn, retting eller sletting, eller har du andre spørsmål om behandlingen av personopplysninger, ta kontakt på <a href="mailto:{{ business.email }}">{{ business.email }}</a> eller <a href="tel:{{ business.phone }}">{{ business.phone_display }}</a>.</p>
+  </div>
 </article>
 {% endblock %}

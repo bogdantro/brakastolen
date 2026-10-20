@@ -10,25 +10,23 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'scss/store/nyheter.css' %}">
 
-<section class="page-intro">
-  <h1>Nyheter</h1>
-  <p>Siste nytt fra Brakastølen.</p>
-</section>
+{% include 'core/page-header.html' with title="Nyheter" lead="Siste nytt fra Brakastølen – hyttegrender, tomter og fremdrift." image="images/projects/leve-hytter-interior-hellerud.jpg" image_alt="Lyst hytteinteriør med utsikt" label="Brakastølen · Nyheter" %}
 
-<section class="list">
-  <ul>
-    {% for post in posts %}
-    <li>
-      <a href="{{ post.get_absolute_url }}">
-        {% if post.image %}<img src="{{ post.image.url }}" alt="{{ post.image_alt|default:post.title }}" loading="lazy">{% endif %}
-        <h2>{{ post.title }}</h2>
-        <time datetime="{{ post.created_at|date:'Y-m-d' }}">{{ post.created_at|date:'j. F Y' }}</time>
-        <p>{{ post.excerpt }}</p>
-      </a>
-    </li>
-    {% empty %}
-    <li>Ingen nyheter ennå. Ta gjerne <a href="{% url 'kontakt' %}">kontakt</a> for siste nytt om tomtene.</li>
-    {% endfor %}
-  </ul>
+<section class="section">
+  <div class="content">
+    <ul class="news-list">
+      {% for post in posts %}
+      <li>
+        <a href="{{ post.get_absolute_url }}">
+          <time datetime="{{ post.created_at|date:'Y-m-d' }}">{{ post.created_at|date:'j. F Y' }}</time>
+          <h2>{{ post.title }}</h2>
+          <p>{{ post.excerpt }}</p>
+        </a>
+      </li>
+      {% empty %}
+      <li class="empty">Ingen nyheter ennå. Ta gjerne <a href="{% url 'kontakt' %}" class="text-link">kontakt</a> for siste nytt om tomtene.</li>
+      {% endfor %}
+    </ul>
+  </div>
 </section>
 {% endblock %}

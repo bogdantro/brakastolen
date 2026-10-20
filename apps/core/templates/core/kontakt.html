@@ -10,79 +10,86 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'scss/store/kontakt.css' %}">
 
-<section class="page-intro">
-  <h1>Kontakt</h1>
-  <p>Er du interessert i ei unik tomt, og/eller et hytteprosjekt på Brakastølen? Be om prospekt for de ulike tomte- og hytteområdene, eller avtal en personlig visning.</p>
-  <p>Send oss en e-post på <a href="mailto:{{ business.email }}">{{ business.email }}</a>, ring oss på <a href="tel:{{ business.phone }}">{{ business.phone_display }}</a> eller fyll ut skjemaet nedenfor.</p>
+{% include 'core/page-header.html' with title="Kontakt" lead="Er du interessert i ei unik tomt, og/eller et hytteprosjekt på Brakastølen? Be om prospekt, eller avtal en personlig visning." image="images/projects/leve-hytter-ildsted-hellerud.jpg" image_alt="Peis og lune stoler i Leve-hytte" label="Brakastølen · Kontakt" %}
+
+<section class="section contact-section">
+  <div class="content contact-grid">
+    <div class="form-column">
+      <h2>Send oss en melding</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+
+      {% if csrf_expired %}
+      <p class="notice" role="alert">Skjemaet hadde ligget åpent en stund, så vi måtte fornye det av sikkerhetshensyn. Teksten din er tatt vare på – trykk «Send» én gang til.</p>
+      {% endif %}
+
+      <form method="post" action="{% url 'kontakt' %}" id="inquiry-form" class="form" novalidate>
+        {% csrf_token %}
+        {{ form.form_ts }}
+        {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
+
+        <div class="field-row">
+          <div class="field">
+            <label for="{{ form.name.id_for_label }}">Navn <span class="required" aria-hidden="true">*</span></label>
+            {{ form.name }}
+            {{ form.name.errors }}
+          </div>
+          <div class="field">
+            <label for="{{ form.email.id_for_label }}">E-post <span class="required" aria-hidden="true">*</span></label>
+            {{ form.email }}
+            {{ form.email.errors }}
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="{{ form.phone.id_for_label }}">Telefon <span class="optional">(valgfritt)</span></label>
+            {{ form.phone }}
+            {{ form.phone.errors }}
+          </div>
+          <div class="field">
+            <label for="{{ form.interest.id_for_label }}">Jeg er interessert i</label>
+            {{ form.interest }}
+            {{ form.interest.errors }}
+          </div>
+        </div>
+        <div class="field">
+          <label for="{{ form.message.id_for_label }}">Beskjed <span class="optional">(valgfritt)</span></label>
+          {{ form.message }}
+          {{ form.message.errors }}
+        </div>
+
+        {% comment %} Honeypot – hidden from people with CSS and aria-hidden, filled in by bots. {% endcomment %}
+        <div class="hp-field" aria-hidden="true">
+          <label for="{{ form.hp_check.id_for_label }}">Ikke fyll ut dette feltet</label>
+          {{ form.hp_check }}
+        </div>
+
+        <div class="field checkbox">
+          {{ form.consent }}
+          <label for="{{ form.consent.id_for_label }}">Jeg godtar <a href="{% url 'personvern' %}" target="_blank">personvernerklæringen</a> <span class="required" aria-hidden="true">*</span></label>
+          {{ form.consent.errors }}
+        </div>
+
+        <button type="submit" class="button">Send {% include 'core/arrow.svg' %}</button>
+      </form>
+    </div>
+
+    <aside class="contact-info">
+      <h2>Eller ta kontakt direkte</h2>
+      <p><a href="tel:{{ business.phone }}" class="big-link">{{ business.phone_display }}</a></p>
+      <p><a href="mailto:{{ business.email }}" class="big-link">{{ business.email }}</a></p>
+      <p class="small">For visning, kontakt grunneier og utbygger {{ business.company }}.</p>
+    </aside>
+  </div>
 </section>
 
-<section class="form-section">
-  {% if csrf_expired %}
-  <p class="notice" role="alert">Skjemaet hadde ligget åpent en stund, så vi måtte fornye det av sikkerhetshensyn. Teksten din er tatt vare på – trykk «Send» én gang til.</p>
-  {% endif %}
-
-  <form method="post" action="{% url 'kontakt' %}" id="inquiry-form" novalidate>
-    {% csrf_token %}
-    {{ form.form_ts }}
-    {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
-
-    <div class="field">
-      <label for="{{ form.name.id_for_label }}">Navn <span class="required" aria-hidden="true">*</span></label>
-      {{ form.name }}
-      {{ form.name.errors }}
+<section class="section faq-section">
+  <div class="content split">
+    <div class="split-head">
+      <h2>Ofte stilte spørsmål</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
     </div>
-    <div class="field">
-      <label for="{{ form.email.id_for_label }}">E-post <span class="required" aria-hidden="true">*</span></label>
-      {{ form.email }}
-      {{ form.email.errors }}
-    </div>
-    <div class="field">
-      <label for="{{ form.phone.id_for_label }}">Telefon <span class="optional">(valgfritt)</span></label>
-      {{ form.phone }}
-      {{ form.phone.errors }}
-    </div>
-    <div class="field">
-      <label for="{{ form.interest.id_for_label }}">Jeg er interessert i</label>
-      {{ form.interest }}
-      {{ form.interest.errors }}
-    </div>
-    <div class="field">
-      <label for="{{ form.message.id_for_label }}">Beskjed <span class="optional">(valgfritt)</span></label>
-      {{ form.message }}
-      {{ form.message.errors }}
-    </div>
-
-    {% comment %} Honeypot – hidden from people with CSS and aria-hidden, filled in by bots. {% endcomment %}
-    <div class="hp-field" aria-hidden="true">
-      <label for="{{ form.hp_check.id_for_label }}">Ikke fyll ut dette feltet</label>
-      {{ form.hp_check }}
-    </div>
-
-    <div class="field checkbox">
-      {{ form.consent }}
-      <label for="{{ form.consent.id_for_label }}">Jeg godtar <a href="{% url 'personvern' %}" target="_blank">personvernerklæringen</a> <span class="required" aria-hidden="true">*</span></label>
-      {{ form.consent.errors }}
-    </div>
-
-    <button type="submit" class="button">Send</button>
-  </form>
-</section>
-
-<section class="contact-info">
-  <h2>Utbygger</h2>
-  <p>{{ business.company }}</p>
-  <p><a href="tel:{{ business.phone }}">Tlf. {{ business.phone_display }}</a></p>
-  <p><a href="mailto:{{ business.email }}">{{ business.email }}</a></p>
-</section>
-
-<section class="faq">
-  <h2>Ofte stilte spørsmål</h2>
-  {% for item in faq %}
-  <details>
-    <summary>{{ item.question }}</summary>
-    <p>{{ item.answer }}</p>
-  </details>
-  {% endfor %}
+    {% include 'core/faq-list.html' %}
+  </div>
 </section>
 {% endblock %}
 

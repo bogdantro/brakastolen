@@ -1,1 +1,1 @@
-{"version":3,"sources":[],"names":[],"mappings":"","file":"prosjekter.css"}
+{"version":3,"sourceRoot":"","sources":["prosjekter.scss","../global/_variables.scss"],"names":[],"mappings":"AAGA;EACE;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE,OCMQ;EDLR;EACA;EACA;EACA;;AAEA;EACE,OCXS;;ADcX;EACE,OCfS;EDgBT,cCRK","file":"prosjekter.css"}

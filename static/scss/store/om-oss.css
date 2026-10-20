@@ -1,1 +1,27 @@
+.rows.company dt,
+.partners-section .rows dt {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #5E7D5A;
+  padding-top: 6px;
+}
+.rows.company dd,
+.partners-section .rows dd {
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+  font-size: clamp(22px, 1.6vw, 27px);
+  line-height: 1.25;
+  color: #0D1716;
+}
+.rows.company dd a,
+.partners-section .rows dd a {
+  text-decoration: none;
+  color: #0D1716;
+  border-bottom: 1px solid #90AE8C;
+}
+
+.partners-section {
+  background: #EEE8DA;
+}
+
 /*# sourceMappingURL=om-oss.css.map */

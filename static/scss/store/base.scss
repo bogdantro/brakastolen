@@ -1,0 +1,1022 @@
+// Shared building blocks for every public page: sections and the content grid, page headers,
+// headings, text, links and buttons, fact lists, project lists, FAQ, the green call to action,
+// tables, forms and flash messages. Page files only add what is unique to that page.
+@use '../global/variables' as *;
+
+// ------------------------------------------------------------
+// Layout: content lines up with the hero heading (x 116) and the nav's right edge (x 89)
+// ------------------------------------------------------------
+.content {
+  margin: 0 auto;
+}
+
+.section {
+  position: relative;
+}
+
+h2 {
+  font-size: clamp(36px, 3.9vw, 64px);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+}
+
+h3 {
+  font-size: clamp(24px, 1.8vw, 30px);
+  line-height: 1.15;
+}
+
+.copper-rule {
+  display: block;
+  width: 56px;
+  height: 2px;
+  background: $sageDeep;
+}
+
+.prose {
+  color: $mutedText;
+  max-width: 36em;
+
+  p + p {
+    margin-top: 1em;
+  }
+
+  &.large {
+    font-size: clamp(19px, 1.45vw, 23px);
+    line-height: 1.55;
+    color: #45433f;
+  }
+
+  h2 {
+    font-size: clamp(30px, 2.6vw, 42px);
+    margin: 1.6em 0 0.5em;
+    color: $heroText;
+  }
+
+  h3 {
+    margin: 1.4em 0 0.4em;
+    color: $heroText;
+  }
+
+  ul, ol {
+    padding-left: 1.2em;
+    margin: 1em 0;
+  }
+
+  li + li {
+    margin-top: 0.35em;
+  }
+
+  a {
+    color: $primaryColor;
+    text-decoration-color: $sage;
+    text-underline-offset: 3px;
+  }
+
+  blockquote {
+    margin: 1.5em 0;
+    padding-left: 24px;
+    border-left: 2px solid $sage;
+    font-style: italic;
+  }
+}
+
+.split-head {
+  .copper-rule {
+    margin: 28px 0 24px;
+  }
+
+  p {
+    color: $mutedText;
+    max-width: 22em;
+  }
+
+  .text-link {
+    margin-top: 22px;
+  }
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+// ------------------------------------------------------------
+// Links and buttons
+// ------------------------------------------------------------
+.text-link {
+  display: inline-block;
+  color: $primaryColor;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: $sage;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+  transition: text-decoration-color 0.25s ease;
+
+  &:hover {
+    text-decoration-color: $primaryColor;
+  }
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 54px;
+  padding: 0 26px;
+  background: $primaryColor;
+  color: $white;
+  border: 0;
+  border-radius: 2px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 17px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    background: $sageDeep;
+  }
+}
+
+// The round arrow link from the hero
+.circle-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+  color: $black;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 19px;
+
+  .circle {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    background: $primaryColor;
+    color: $white;
+    border-radius: 50%;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  &:hover .circle {
+    background: $sage;
+    color: $primaryColor;
+  }
+}
+
+// ------------------------------------------------------------
+// Page header – the hero's split, for every other page
+// ------------------------------------------------------------
+.page-header {
+  position: relative;
+  background: $background;
+
+  .page-header-photo {
+    overflow: hidden;
+    background: #2b2f2c;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    // Same soft wash as the hero, so the white nav links stay readable
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(18, 20, 22, 0.42) 0%, rgba(18, 20, 22, 0) 32%);
+      pointer-events: none;
+    }
+  }
+
+  h1 {
+    letter-spacing: -0.03em;
+
+    // Each line of the heading sits on cream – it steps out over the photo like the hero
+    span {
+      background: $background;
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+  }
+
+  .meta {
+    color: $sageDeep;
+    font-weight: 500;
+  }
+
+  .lead {
+    color: $mutedText;
+  }
+
+  // Pages without a photo: a band of the brand green, so the white nav links stay readable
+  &.is-plain {
+    background: $primaryColor;
+
+    h1 {
+      color: $white;
+
+      span {
+        background: none;
+      }
+    }
+
+    .lead {
+      color: rgba(246, 243, 233, 0.8);
+    }
+
+    .meta {
+      color: $sage;
+    }
+
+    .copper-rule {
+      background: $sage;
+    }
+
+    .rail {
+      color: rgba(246, 243, 233, 0.7);
+    }
+
+    .rail-line {
+      background: $borderOnDark !important;
+    }
+  }
+
+  .rail-label {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    white-space: nowrap;
+  }
+}
+
+// ------------------------------------------------------------
+// Facts: a strip of short facts with thin rules between them
+// ------------------------------------------------------------
+.fact-strip {
+  display: grid;
+  margin-top: 0;
+
+  > div {
+    border-top: 1px solid $border;
+  }
+
+  dt {
+    color: $sageDeep;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+  }
+
+  dd {
+    margin: 6px 0 0;
+    font-family: $fontDisplay;
+    font-size: clamp(26px, 2.2vw, 36px);
+    line-height: 1.1;
+    color: $heroText;
+  }
+}
+
+// Rows: a term on the left, its text on the right (activities, partners, project facts)
+.rows {
+  margin: 0;
+
+  > div {
+    display: grid;
+    border-top: 1px solid $border;
+  }
+
+  > div:last-child {
+    border-bottom: 1px solid $border;
+  }
+
+  dt {
+    font-family: $fontDisplay;
+    font-size: clamp(26px, 2vw, 34px);
+    line-height: 1.1;
+    color: $heroText;
+  }
+
+  dd {
+    margin: 0;
+    color: $mutedText;
+
+    a {
+      color: $primaryColor;
+      text-decoration-color: $sage;
+      text-underline-offset: 3px;
+    }
+  }
+}
+
+// ------------------------------------------------------------
+// Projects
+// ------------------------------------------------------------
+.project-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+
+  .empty {
+    color: $mutedText;
+  }
+}
+
+.project-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+
+  .project-photo {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background: $sand;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1.2s ease;
+    }
+  }
+
+  &:hover .project-photo img {
+    transform: scale(1.03);
+  }
+
+  .project-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid $border;
+    font-size: 15px;
+    color: $mutedText;
+  }
+
+  .status {
+    color: $sageDeep;
+    font-weight: 500;
+  }
+
+  .status-sold {
+    color: $mutedText;
+  }
+
+  h3 {
+    margin-top: 16px;
+  }
+
+  p {
+    margin-top: 8px;
+    color: $mutedText;
+    font-size: 17px;
+  }
+}
+
+// ------------------------------------------------------------
+// News list
+// ------------------------------------------------------------
+.news-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    border-top: 1px solid $border;
+  }
+
+  li:last-child {
+    border-bottom: 1px solid $border;
+  }
+
+  a {
+    display: grid;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover h3,
+    &:hover h2 {
+      color: $sageDeep;
+    }
+  }
+
+  time {
+    color: $sageDeep;
+    font-size: 16px;
+  }
+
+  h2, h3 {
+    transition: color 0.25s ease;
+  }
+
+  p {
+    color: $mutedText;
+  }
+}
+
+// ------------------------------------------------------------
+// FAQ
+// ------------------------------------------------------------
+.faq-list {
+  details {
+    border-top: 1px solid $border;
+
+    &:last-child {
+      border-bottom: 1px solid $border;
+    }
+  }
+
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 24px 0;
+    font-family: $fontDisplay;
+    font-size: clamp(21px, 1.6vw, 26px);
+    line-height: 1.2;
+    color: $heroText;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+
+  // A plus that turns into a minus when the answer is open
+  .plus {
+    position: relative;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+
+    &::before, &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1px;
+      background: $primaryColor;
+      transition: transform 0.3s ease;
+    }
+
+    &::after {
+      transform: rotate(90deg);
+    }
+  }
+
+  details[open] .plus::after {
+    transform: rotate(0deg);
+  }
+
+  details p {
+    padding: 0 48px 26px 0;
+    color: $mutedText;
+    max-width: 40em;
+  }
+}
+
+// ------------------------------------------------------------
+// Call to action on the brand green
+// ------------------------------------------------------------
+.cta-band {
+  background: $primaryColor;
+  color: $white;
+
+  h2 {
+    color: $white;
+    max-width: 14em;
+  }
+
+  p {
+    color: rgba(246, 243, 233, 0.78);
+    margin-top: 18px;
+    font-size: 20px;
+  }
+
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px 32px;
+    margin-top: 40px;
+  }
+
+  .button {
+    background: $sage;
+    color: $primaryColor;
+
+    &:hover {
+      background: $white;
+    }
+  }
+
+  .phone {
+    color: $white;
+    text-decoration: underline;
+    text-decoration-color: $sage;
+    text-underline-offset: 6px;
+  }
+}
+
+// ------------------------------------------------------------
+// Tables (plots)
+// ------------------------------------------------------------
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+
+  th {
+    text-align: left;
+    font-weight: 500;
+    font-size: 15px;
+    color: $sageDeep;
+    padding: 0 16px 14px 0;
+    border-bottom: 1px solid $heroText;
+  }
+
+  td {
+    padding: 18px 16px 18px 0;
+    border-bottom: 1px solid $border;
+  }
+
+  .plot-number {
+    font-family: $fontDisplay;
+    font-size: 24px;
+  }
+
+  .plot-status {
+    font-weight: 500;
+
+    &.status-available { color: $sageDeep; }
+    &.status-reserved { color: #8A6A2E; }
+    &.status-sold { color: $mutedText; }
+  }
+}
+
+// ------------------------------------------------------------
+// Forms (contact)
+// ------------------------------------------------------------
+.form {
+  display: grid;
+  gap: 22px;
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  label {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .required {
+    color: $sageDeep;
+  }
+
+  .optional {
+    color: $mutedText;
+    font-weight: 400;
+  }
+
+  .input {
+    font: inherit;
+    font-size: 18px;
+    width: 100%;
+    padding: 14px 16px;
+    background: #FBF8F1;
+    border: 1px solid $border;
+    border-radius: 2px;
+    color: $black;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primaryColor;
+      box-shadow: 0 0 0 3px rgba(144, 174, 140, 0.35);
+    }
+
+    &[aria-invalid="true"] {
+      border-color: #A23B2A;
+    }
+  }
+
+  select.input {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, $primaryColor 50%), linear-gradient(135deg, $primaryColor 50%, transparent 50%);
+    background-position: calc(100% - 22px) 52%, calc(100% - 16px) 52%;
+    background-size: 6px 6px;
+    background-repeat: no-repeat;
+  }
+
+  .checkbox {
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    input {
+      width: 20px;
+      height: 20px;
+      margin-top: 3px;
+      accent-color: $primaryColor;
+    }
+
+    label {
+      flex: 1;
+      font-weight: 400;
+    }
+
+    a {
+      color: $primaryColor;
+    }
+
+    .errorlist {
+      flex-basis: 100%;
+    }
+  }
+
+  .button {
+    justify-self: start;
+  }
+}
+
+.errorlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: #A23B2A;
+  font-size: 16px;
+}
+
+.notice {
+  padding: 16px 20px;
+  background: $card;
+  border-left: 2px solid $sageDeep;
+}
+
+// Flash message ("Takk for henvendelsen!") under the nav
+.flash-messages {
+  position: relative;
+  z-index: 40;
+  background: $primaryColor;
+  color: $white;
+
+  .flash {
+    margin: 0 auto;
+    padding: 18px 20px;
+  }
+}
+
+.draft-notice {
+  position: relative;
+  z-index: 40;
+  background: #8A6A2E;
+  color: #fff;
+  text-align: center;
+  padding: 10px 20px;
+}
+
+// ------------------------------------------------------------
+// Mobile and tablet
+// ------------------------------------------------------------
+@media (max-width: 1139px) {
+  .content {
+    padding: 0 20px;
+  }
+
+  .section {
+    padding: 72px 0;
+  }
+
+  .split {
+    display: grid;
+    gap: 36px;
+  }
+
+  .section-head {
+    margin-bottom: 32px;
+  }
+
+  .flash-messages {
+    margin-top: 64px;
+  }
+
+  .page-header {
+    display: flex;
+    flex-direction: column;
+    padding-top: 64px;
+
+    .page-header-photo {
+      position: relative;
+      height: 46vh;
+      min-height: 280px;
+      max-height: 520px;
+    }
+
+    .rail {
+      display: none;
+    }
+
+    .page-header-text {
+      position: relative;
+      padding: 0 20px 48px;
+      margin-top: -46px;
+    }
+
+    h1 {
+      font-size: clamp(44px, 12vw, 80px);
+      // 1.25 em = DM Serif Display's full glyph box, so the cream line backgrounds
+      // touch without covering the descenders of the line above
+      line-height: 1.25;
+
+      span {
+        padding: 0 14px 0 0;
+      }
+    }
+
+    &.is-plain .page-header-text {
+      margin-top: 48px;
+    }
+
+    .meta {
+      margin-top: 18px;
+    }
+
+    .copper-rule {
+      margin: 22px 0 18px;
+    }
+
+    .lead {
+      font-size: 19px;
+      line-height: 1.5;
+    }
+  }
+
+  .fact-strip {
+    grid-template-columns: 1fr 1fr;
+    margin-top: 48px;
+
+    > div {
+      padding: 18px 12px 18px 0;
+    }
+  }
+
+  .rows > div {
+    gap: 6px;
+    padding: 20px 0;
+  }
+
+  .project-list {
+    gap: 44px;
+  }
+
+  .news-list a {
+    gap: 6px;
+    padding: 24px 0;
+  }
+
+  .cta-band {
+    padding: 72px 0;
+  }
+
+  .data-table {
+    // Phones: each plot becomes a small block instead of a wide table row
+    thead {
+      display: none;
+    }
+
+    tr {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 12px;
+      padding: 16px 0;
+      border-bottom: 1px solid $border;
+    }
+
+    td {
+      padding: 0;
+      border: 0;
+    }
+
+    td[data-label]::before {
+      content: attr(data-label) ': ';
+      color: $mutedText;
+    }
+  }
+
+  .flash-messages .flash {
+    padding: 16px 20px;
+  }
+}
+
+// ------------------------------------------------------------
+// Desktop – on the reference grid
+// ------------------------------------------------------------
+@media only screen and (min-width: 1140px) {
+  .content {
+    padding: 0 u(89) 0 u(116);
+    max-width: 2200px;
+  }
+
+  .section {
+    padding: u(140) 0;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    gap: u(120);
+    align-items: start;
+  }
+
+  .split-head {
+    position: sticky;
+    top: 40px;
+  }
+
+  .section-head {
+    margin-bottom: u(56);
+  }
+
+  .flash-messages {
+    margin-top: u(110);
+
+    .flash {
+      padding: 18px u(89) 18px u(116);
+    }
+  }
+
+  // The text stays in normal flow, so a long (three-line) title makes the header taller
+  // instead of spilling into the next section; the photo fills whatever height that gives.
+  .page-header {
+    min-height: max(470px, u(640));
+    padding: u(220) 0 u(90);
+
+    .page-header-photo,
+    .rail {
+      position: absolute;
+    }
+
+    .page-header-photo {
+      left: u(495);
+      top: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    // A cream step under the heading, so the lead text has room beside the photo
+    &::after {
+      content: '';
+      position: absolute;
+      left: u(495);
+      top: u(400);
+      width: u(210);
+      bottom: 0;
+      background: $background;
+    }
+
+    .rail {
+      inset: 0 auto 0 0;
+      width: u(100);
+      z-index: 1;
+
+      .rail-line {
+        position: absolute;
+        left: u(78);
+        top: u(160);
+        bottom: 0;
+        width: 1px;
+        background: rgba(20, 22, 22, 0.55);
+      }
+
+      .rail-label {
+        position: absolute;
+        left: u(32);
+        top: u(190);
+        margin: 0;
+        font-size: u(13.5);
+      }
+    }
+
+    .page-header-text {
+      position: relative;
+      margin-left: u(116);
+      width: u(820);
+      z-index: 2;
+    }
+
+    h1 {
+      font-size: u(112);
+      line-height: 1.25;
+
+      span {
+        padding: 0 u(26) 0 0;
+      }
+    }
+
+    .meta {
+      margin-top: u(26);
+      font-size: u(18);
+    }
+
+    .copper-rule {
+      width: u(58);
+      margin: u(30) 0 u(22);
+    }
+
+    .lead {
+      width: u(560);
+      font-size: u(21);
+      line-height: 1.5;
+    }
+
+    &.is-plain {
+      min-height: 0;
+      padding: u(230) 0 u(90);
+
+      &::after {
+        display: none;
+      }
+    }
+  }
+
+  .fact-strip {
+    grid-template-columns: repeat(4, 1fr);
+    margin-top: u(110);
+
+    > div {
+      padding: u(26) u(30) 0 0;
+    }
+
+    > div + div {
+      border-left: 1px solid $border;
+      padding-left: u(30);
+    }
+  }
+
+  .rows > div {
+    grid-template-columns: u(240) 1fr;
+    gap: u(40);
+    padding: u(30) 0;
+  }
+
+  .project-list {
+    grid-template-columns: repeat(3, 1fr);
+    gap: u(48);
+  }
+
+  .news-list a {
+    grid-template-columns: u(240) 1fr;
+    column-gap: u(40);
+    padding: u(32) 0;
+
+    time {
+      grid-row: span 2;
+      padding-top: u(8);
+    }
+
+    p {
+      margin-top: 8px;
+    }
+  }
+
+  .cta-band {
+    padding: u(150) 0;
+
+    h2 {
+      font-size: u(84);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-card .project-photo img,
+  .faq-list .plus::before,
+  .faq-list .plus::after {
+    transition: none;
+  }
+}

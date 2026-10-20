@@ -79,15 +79,17 @@ From the **design reference** (`docs/design-reference-hero.png`, sampled):
 | Nav glass | `#3D464D` at ~55 % over the photo |
 | Light button | `#F6F3E9` |
 
-Mapped in `static/scss/global/_variables.scss`: `$primaryColor #AC742C`, `$secondColor #002223`,
-`$black #141616`, `$white #F6F3E9`, `$background #F1EBDF` (+ supporting colours).
+**Decision:** the main colour is the current site's green. Mapped in `static/scss/global/_variables.scss`:
+`$primaryColor #002223` (brand green), `$secondColor #001819` (footer), `$sage #90AE8C` / `$sageDeep #5E7D5A`
+(accents, "i fjellet" in the hero), `$black #141616`, `$white #F6F3E9`, `$background #F1EBDF` (cream from the reference).
+The copper from the reference image was replaced by sage.
 
 ### Fonts
 - Current site: **Abhaya Libre** (headings, `font-840908`), **Poppins** (menu/UI). The theme also loads
   Droid Serif, Dosis, Playfair Display, Oswald, Roboto, Nunito and Open Sans (theme leftovers).
 - Design reference: a high-contrast serif for headings/nav (closest Google Font: **Playfair Display**),
   a serif body and a handwritten script ("Mer enn et sted.").
-- Loaded for now: Playfair Display + Abhaya Libre + Mrs Saint Delafield (script) – **to confirm in design phase**.
+- **Chosen** (matched to the design reference): **DM Serif Display** (headings, price), **Newsreader** (nav, body), **La Belle Aurore** (the one handwritten line).
 
 ### Style / feel
 Current site: dark teal, full-width photos, Revolution/Layer sliders, one long one-pager with anchors.

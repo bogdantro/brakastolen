@@ -14,13 +14,13 @@ body.dashboard {
 }
 
 a {
-  color: #002223;
+  color: #001819;
 }
 
 .sidebar {
   width: 230px;
   flex-shrink: 0;
-  background: #002223;
+  background: #001819;
   color: #F6F3E9;
   padding: 24px 18px;
   display: flex;
@@ -32,7 +32,7 @@ a {
   text-decoration: none;
 }
 .sidebar .brand {
-  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
   font-size: 22px;
 }
 .sidebar ul {
@@ -58,7 +58,7 @@ a {
   background: rgba(255, 255, 255, 0.12);
 }
 .sidebar .badge {
-  background: #AC742C;
+  background: #002223;
   border-radius: 10px;
   padding: 0 8px;
   font-size: 12px;
@@ -99,7 +99,7 @@ h2 {
 
 .panel, fieldset {
   background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(20, 22, 22, 0.16);
   border-radius: 4px;
   padding: 18px 20px;
   margin: 0 0 20px;
@@ -116,7 +116,7 @@ input[type=password], select, textarea {
   width: 100%;
   max-width: 640px;
   padding: 8px 10px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(20, 22, 22, 0.16);
   border-radius: 3px;
   background: #fff;
 }
@@ -163,16 +163,16 @@ input[type=checkbox] {
   display: inline-block;
   font: inherit;
   cursor: pointer;
-  background: #002223;
+  background: #001819;
   color: #F6F3E9;
-  border: 1px solid #002223;
+  border: 1px solid #001819;
   border-radius: 3px;
   padding: 8px 14px;
   text-decoration: none;
 }
 .button.secondary {
   background: #fff;
-  color: #002223;
+  color: #001819;
 }
 .button.danger {
   background: #B3261E;
@@ -184,7 +184,7 @@ input[type=checkbox] {
   border: 0;
   padding: 0;
   font: inherit;
-  color: #002223;
+  color: #001819;
   text-decoration: underline;
   cursor: pointer;
 }
@@ -228,7 +228,7 @@ form.inline {
 }
 .messages .message.warning, .message.warning {
   background: #FFF6E5;
-  border-left-color: #AC742C;
+  border-left-color: #002223;
 }
 
 .stats {
@@ -242,7 +242,7 @@ form.inline {
 .stats a {
   display: block;
   background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(20, 22, 22, 0.16);
   border-radius: 4px;
   padding: 14px;
   text-decoration: none;
@@ -261,13 +261,13 @@ form.inline {
 }
 .tabs a {
   padding: 6px 12px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(20, 22, 22, 0.16);
   border-radius: 20px;
   text-decoration: none;
   background: #fff;
 }
 .tabs a[aria-current=page] {
-  background: #002223;
+  background: #001819;
   color: #F6F3E9;
 }
 .tabs.small a {
@@ -279,12 +279,12 @@ form.inline {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(20, 22, 22, 0.16);
 }
 .table th, .table td {
   text-align: left;
   padding: 10px 12px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(20, 22, 22, 0.16);
   vertical-align: top;
 }
 .table th {
@@ -306,11 +306,10 @@ form.inline {
   align-items: center;
   gap: 10px;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(20, 22, 22, 0.16);
 }
 .rows img {
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   border-radius: 3px;
 }
 
@@ -327,7 +326,7 @@ form.inline {
 }
 
 .dot {
-  color: #AC742C;
+  color: #002223;
 }
 
 .pre {
@@ -379,7 +378,7 @@ form.inline {
   min-height: 2px;
 }
 .chart .bar.current .fill {
-  background: #AC742C;
+  background: #002223;
 }
 
 .status-bars {
@@ -404,7 +403,7 @@ form.inline {
 .status-bars .track .fill {
   display: block;
   height: 100%;
-  background: #002223;
+  background: #001819;
   border-radius: 4px;
 }
 
@@ -453,4 +452,6 @@ form.inline {
   * {
     transition: none !important;
   }
-}/*# sourceMappingURL=dashboard.css.map */
+}
+
+/*# sourceMappingURL=dashboard.css.map */

@@ -1,1 +1,44 @@
+.plot-section {
+  background: #EEE8DA;
+}
+.plot-section .count {
+  color: #5E7D5A;
+  font-weight: 500;
+}
+.plot-section .groups {
+  margin-top: 72px;
+}
+
+.map-section .map {
+  margin: 0;
+  background: #fff;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  padding: 24px;
+}
+.map-section .map img {
+  width: 100%;
+  max-height: 1100px;
+  object-fit: contain;
+}
+.map-section .map figcaption {
+  margin-top: 14px;
+  font-size: 15px;
+  color: #5C5956;
+}
+
+.faq-section {
+  border-top: 1px solid rgba(20, 22, 22, 0.16);
+}
+
+@media (max-width: 1139px) {
+  .map-section .map {
+    padding: 10px;
+  }
+}
+@media only screen and (min-width: 1140px) {
+  .plot-section .groups {
+    margin-top: calc(var(--u) * 96);
+  }
+}
+
 /*# sourceMappingURL=tomter.css.map */

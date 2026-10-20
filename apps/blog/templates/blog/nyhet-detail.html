@@ -14,33 +14,32 @@
 
 {% if not post.is_published %}<p class="draft-notice" role="status">Utkast – bare synlig for innloggede.</p>{% endif %}
 
-<article class="post">
-  <header>
-    <p class="eyebrow"><a href="{% url 'nyheter' %}">Nyheter</a></p>
-    <h1>{{ post.title }}</h1>
-    <p class="meta">
-      <time datetime="{{ post.created_at|date:'Y-m-d' }}">{{ post.created_at|date:'j. F Y' }}</time>
-      · {{ minutes }} min lesetid{% if post.author %} · {{ post.author }}{% endif %}
-    </p>
-    {% if post.image %}<img src="{{ post.image.url }}" alt="{{ post.image_alt|default:post.title }}" fetchpriority="high">{% endif %}
-  </header>
-  {% if post.excerpt %}<p class="lead">{{ post.excerpt }}</p>{% endif %}
-  <div class="text">{{ post.text|rich }}</div>
+{% with meta=post.created_at|date:'j. F Y' %}
+{% include 'core/page-header.html' with title=post.title lead=post.excerpt image_url=post_image image_alt=post.image_alt|default:post.title label="Brakastølen · Nyheter" meta=meta %}
+{% endwith %}
+
+<article class="section post">
+  <div class="content split">
+    <aside class="split-head">
+      <p class="post-meta">{{ minutes }} min lesetid{% if post.author %}<br>{{ post.author }}{% endif %}</p>
+      <a href="{% url 'nyheter' %}" class="text-link">Alle nyheter</a>
+    </aside>
+    <div class="prose large">{{ post.text|rich }}</div>
+  </div>
 </article>
 
-<section class="more">
-  <h2>Flere nyheter</h2>
-  <ul>
-    {% for other in more_posts %}
-    <li><a href="{{ other.get_absolute_url }}">{{ other.title }}</a></li>
-    {% empty %}
-    <li><a href="{% url 'nyheter' %}">Alle nyheter</a></li>
-    {% endfor %}
-  </ul>
+{% if more_posts %}
+<section class="section more-news">
+  <div class="content">
+    <div class="section-head"><h2>Flere nyheter</h2></div>
+    <ul class="news-list">
+      {% for other in more_posts %}
+      <li><a href="{{ other.get_absolute_url }}"><time datetime="{{ other.created_at|date:'Y-m-d' }}">{{ other.created_at|date:'j. F Y' }}</time><h3>{{ other.title }}</h3><p>{{ other.excerpt }}</p></a></li>
+      {% endfor %}
+    </ul>
+  </div>
 </section>
+{% endif %}
 
-<section class="cta">
-  <h2>Interessert i en tomt?</h2>
-  <a href="{% url 'kontakt' %}?interesse=prospectus" class="button">Be om prospekt</a>
-</section>
+{% include 'core/cta.html' with heading="Interessert i en tomt?" text="Vi sender deg prospekt med pris på de ledige tomtene." interest="prospectus" button="Be om prospekt" %}
 {% endblock %}

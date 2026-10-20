@@ -1,0 +1,10 @@
+{% comment %}
+    One project in a list: photo, title and what it is.
+    Parameter: project – a Project.
+{% endcomment %}
+<a href="{% url 'prosjekt_detail' project.slug %}" class="project-card">
+  <span class="project-photo"><img src="{{ project.image.url }}" alt="{{ project.title }}" loading="lazy"></span>
+  <span class="project-meta">{{ project.get_category_display }}<span class="status status-{{ project.status }}">{{ project.get_status_display }}</span></span>
+  <h3>{{ project.title }}</h3>
+  {% if project.excerpt %}<p>{{ project.excerpt }}</p>{% endif %}
+</a>

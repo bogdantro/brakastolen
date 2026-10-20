@@ -1,13 +1,28 @@
-// prosjekter – styled in the design phase. Palette and fonts: global/_variables.scss
+// Prosjekter: category filter above the shared project list.
 @use '../global/variables' as *;
 
-// Mobile and tablet
-@media (max-width: 1139px) {
-}
+.filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin-bottom: 48px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid $border;
 
-// Desktop
-@media only screen and (min-width: 1140px) {
-}
+  a {
+    color: $mutedText;
+    text-decoration: none;
+    font-size: 18px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid transparent;
 
-@media (prefers-reduced-motion: reduce) {
+    &:hover {
+      color: $primaryColor;
+    }
+
+    &[aria-current="page"] {
+      color: $primaryColor;
+      border-color: $sageDeep;
+    }
+  }
 }

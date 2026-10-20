@@ -1,25 +1,36 @@
 {% load static %}{% comment %}
-    Main navigation. Matches the design reference (docs/design-reference-hero.png):
-    logo with "Vaset · Valdres", five links and the "Avtal visning" button.
+    Main navigation, 1:1 after docs/design-reference-hero.png: a frosted glass bar with the
+    mountain mark and two-line wordmark, five links, a divider and the "Avtal visning" pill.
 {% endcomment %}
 <header class="site-header">
   <nav class="nav" aria-label="Hovedmeny">
     <a href="/" class="logo">
-      <img src="{% static 'images/logo/logo-brakastolen-hvit.png' %}" alt="{{ business.name }} – til forsiden" width="60" height="60">
-      <span class="logo-name">{{ business.name }}</span>
-      <span class="logo-place">Vaset · Valdres</span>
+      <img src="{% static 'images/logo/logo-mark-hvit.png' %}" alt="" width="78" height="54">
+      <span class="logo-text">
+        <span class="logo-name">{{ business.name }}</span>
+        <span class="logo-place">Vaset · Valdres</span>
+      </span>
+      <span class="visually-hidden"> – til forsiden</span>
     </a>
 
-    <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="nav-links">Meny</button>
+    <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="nav-links">
+      <span class="menu-icon" aria-hidden="true"></span>
+      <span class="menu-label">Meny</span>
+    </button>
 
-    <ul class="links" id="nav-links">
-      <li><a href="{% url 'tomter' %}">Tomter</a></li>
-      <li><a href="{% url 'hytter' %}">Hytter</a></li>
-      <li><a href="{% url 'om_vaset' %}">Om Vaset</a></li>
-      <li><a href="{% url 'aktiviteter' %}">Aktiviteter</a></li>
-      <li><a href="{% url 'kontakt' %}">Kontakt</a></li>
-    </ul>
-
-    <a href="{% url 'kontakt' %}?interesse=viewing" class="button cta">Avtal visning <span aria-hidden="true">→</span></a>
+    <div class="nav-panel" id="nav-links">
+      <ul class="links">
+        {% url 'tomter' as tomter_url %}{% url 'hytter' as hytter_url %}{% url 'om_vaset' as om_vaset_url %}{% url 'aktiviteter' as aktiviteter_url %}{% url 'kontakt' as kontakt_url %}
+        <li><a href="{{ tomter_url }}" {% if request.path == tomter_url %}aria-current="page"{% endif %}>Tomter</a></li>
+        <li><a href="{{ hytter_url }}" {% if request.path == hytter_url %}aria-current="page"{% endif %}>Hytter</a></li>
+        <li><a href="{{ om_vaset_url }}" {% if request.path == om_vaset_url %}aria-current="page"{% endif %}>Om Vaset</a></li>
+        <li><a href="{{ aktiviteter_url }}" {% if request.path == aktiviteter_url %}aria-current="page"{% endif %}>Aktiviteter</a></li>
+        <li><a href="{{ kontakt_url }}" {% if request.path == kontakt_url %}aria-current="page"{% endif %}>Kontakt</a></li>
+      </ul>
+      <a href="{{ kontakt_url }}?interesse=viewing" class="nav-cta">
+        Avtal visning
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M3 12h17M14 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      </a>
+    </div>
   </nav>
 </header>

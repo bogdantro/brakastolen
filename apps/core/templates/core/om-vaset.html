@@ -10,33 +10,45 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'scss/store/om-vaset.css' %}">
 
-<section class="page-intro">
-  <h1>Om Vaset</h1>
-  <p>Vaset er et av de mest attraktive hytteområdene i Valdres og kan tilby spennende aktiviteter både sommer og vinter.</p>
+{% include 'core/page-header.html' with title="Om Vaset" lead="Et av de mest attraktive hytteområdene i Valdres – med spennende aktiviteter både sommer og vinter." image="images/projects/leve-hytte-utsikt-til-syndin.jpg" image_alt="Utsikt mot Syndin og fjellene rundt Vaset" label="Vaset · Valdres" %}
+
+<section class="section">
+  <div class="content split">
+    <div class="split-head">
+      <h2>Brakastølen</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+    </div>
+    <div class="prose large">
+      <p>Brakastølen – Vaset i Valdres ligger høyt og flott ved Panoramavegen mellom Valdres og Hemsedal.</p>
+      <p>Området er en naturperle og byr på et flott og variert fjellterreng med et levende stølsmiljø, varierte aktiviteter, butikker og hyggelige serveringssteder.</p>
+      <p>Her er det åpent og vilt landskap med flott utsyn mot den ville Jotunheimen.</p>
+    </div>
+  </div>
 </section>
 
-<section class="location">
-  <h2>Beliggenhet</h2>
-  <p>Vaset ligger i Vestre Slidre kommune og grenser mot Hemsedal, ca. 18 km nord-vest for regionsenteret Fagernes og 200 km fra Oslo. Panoramavegen over til Hemsedal gjør tilgjengeligheten til Vaset god, også mot vest, samtidig som en kjøretur langs denne legendariske veien er en opplevelse i seg selv.</p>
-  <dl>
-    <dt>Fagernes</dt><dd>{{ business.distances.Fagernes }}</dd>
-    <dt>Oslo</dt><dd>{{ business.distances.Oslo }}</dd>
-    <dt>Kommune</dt><dd>{{ business.municipality }}</dd>
-  </dl>
-  <a href="{{ business.maps_url }}" target="_blank" rel="noopener">Se Brakastølen på kartet</a>
+<section class="section location-section">
+  <div class="content split">
+    <div class="split-head">
+      <h2>Beliggenhet</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+      <a href="{{ business.maps_url }}" class="text-link" target="_blank" rel="noopener">Se Brakastølen på kartet</a>
+    </div>
+    <div>
+      <div class="prose large">
+        <p>Vaset ligger i Vestre Slidre kommune og grenser mot Hemsedal, ca. 18 km nord-vest for regionsenteret Fagernes og 200 km fra Oslo. Panoramavegen over til Hemsedal gjør tilgjengeligheten til Vaset god, også mot vest, samtidig som en kjøretur langs denne legendariske veien er en opplevelse i seg selv.</p>
+      </div>
+      <dl class="distances">
+        <div><dt>Fagernes</dt><dd>{{ business.distances.Fagernes }}</dd></div>
+        <div><dt>Oslo</dt><dd>{{ business.distances.Oslo }}</dd></div>
+        <div><dt>Kommune</dt><dd>{{ business.municipality }}</dd></div>
+      </dl>
+    </div>
+  </div>
 </section>
 
-<section class="nature">
-  <h2>Brakastølen</h2>
-  <p>Brakastølen – Vaset i Valdres ligger høyt og flott ved Panoramavegen mellom Valdres og Hemsedal.</p>
-  <p>Området er en naturperle og byr på et flott og variert fjellterreng med et levende stølsmiljø, varierte aktiviteter, butikker og hyggelige serveringssteder.</p>
-  <p>Her er det åpent og vilt landskap med flott utsyn mot den ville Jotunheimen.</p>
+<figure class="wide-photo">
   <img src="{% static 'images/hero/hero-1-tranberg-utvikling-vaset.jpg' %}" alt="Flyfoto over Brakastølen og Vaset med fjellene i bakgrunnen" loading="lazy">
-</section>
+</figure>
 
-<section class="cta">
-  <h2>Opplev området selv</h2>
-  <a href="{% url 'kontakt' %}?interesse=viewing" class="button">Avtal visning</a>
-  <a href="{% url 'aktiviteter' %}">Se aktivitetene på Vaset</a>
-</section>
+{% include 'core/cta.html' with heading="Opplev området selv" text="Ta kontakt for en personlig visning av Brakastølen." interest="viewing" button="Avtal visning" %}
 {% endblock %}

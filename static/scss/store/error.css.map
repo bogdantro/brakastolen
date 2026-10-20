@@ -1,1 +1,1 @@
-{"version":3,"sources":[],"names":[],"mappings":"","file":"error.css"}
+{"version":3,"sourceRoot":"","sources":["error.scss","../global/_variables.scss"],"names":[],"mappings":"AAIE;EACE;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE,aCaQ;EDZR;EACA,OCEK;EDDL;EACA;;AAIJ;EACE,OCdW;;ADiBb;EACE","file":"error.css"}

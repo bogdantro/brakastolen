@@ -1,1 +1,1 @@
-{"version":3,"sources":[],"names":[],"mappings":"","file":"nyheter.css"}
+{"version":3,"sourceRoot":"","sources":["nyheter.scss","../global/_variables.scss"],"names":[],"mappings":"AAGA;EACE,OCcU;EDbV;;;AAGF;EACE,YCUK","file":"nyheter.css"}

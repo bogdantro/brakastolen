@@ -1,13 +1,11 @@
-// nyheter – styled in the design phase. Palette and fonts: global/_variables.scss
+// Nyheter: list and single post.
 @use '../global/variables' as *;
 
-// Mobile and tablet
-@media (max-width: 1139px) {
+.post .post-meta {
+  color: $mutedText;
+  margin-bottom: 18px;
 }
 
-// Desktop
-@media only screen and (min-width: 1140px) {
-}
-
-@media (prefers-reduced-motion: reduce) {
+.more-news {
+  background: $card;
 }

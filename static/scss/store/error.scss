@@ -1,13 +1,29 @@
-// error – styled in the design phase. Palette and fonts: global/_variables.scss
+// 404 and 500: links onward, then featured projects.
 @use '../global/variables' as *;
 
-// Mobile and tablet
-@media (max-width: 1139px) {
-}
+.error-page {
+  .error-links {
+    list-style: none;
+    margin: 0 0 18px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 36px;
 
-// Desktop
-@media only screen and (min-width: 1140px) {
-}
+    a {
+      font-family: $fontDisplay;
+      font-size: clamp(26px, 2.2vw, 36px);
+      color: $heroText;
+      text-decoration: none;
+      border-bottom: 1px solid $sage;
+    }
+  }
 
-@media (prefers-reduced-motion: reduce) {
+  p a {
+    color: $primaryColor;
+  }
+
+  .section-head {
+    margin-top: 80px;
+  }
 }

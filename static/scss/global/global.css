@@ -1,18 +1,29 @@
+:root {
+  --u: calc(min(100vw, 2200px) / 1672);
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
 html {
   -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   background: #F1EBDF;
   color: #141616;
-  font-family: "Abhaya Libre", Georgia, serif;
-  font-size: 18px;
-  line-height: 1.6;
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 19px;
+  line-height: 1.65;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.menu-open {
+  overflow: hidden;
 }
 
 img {
@@ -22,12 +33,24 @@ img {
 }
 
 h1, h2, h3, h4 {
-  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
-  line-height: 1.15;
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  line-height: 1.05;
+  margin: 0;
+  color: #0D1716;
+}
+
+p {
+  margin: 0;
 }
 
 a {
   color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid #002223;
+  outline-offset: 3px;
 }
 
 .skip-link {
@@ -60,9 +83,13 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
-}/*# sourceMappingURL=global.css.map */
+}
+
+/*# sourceMappingURL=global.css.map */

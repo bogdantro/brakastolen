@@ -1,13 +1,284 @@
-// nav – styled in the design phase. Palette and fonts: global/_variables.scss
+// Main navigation. The logo sits on a solid block of the brand green in the top-left corner –
+// as on the current brakastølen.no – running exactly to the line where the photos start (x 495).
+// The links stand straight on the photo; "Avtal visning" is a sage button.
 @use '../global/variables' as *;
 
-// Mobile and tablet
-@media (max-width: 1139px) {
+.site-header {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 50;
 }
 
-// Desktop
+.nav {
+  display: flex;
+  align-items: center;
+  color: $white;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    background: $primaryColor;
+  }
+
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+
+  .logo-name {
+    font-family: $fontBody;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  .logo-place {
+    letter-spacing: 0.14em;
+    color: $sage;
+  }
+
+  .links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+
+    a {
+      position: relative;
+      transition: color 0.25s ease;
+
+      &:hover {
+        color: $sage;
+      }
+
+      // The page you're on: sage, with a short line under it
+      &[aria-current="page"] {
+        color: $sage;
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: -7px;
+          height: 1px;
+          background: $sage;
+        }
+      }
+    }
+  }
+
+  .nav-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: $sage;
+    color: $primaryColor;
+    font-weight: 600;
+    border-radius: 2px;
+    transition: background 0.25s ease, color 0.25s ease;
+
+    &:hover {
+      background: $white;
+    }
+
+    svg {
+      transform: translateY(1px);
+    }
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+}
+
+// ------------------------------------------------------------
+// Mobile and tablet: a solid green bar; the links open as a full-screen green panel
+// ------------------------------------------------------------
+@media (max-width: 1139px) {
+  .nav {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 64px;
+    background: $primaryColor;
+    padding: 0 6px 0 20px;
+    justify-content: space-between;
+
+    .logo {
+      gap: 12px;
+      position: relative;
+      z-index: 2;
+
+      img {
+        width: 44px;
+      }
+    }
+
+    .logo-name {
+      font-size: 21px;
+    }
+
+    .logo-place {
+      font-size: 10px;
+      margin-top: 4px;
+    }
+
+    .menu-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      z-index: 2;
+      background: none;
+      border: 0;
+      color: $white;
+      font: inherit;
+      font-size: 17px;
+      padding: 12px 14px;
+      cursor: pointer;
+    }
+
+    .menu-icon,
+    .menu-icon::before {
+      display: block;
+      width: 22px;
+      height: 1px;
+      background: currentColor;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .menu-icon::before {
+      content: '';
+      position: absolute;
+      top: 7px;
+    }
+
+    .menu-toggle[aria-expanded="true"] {
+      .menu-icon { transform: translateY(3px) rotate(45deg); }
+      .menu-icon::before { transform: translateY(-7px) rotate(-90deg); }
+    }
+
+    .nav-panel {
+      position: fixed;
+      inset: 0;
+      background: $primaryColor;
+      padding: 110px 24px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s;
+      z-index: 1;
+
+      &.is-open {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+
+    .links {
+      flex-direction: column;
+      border-top: 1px solid $borderOnDark;
+
+      li {
+        border-bottom: 1px solid $borderOnDark;
+      }
+
+      a {
+        display: block;
+        font-family: $fontDisplay;
+        font-size: 38px;
+        line-height: 1;
+        padding: 18px 0;
+
+        &[aria-current="page"]::after {
+          display: none;
+        }
+      }
+    }
+
+    .nav-cta {
+      height: 58px;
+      font-size: 18px;
+    }
+  }
+}
+
+// ------------------------------------------------------------
+// Desktop: on the reference grid (u() = px on the 1672 px canvas)
+// ------------------------------------------------------------
 @media only screen and (min-width: 1140px) {
+  .nav {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: u(110);
+    padding-right: u(89);
+
+    // The green block: from the left edge to where the photo starts
+    .logo {
+      width: u(495);
+      height: 100%;
+      padding-left: u(116);
+      gap: u(22);
+
+      img {
+        width: u(60);
+      }
+    }
+
+    .logo-name {
+      font-size: max(19px, u(29));
+    }
+
+    .logo-place {
+      font-size: max(10px, u(13));
+      margin-top: u(8);
+    }
+
+    .nav-panel {
+      display: flex;
+      align-items: center;
+      margin-left: auto;
+      height: 100%;
+    }
+
+    .links {
+      gap: u(44);
+      align-items: center;
+
+      a {
+        font-size: max(14px, u(17.5));
+        // Keeps the white links readable over bright sky
+        text-shadow: 0 1px 14px rgba(0, 0, 0, 0.45);
+      }
+    }
+
+    .nav-cta {
+      margin-left: u(48);
+      height: u(52);
+      padding: 0 u(26);
+      font-size: max(14px, u(16));
+
+      svg {
+        width: u(20);
+        height: u(20);
+      }
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .nav .nav-panel,
+  .nav .menu-icon {
+    transition: none;
+  }
 }

@@ -1,31 +1,42 @@
 // ------------------------------------------------------------
-// Brakastølen palette and fonts – one place, @use'd by every file.
+// Brakastølen palette, fonts and the design grid – one place, @use'd by every file.
 // Sampled from the design reference (docs/design-reference-hero.png) and
-// the current website's theme CSS (brakastølen.no, Uncode theme).
+// the current website's theme CSS (brakastølen.no).
 // ------------------------------------------------------------
 
-// Main palette (same names as every project)
-$primaryColor: #AC742C;   // accent: copper line under headings, links, small details (design reference)
-$secondColor: #002223;    // dark sections and footer: the current site's deep teal background
-$black: #141616;          // text and headings (design reference)
-$white: #F6F3E9;          // text on dark, light button background (design reference)
+// Main palette (same names as every project). The main colour is the deep fjord green
+// of the current website (brakastølen.no: page background #002223, sage #90AE8C for buttons).
+$primaryColor: #002223;   // main brand green: logo block, buttons, links, dark sections
+$secondColor: #001819;    // a shade deeper: footer
+$black: #141616;          // text and headings
+$white: #F6F3E9;          // text on green, light surfaces
 $background: #F1EBDF;     // page background: warm cream (design reference)
 
 // Supporting colours
-$heroText: #0D0C0B;       // the big "Din plass i fjellet." heading
+$sage: #90AE8C;           // the current site's accent green: active links, the "Avtal visning" button
+$sageDeep: #5E7D5A;       // sage dark enough to read on cream: short rules, small labels
+$heroText: #0D1716;       // the big headings – near-black with a touch of the brand green
 $mutedText: #5C5956;      // body text and lead paragraphs
 $card: #EEE8DA;           // price card and panels on the cream background
-$scriptColor: #756353;    // the handwritten "Mer enn et sted."
-$navGlass: rgba(61, 70, 77, 0.55); // frosted nav bar over the hero photo (#3D464D)
-$sage: #90AE8C;           // the current site's button colour – kept for recognition, optional
-$border: rgba(0, 0, 0, 0.15);
+$sand: #E6DDCB;           // slightly deeper panel, table stripes
+$scriptColor: #5E7D5A;    // the handwritten "Mer enn et sted."
+$border: rgba(20, 22, 22, 0.16);
+$borderOnDark: rgba(246, 243, 233, 0.24);
 
-// Fonts (candidates matching the design reference – confirm in the design phase)
-$fontDisplay: 'Playfair Display', Georgia, 'Times New Roman', serif;  // headings, nav, price
-$fontBody: 'Abhaya Libre', Georgia, serif;                           // body text (the current site's heading font)
-$fontScript: 'Mrs Saint Delafield', cursive;                        // "Mer enn et sted."
+// Fonts – matched to the design reference
+$fontDisplay: 'DM Serif Display', Georgia, 'Times New Roman', serif;  // headings, price
+$fontBody: 'Newsreader', Georgia, serif;                             // nav, body text, labels
+$fontScript: 'La Belle Aurore', cursive;                             // "Mer enn et sted." – used once
 $fontUi: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;  // dashboard
 
 // Breakpoints (two blocks per file: mobile/tablet and desktop)
 $mobileMax: 1139px;
 $desktopMin: 1140px;
+
+// The reference is drawn on a 1672 px wide canvas. On desktop, u(103) is "103 px of the
+// reference" scaled to the window, so the hero keeps exactly the drawn proportions.
+$designWidth: 1672;
+
+@function u($n) {
+  @return calc(var(--u) * #{$n});
+}

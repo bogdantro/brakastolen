@@ -1,22 +1,25 @@
 {% load static %}
 <footer class="site-footer">
-  <div class="content">
-    <div class="brand">
-      <img src="{% static 'images/logo/logo-brakastolen-hvit.png' %}" alt="{{ business.name }} – {{ business.tagline }}" width="120" height="120" loading="lazy">
-      <p>{{ business.description }}</p>
+  <div class="content footer-grid">
+    <div class="footer-brand">
+      <a href="/" class="footer-logo">
+        <img src="{% static 'images/logo/logo-mark-hvit.png' %}" alt="" width="96" height="66" loading="lazy">
+        <span class="logo-name">{{ business.name }}</span>
+        <span class="logo-place">Vaset · Valdres</span>
+        <span class="visually-hidden"> – til forsiden</span>
+      </a>
+      <p>Hyttetomter 900–1050 meter over havet, med utsikt mot Jotunheimen og sol fra morgen til kveld.</p>
     </div>
 
-    <div class="contact">
-      <h2>Utbygger</h2>
-      <p>{{ business.company }}</p>
-      <p><a href="tel:{{ business.phone }}">Tlf. {{ business.phone_display }}</a></p>
-      <p><a href="mailto:{{ business.email }}">{{ business.email }}</a></p>
-      <p>{{ business.street }}, {{ business.postal_code }} {{ business.city }}</p>
-      <p>Org.nr. {{ business.org_number_display }}</p>
+    <div class="footer-contact">
+      <h2>Kontakt utbygger</h2>
+      <p><a href="tel:{{ business.phone }}" class="big-link">{{ business.phone_display }}</a></p>
+      <p><a href="mailto:{{ business.email }}" class="big-link">{{ business.email }}</a></p>
+      <p class="company">{{ business.company }}<br>{{ business.street }}, {{ business.postal_code }} {{ business.city }}<br>Org.nr. {{ business.org_number_display }}</p>
     </div>
 
-    <nav class="links" aria-label="Bunnmeny">
-      <h2>Snarveier</h2>
+    <nav class="footer-links" aria-label="Bunnmeny">
+      <h2>Nettsiden</h2>
       <ul>
         <li><a href="{% url 'tomter' %}">Tomter</a></li>
         <li><a href="{% url 'hytter' %}">Hytter</a></li>
@@ -30,7 +33,7 @@
     </nav>
   </div>
 
-  <div class="bottom">
+  <div class="content footer-bottom">
     <p>© {% now "Y" %} {{ business.company }}</p>
     <a href="{% url 'personvern' %}">Personvern</a>
     {% if ga_id %}<button type="button" class="cookie-settings" data-cookie-settings>Informasjonskapsler</button>{% endif %}

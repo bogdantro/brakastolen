@@ -1,13 +1,502 @@
-// home – styled in the design phase. Palette and fonts: global/_variables.scss
+// Homepage. The hero is a 1:1 build of docs/design-reference-hero.png: on desktop every
+// element sits at its x/y on the 1672×941 reference, scaled with u().
 @use '../global/variables' as *;
 
-// Mobile and tablet
-@media (max-width: 1139px) {
+// ------------------------------------------------------------
+// Hero – shared
+// ------------------------------------------------------------
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: $background;
+
+  .hero-photo {
+    position: absolute;
+    overflow: hidden;
+    background: #2b2f2c;
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1.4s ease;
+
+      &.is-active {
+        opacity: 1;
+      }
+    }
+
+    // A soft dark wash at the top keeps the glass nav readable over a bright sky
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(18, 20, 22, 0.42) 0%, rgba(18, 20, 22, 0.12) 22%, rgba(18, 20, 22, 0) 40%,
+                  rgba(18, 20, 22, 0) 70%, rgba(18, 20, 22, 0.28) 100%);
+      pointer-events: none;
+    }
+  }
+
+  h1 {
+    color: $heroText;
+    letter-spacing: -0.015em;
+
+    .line {
+      display: block;
+      width: fit-content;
+    }
+
+    // "i fjellet" in the brand's sage green (deep enough to read on cream)
+    .green {
+      color: $sageDeep;
+    }
+  }
+
+  .place {
+    font-family: $fontBody;
+    color: $black;
+  }
+
+  .copper-rule {
+    display: block;
+    height: 2px;
+    background: $sageDeep;
+  }
+
+  .lead {
+    color: $mutedText;
+  }
+
+  .price-card {
+    background: $background;
+
+    .label {
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: $black;
+    }
+
+    .price {
+      font-family: $fontDisplay;
+      color: $heroText;
+      line-height: 1;
+      letter-spacing: -0.035em;
+      white-space: nowrap;
+    }
+
+    .costs {
+      text-align: right;
+      color: $black;
+    }
+  }
+
+  .script {
+    font-family: $fontScript;
+    color: $scriptColor;
+    line-height: 1.05;
+    transform: rotate(-8deg);
+    transform-origin: left top;
+  }
+
+
+
+
+
+  .winter {
+    object-fit: cover;
+  }
 }
 
-// Desktop
+// ------------------------------------------------------------
+// Mobile and tablet: photo on top, the heading steps up into it
+// ------------------------------------------------------------
+@media (max-width: 1139px) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 56px;
+
+    .hero-photo {
+      position: relative;
+      order: 1;
+      height: 64vh;
+      min-height: 380px;
+      max-height: 640px;
+    }
+
+    .step, .side-column, .rail, .side-text, .winter {
+      display: none;
+    }
+
+
+    .price-card {
+      order: 2;
+      position: relative;
+      align-self: flex-end;
+      margin-top: -64px;
+      padding: 18px 20px 14px 24px;
+      .copper-rule { width: 32px; margin-bottom: 12px; }
+      .label { font-size: 11px; }
+      .price { font-size: 44px; margin-top: 4px; }
+      .costs { font-size: 14px; }
+    }
+
+    .hero-text {
+      order: 3;
+      padding: 0 20px;
+      margin-top: -34px;
+    }
+
+    h1 {
+      font-size: clamp(64px, 17vw, 120px);
+      line-height: 0.86;
+
+      // The cream steps of the desktop design, as backgrounds behind the lines
+      .line {
+        background: $background;
+        padding: 6px 14px 0 0;
+      }
+      .line-3 {
+        padding-left: 0.32em;
+      }
+    }
+
+    .place {
+      font-size: 24px;
+      margin-top: 22px;
+    }
+
+    .copper-rule {
+      width: 48px;
+      margin: 16px 0 18px;
+    }
+
+    .lead {
+      font-size: 18px;
+      line-height: 1.45;
+    }
+
+    .circle-link {
+      margin-top: 28px;
+      gap: 18px;
+      font-size: 18px;
+      .circle { width: 60px; height: 60px; }
+    }
+  }
+}
+
+// ------------------------------------------------------------
+// Desktop: positions straight from the reference (x, y in px of the 1672×941 canvas)
+// ------------------------------------------------------------
 @media only screen and (min-width: 1140px) {
+  .hero {
+    height: u(941);
+    min-height: 620px;
+
+    > * {
+      position: absolute;
+      margin: 0;
+    }
+
+    .hero-photo {
+      left: u(495);
+      top: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    // Cream steps cutting into the photo behind "plass" and "i fjellet."
+    .step {
+      background: $background;
+    }
+    .step-1 { left: u(495); top: u(318); width: u(118); height: u(452); }
+    .step-2 { left: u(612); top: u(495); width: u(138); height: u(190); }
+
+    // Right-hand cream column under the price card
+    .side-column {
+      left: u(1488);
+      top: u(326);
+      right: 0;
+      bottom: 0;
+      background: $background;
+    }
+
+
+    // Left rail: slide counter, vertical place name and coordinates
+    .rail {
+      inset: 0 auto 0 0;
+      width: u(100);
+      color: $black;
+
+      > * { position: absolute; margin: 0; }
+
+      .counter {
+        left: u(26);
+        top: u(160);
+        width: u(34);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: u(17);
+        line-height: 1.25;
+        letter-spacing: 0.04em;
+      }
+
+      .counter-rule {
+        width: u(22);
+        height: 1px;
+        background: $black;
+        margin: u(3) 0;
+      }
+
+      .rail-line {
+        left: u(78);
+        top: u(183);
+        width: 1px;
+        height: u(702);
+        background: rgba(20, 22, 22, 0.55);
+      }
+
+      .rail-label {
+        left: u(32);
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        text-transform: uppercase;
+        letter-spacing: 0.32em;
+        font-size: u(13.5);
+        white-space: nowrap;
+      }
+
+      .rail-label { top: u(366); }
+
+    }
+
+    .hero-text {
+      left: u(114);
+      top: u(182);
+      width: u(700);
+    }
+
+    h1 {
+      font-size: u(192);
+      line-height: u(151);
+      letter-spacing: -0.042em;
+
+      .line-3 { margin-left: u(62); }
+    }
+
+    .place {
+      font-size: u(34);
+      line-height: 1;
+      margin-top: u(22);
+      margin-left: u(4);
+    }
+
+    .copper-rule {
+      width: u(58);
+      margin: u(22) 0 0 u(5);
+    }
+
+    .lead {
+      font-size: u(19.5);
+      line-height: 1.4;
+      margin: u(19) 0 0 u(5);
+    }
+
+    .circle-link {
+      margin: u(25) 0 0 u(5);
+      gap: u(30);
+      font-size: u(19);
+
+      .circle {
+        width: u(70);
+        height: u(70);
+
+        svg { width: u(26); height: u(26); }
+      }
+    }
+
+    .price-card {
+      left: u(1268);
+      top: u(130);
+      right: 0;
+      height: u(197);
+      padding: u(36) u(65) 0 u(37);
+
+      .copper-rule { width: u(40); margin: 0 0 u(23); }
+      .label { font-size: u(13.5); line-height: 1; }
+      .price { font-size: u(75); margin-top: u(10); }
+      .costs { font-size: u(16); margin-top: u(4); }
+    }
+
+    .side-text {
+      left: u(1524);
+      top: u(388);
+      width: u(140);
+
+      .script {
+        font-size: u(43);
+        margin-left: u(4);
+      }
+
+
+    }
+
+
+    .winter {
+      left: u(1372);
+      top: u(717);
+      width: u(256);
+      height: u(224);
+      max-width: none;
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero .hero-photo .slide {
+    transition: none;
+  }
+}
+
+// ------------------------------------------------------------
+// Sections below the hero
+// ------------------------------------------------------------
+
+// Tomter: the plot map on a sand panel beside the text
+.plots-feature {
+  background: $card;
+
+  .map-frame {
+    margin: 0;
+    background: #fff;
+    border: 1px solid $border;
+    overflow: hidden;
+
+    a {
+      display: block;
+    }
+
+    img {
+      width: 100%;
+      object-fit: cover;
+      object-position: 50% 32%;
+    }
+  }
+
+  .feature-text {
+    .copper-rule { margin: 28px 0 24px; }
+    p { color: $mutedText; max-width: 26em; }
+  }
+
+  .price-line {
+    margin-top: 22px;
+    font-size: 20px;
+    color: $black;
+
+    strong {
+      font-family: $fontDisplay;
+      font-weight: 400;
+      font-size: 1.6em;
+      letter-spacing: -0.02em;
+      color: $heroText;
+    }
+  }
+
+  .note {
+    margin-top: 6px;
+    color: $sageDeep;
+  }
+
+  .circle-link {
+    margin-top: 34px;
+  }
+}
+
+// Hytter: a full-width photo with a cream card stepping into its lower-left corner
+.cabins-feature {
+  position: relative;
+
+  .cabins-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cabins-card {
+    background: $background;
+
+    .copper-rule { margin: 26px 0 22px; }
+    p { color: $mutedText; }
+    .circle-link { margin-top: 30px; }
+  }
+}
+
+.activities-section,
+.faq-section {
+  border-top: 1px solid $border;
+}
+
+.news-section {
+  background: $card;
+}
+
+@media (max-width: 1139px) {
+  .intro .split-head .copper-rule { margin-bottom: 0; }
+
+  .plots-feature {
+    .feature-grid { display: grid; gap: 36px; }
+    .map-frame img { height: 320px; }
+  }
+
+  .cabins-feature {
+    .cabins-photo { height: 58vh; min-height: 320px; max-height: 560px; }
+
+    .cabins-card {
+      position: relative;
+      margin: -70px 20px 0 0;
+      padding: 32px 20px 56px;
+    }
+  }
+}
+
+@media only screen and (min-width: 1140px) {
+  .plots-feature {
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      gap: u(110);
+      align-items: center;
+    }
+
+    .map-frame img {
+      height: u(560);
+    }
+  }
+
+  // Photo from the hero's photo line to the right edge; the card is cream from the left edge
+  .cabins-feature {
+    height: u(780);
+
+    .cabins-photo {
+      position: absolute;
+      left: u(495);
+      top: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    .cabins-card {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: u(760);
+      padding: u(80) u(90) u(90) u(116);
+
+      p { max-width: u(500); }
+    }
+  }
 }

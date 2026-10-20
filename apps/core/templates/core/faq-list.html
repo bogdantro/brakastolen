@@ -1,0 +1,12 @@
+{% comment %}
+    The FAQ from seo.py as open/close questions. Parameter: faq – list of {question, answer}.
+    The same list is printed as FAQ structured data.
+{% endcomment %}
+<div class="faq-list">
+  {% for item in faq %}
+  <details>
+    <summary>{{ item.question }}<span class="plus" aria-hidden="true"></span></summary>
+    <p>{{ item.answer }}</p>
+  </details>
+  {% endfor %}
+</div>

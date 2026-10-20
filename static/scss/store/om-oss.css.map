@@ -1,1 +1,1 @@
-{"version":3,"sources":[],"names":[],"mappings":"","file":"om-oss.css"}
+{"version":3,"sourceRoot":"","sources":["om-oss.scss","../global/_variables.scss"],"names":[],"mappings":"AAKE;AAAA;EACE,aCqBO;EDpBP;EACA;EACA,OCOO;EDNP;;AAGF;AAAA;EACE,aCYU;EDXV;EACA;EACA;;AAEA;AAAA;EACE;EACA,OCJK;EDKL;;;AAKN;EACE,YCTK","file":"om-oss.css"}

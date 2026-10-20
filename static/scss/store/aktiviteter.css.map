@@ -1,1 +1,1 @@
-{"version":3,"sources":[],"names":[],"mappings":"","file":"aktiviteter.css"}
+{"version":3,"sourceRoot":"","sources":["aktiviteter.scss","../global/_variables.scss"],"names":[],"mappings":"AAGA;EACE;;AAEA;EACE,YCYG;;ADTL;EACE;;AAEA;EACE;EACA;EACA;;AAIJ;EACE,OCLO;EDMP;EACA;;AAGF;EACE;;AAGF;EACE,OCbQ;EDcR;;AAGF;EACE;;AAGF;EACE;EACA,OCvBQ;;ADyBR;EACE,aClBQ;EDmBR;EACA;EACA;EACA,OCxCS;EDyCT;;;AAKN;EACE;IACE;;EAEA;IACE;IACA;;;AAKN;EACE;IACE;;EAEA;IACE;IACA;IACA;IACA;;EAEA;IACE;;EAEA;IACE;;EAKN;IACE","file":"aktiviteter.css"}

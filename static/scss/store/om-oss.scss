@@ -1,13 +1,30 @@
-// om-oss – styled in the design phase. Palette and fonts: global/_variables.scss
+// Om oss: company facts and partners as rows (labels small, values in the display face).
 @use '../global/variables' as *;
 
-// Mobile and tablet
-@media (max-width: 1139px) {
+.rows.company,
+.partners-section .rows {
+  dt {
+    font-family: $fontBody;
+    font-size: 16px;
+    font-weight: 500;
+    color: $sageDeep;
+    padding-top: 6px;
+  }
+
+  dd {
+    font-family: $fontDisplay;
+    font-size: clamp(22px, 1.6vw, 27px);
+    line-height: 1.25;
+    color: $heroText;
+
+    a {
+      text-decoration: none;
+      color: $heroText;
+      border-bottom: 1px solid $sage;
+    }
+  }
 }
 
-// Desktop
-@media only screen and (min-width: 1140px) {
-}
-
-@media (prefers-reduced-motion: reduce) {
+.partners-section {
+  background: $card;
 }

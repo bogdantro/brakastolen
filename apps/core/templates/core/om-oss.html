@@ -10,36 +10,40 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'scss/store/om-oss.css' %}">
 
-<section class="page-intro">
-  <h1>Om oss</h1>
-  <p>Brakastølen utvikles av {{ business.company }}, som er grunneier og utbygger av hyttefeltet på Vaset.</p>
+{% include 'core/page-header.html' with title="Om oss" lead="Brakastølen utvikles av Tranberg Utvikling AS – grunneier og utbygger av hyttefeltet på Vaset." image="images/projects/tinde-vaset-3939.jpg" image_alt="Stue med fjellutsikt i Tinde-hytte på Vaset" label="Brakastølen · Utbygger" %}
+
+<section class="section">
+  <div class="content split">
+    <div class="split-head">
+      <h2>Utbygger</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+      <p>Ta kontakt for prospekt, pris eller en personlig visning.</p>
+    </div>
+    <dl class="rows company">
+      <div><dt>Selskap</dt><dd>{{ business.company }}</dd></div>
+      <div><dt>{{ business.manager_title }}</dt><dd>{{ business.manager }}</dd></div>
+      <div><dt>Telefon</dt><dd><a href="tel:{{ business.phone }}">{{ business.phone_display }}</a></dd></div>
+      <div><dt>E-post</dt><dd><a href="mailto:{{ business.email }}">{{ business.email }}</a></dd></div>
+      <div><dt>Adresse</dt><dd>{{ business.street }}, {{ business.postal_code }} {{ business.city }}</dd></div>
+      <div><dt>Org.nr.</dt><dd>{{ business.org_number_display }}</dd></div>
+    </dl>
+  </div>
 </section>
 
-<section class="company">
-  <h2>Utbygger</h2>
-  <dl>
-    <dt>Selskap</dt><dd>{{ business.company }}</dd>
-    <dt>Org.nr.</dt><dd>{{ business.org_number_display }}</dd>
-    <dt>{{ business.manager_title }}</dt><dd>{{ business.manager }}</dd>
-    <dt>Adresse</dt><dd>{{ business.street }}, {{ business.postal_code }} {{ business.city }}</dd>
-    <dt>Telefon</dt><dd><a href="tel:{{ business.phone }}">{{ business.phone_display }}</a></dd>
-    <dt>E-post</dt><dd><a href="mailto:{{ business.email }}">{{ business.email }}</a></dd>
-  </dl>
+<section class="section partners-section">
+  <div class="content split">
+    <div class="split-head">
+      <h2>Våre samarbeidspartnere</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+      <p>Fra tomt og grunnmur til finansiering og oppgjør.</p>
+    </div>
+    <dl class="rows">
+      {% for role, name, url in partners %}
+      <div><dt>{{ role }}</dt><dd>{% if url %}<a href="{{ url }}" target="_blank" rel="noopener">{{ name }}</a>{% else %}{{ name }}{% endif %}</dd></div>
+      {% endfor %}
+    </dl>
+  </div>
 </section>
 
-<section class="partners">
-  <h2>Våre samarbeidspartnere på Brakastølen</h2>
-  <dl>
-    {% for role, name, url in partners %}
-    <dt>{{ role }}</dt>
-    <dd>{% if url %}<a href="{{ url }}" target="_blank" rel="noopener">{{ name }}</a>{% else %}{{ name }}{% endif %}</dd>
-    {% endfor %}
-  </dl>
-</section>
-
-<section class="cta">
-  <h2>Ta kontakt</h2>
-  <p>Er du interessert i ei unik tomt, og/eller et hytteprosjekt på Brakastølen?</p>
-  <a href="{% url 'kontakt' %}" class="button">Kontakt oss</a>
-</section>
+{% include 'core/cta.html' with heading="Er du interessert i ei unik tomt?" text="Be om prospekt for de ulike tomte- og hytteområdene." interest="prospectus" button="Kontakt oss" %}
 {% endblock %}

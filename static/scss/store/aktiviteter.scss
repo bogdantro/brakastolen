@@ -1,13 +1,89 @@
-// aktiviteter – styled in the design phase. Palette and fonts: global/_variables.scss
+// Aktiviteter: one block per activity, photo and text alternating sides.
 @use '../global/variables' as *;
 
-// Mobile and tablet
+.activity {
+  border-top: 1px solid $border;
+
+  &:nth-of-type(even) {
+    background: $card;
+  }
+
+  .activity-photo {
+    margin: 0;
+
+    img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+    }
+  }
+
+  .season {
+    color: $sageDeep;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  .copper-rule {
+    margin: 24px 0 20px;
+  }
+
+  .activity-text p:not(.season):not(.fact) {
+    color: $mutedText;
+    max-width: 34em;
+  }
+
+  .activity-text p + p {
+    margin-top: 1em;
+  }
+
+  .fact {
+    margin-top: 28px;
+    color: $mutedText;
+
+    strong {
+      font-family: $fontDisplay;
+      font-weight: 400;
+      font-size: 64px;
+      line-height: 1;
+      color: $primaryColor;
+      margin-right: 10px;
+    }
+  }
+}
+
 @media (max-width: 1139px) {
+  .activity {
+    padding: 64px 0;
+
+    .activity-grid {
+      display: grid;
+      gap: 32px;
+    }
+  }
 }
 
-// Desktop
 @media only screen and (min-width: 1140px) {
-}
+  .activity {
+    padding: u(120) 0;
 
-@media (prefers-reduced-motion: reduce) {
+    .activity-grid {
+      display: grid;
+      grid-template-columns: 6fr 5fr;
+      gap: u(110);
+      align-items: center;
+
+      &.no-photo {
+        grid-template-columns: 1fr;
+
+        .activity-text {
+          max-width: u(820);
+        }
+      }
+    }
+
+    &.is-flipped .activity-photo {
+      order: 2;
+    }
+  }
 }

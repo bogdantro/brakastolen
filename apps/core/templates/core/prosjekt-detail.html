@@ -12,81 +12,93 @@
 
 {% if not project.is_published %}<p class="draft-notice" role="status">Utkast – bare synlig for innloggede.</p>{% endif %}
 
-<article class="project">
-  <header>
-    <p class="eyebrow">{{ project.get_category_display }} · {{ project.get_status_display }}</p>
-    <h1>{{ project.title }}</h1>
-    {% if project.location %}<p class="location">{{ project.location }}</p>{% endif %}
-    <img src="{{ project.image.url }}" alt="{{ project.title }}" fetchpriority="high">
-    {% if project.image_credit %}<p class="credit">Foto: {{ project.image_credit }}</p>{% endif %}
-  </header>
+{% with meta=project.get_category_display|add:" · "|add:project.get_status_display %}
+{% include 'core/page-header.html' with title=project.title lead=project.excerpt image_url=project.image.url image_alt=project.title label=project.location|default:"Brakastølen" meta=meta %}
+{% endwith %}
 
-  {% if project.excerpt %}<p class="lead">{{ project.excerpt }}</p>{% endif %}
-  <div class="text">{{ project.description|rich }}</div>
-  {% if project.description_2 %}<div class="text">{{ project.description_2|rich }}</div>{% endif %}
+<article class="section project">
+  <div class="content split">
+    <aside class="split-head facts-panel">
+      <h2>Fakta</h2>
+      <span class="copper-rule" aria-hidden="true"></span>
+      <dl class="facts">
+        {% if project.price %}<div><dt>{% if project.status == 'sold' %}Prisantydning{% else %}Pris{% endif %}</dt><dd>{{ project.price_display }}</dd></div>{% endif %}
+        {% if project.supplier %}<div><dt>Hytteleverandør</dt><dd>{{ project.supplier }}</dd></div>{% endif %}
+        {% if project.area_m2 %}<div><dt>Bruksareal</dt><dd>{{ project.area_m2 }} m²</dd></div>{% endif %}
+        {% if project.plot_m2 %}<div><dt>Tomteareal</dt><dd>{{ project.plot_m2 }} m²</dd></div>{% endif %}
+        {% if project.bedrooms %}<div><dt>Soverom</dt><dd>{{ project.bedrooms }}</dd></div>{% endif %}
+        {% if project.bathrooms %}<div><dt>Bad</dt><dd>{{ project.bathrooms }}</dd></div>{% endif %}
+        {% if project.year_built %}<div><dt>Byggeår</dt><dd>{{ project.year_built }}</dd></div>{% endif %}
+        {% if project.altitude %}<div><dt>Høyde</dt><dd>{{ project.altitude }}</dd></div>{% endif %}
+        {% if project.plot_count %}<div><dt>Antall tomter</dt><dd>{{ project.plot_count }}</dd></div>{% endif %}
+        {% if project.access %}<div><dt>Adkomst</dt><dd>{{ project.access }}</dd></div>{% endif %}
+        <div><dt>Status</dt><dd>{{ project.get_status_display }}</dd></div>
+      </dl>
+      {% if project.extras %}
+      <ul class="extras">
+        {% for extra in project.extras %}<li>{{ extra }}</li>{% endfor %}
+      </ul>
+      {% endif %}
+      {% if project.finn_url %}<a href="{{ project.finn_url }}" class="text-link" target="_blank" rel="noopener">Se annonsen på Finn.no</a>{% endif %}
+    </aside>
 
-  <section class="facts">
-    <h2>Fakta</h2>
-    <dl>
-      {% if project.price %}<dt>{% if project.status == 'sold' %}Prisantydning{% else %}Pris{% endif %}</dt><dd>{{ project.price_display }}</dd>{% endif %}
-      {% if project.supplier %}<dt>Hytteleverandør</dt><dd>{{ project.supplier }}</dd>{% endif %}
-      {% if project.area_m2 %}<dt>Bruksareal</dt><dd>{{ project.area_m2 }} m²</dd>{% endif %}
-      {% if project.plot_m2 %}<dt>Tomteareal</dt><dd>{{ project.plot_m2 }} m²</dd>{% endif %}
-      {% if project.bedrooms %}<dt>Soverom</dt><dd>{{ project.bedrooms }}</dd>{% endif %}
-      {% if project.bathrooms %}<dt>Bad</dt><dd>{{ project.bathrooms }}</dd>{% endif %}
-      {% if project.year_built %}<dt>Byggeår</dt><dd>{{ project.year_built }}</dd>{% endif %}
-      {% if project.altitude %}<dt>Høyde</dt><dd>{{ project.altitude }}</dd>{% endif %}
-      {% if project.plot_count %}<dt>Antall tomter</dt><dd>{{ project.plot_count }}</dd>{% endif %}
-      {% if project.access %}<dt>Adkomst</dt><dd>{{ project.access }}</dd>{% endif %}
-    </dl>
-    {% if project.extras %}
-    <ul class="extras">
-      {% for extra in project.extras %}<li>{{ extra }}</li>{% endfor %}
-    </ul>
-    {% endif %}
-    {% if project.finn_url %}<p><a href="{{ project.finn_url }}" target="_blank" rel="noopener">Se annonsen på Finn.no</a></p>{% endif %}
-  </section>
+    <div class="prose large">
+      {{ project.description|rich }}
+      {% if project.description_2 %}{{ project.description_2|rich }}{% endif %}
+      {% if project.image_credit %}<p class="credit">Foto: {{ project.image_credit }}</p>{% endif %}
+    </div>
+  </div>
+</article>
 
-  {% if plots %}
-  <section class="plots">
-    <h2>Tomter i {{ project.title }}</h2>
-    <table>
+{% if plots %}
+<section class="section plots-in-group">
+  <div class="content">
+    <div class="section-head"><h2>Tomter i {{ project.title }}</h2></div>
+    <table class="data-table">
       <thead><tr><th scope="col">Tomt</th><th scope="col">Areal</th><th scope="col">Pris</th><th scope="col">Status</th></tr></thead>
       <tbody>
         {% for plot in plots %}
-        <tr><td>{{ plot.number }}</td><td>{{ plot.area_display|default:"–" }}</td><td>{{ plot.price_display|default:"Ta kontakt" }}</td><td>{{ plot.get_status_display }}</td></tr>
+        <tr>
+          <td class="plot-number">{{ plot.number }}</td>
+          <td data-label="Areal">{{ plot.area_display|default:"–" }}</td>
+          <td data-label="Pris">{{ plot.price_display|default:"Ta kontakt" }}</td>
+          <td class="plot-status status-{{ plot.status }}">{{ plot.get_status_display }}</td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>
-  </section>
-  {% endif %}
+  </div>
+</section>
+{% endif %}
 
-  {% if gallery %}
-  <section class="gallery">
-    <h2>Bilder</h2>
-    <ul>
+{% if gallery %}
+<section class="section gallery-section">
+  <div class="content">
+    <div class="section-head"><h2>Bilder</h2><p class="count">{{ gallery|length }} bilder</p></div>
+    <ul class="gallery">
       {% for item in gallery %}
-      <li><img src="{{ item.image.url }}" alt="{{ item.caption|default:project.title }}" loading="lazy"></li>
+      <li><a href="{{ item.image.url }}" target="_blank" rel="noopener"><img src="{{ item.image.url }}" alt="{{ item.caption|default:project.title }}" loading="lazy"></a></li>
       {% endfor %}
     </ul>
-  </section>
-  {% endif %}
-</article>
-
-<section class="cta">
-  <h2>Interessert?</h2>
-  <p>Ta kontakt for prospekt eller en personlig visning.</p>
-  <a href="{% url 'kontakt' %}?interesse=viewing" class="button">Avtal visning</a>
+  </div>
 </section>
+{% endif %}
 
-<section class="more">
-  <h2>Flere prosjekter</h2>
-  <ul>
-    {% for other in other_projects %}
-    <li><a href="{% url 'prosjekt_detail' other.slug %}">{{ other.title }}</a></li>
-    {% empty %}
-    <li><a href="{% url 'prosjekter' %}">Se alle prosjekter</a></li>
-    {% endfor %}
-  </ul>
+{% if other_projects %}
+<section class="section more-projects">
+  <div class="content">
+    <div class="section-head">
+      <h2>Flere prosjekter</h2>
+      <a href="{% url 'prosjekter' %}" class="text-link">Alle prosjekter</a>
+    </div>
+    <ul class="project-list">
+      {% for project in other_projects %}
+      <li>{% include 'core/project-card.html' %}</li>
+      {% endfor %}
+    </ul>
+  </div>
 </section>
+{% endif %}
+
+{% include 'core/cta.html' with heading="Interessert?" text="Ta kontakt for prospekt eller en personlig visning." interest="viewing" button="Avtal visning" %}
 {% endblock %}

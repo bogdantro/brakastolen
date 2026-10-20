@@ -1,13 +1,117 @@
-// prosjekt-detail – styled in the design phase. Palette and fonts: global/_variables.scss
+// Project page: facts panel beside the text, plot table and an even photo grid.
 @use '../global/variables' as *;
 
-// Mobile and tablet
-@media (max-width: 1139px) {
+.facts-panel {
+  .facts {
+    margin: 0;
+
+    > div {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid $border;
+    }
+
+    dt {
+      color: $mutedText;
+    }
+
+    dd {
+      margin: 0;
+      text-align: right;
+      color: $heroText;
+      font-weight: 500;
+    }
+  }
+
+  .extras {
+    list-style: none;
+    padding: 0;
+    margin: 22px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    li {
+      padding: 4px 12px;
+      border: 1px solid $sage;
+      color: $sageDeep;
+      font-size: 15px;
+    }
+  }
 }
 
-// Desktop
+.project .credit {
+  margin-top: 28px;
+  font-size: 15px;
+}
+
+.plots-in-group,
+.gallery-section {
+  border-top: 1px solid $border;
+}
+
+.gallery-section .count {
+  color: $sageDeep;
+}
+
+.gallery {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+
+  a {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+    background: $sand;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s ease;
+  }
+
+  a:hover img {
+    transform: scale(1.03);
+  }
+}
+
+.more-projects {
+  background: $card;
+}
+
+@media (max-width: 1139px) {
+  .gallery {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+}
+
 @media only screen and (min-width: 1140px) {
+  .gallery {
+    grid-template-columns: repeat(3, 1fr);
+    gap: u(16);
+
+    // The first photo takes a double tile, like the hero's large photo beside smaller ones
+    li:first-child {
+      grid-column: span 2;
+      grid-row: span 2;
+
+      a {
+        aspect-ratio: auto;
+        height: 100%;
+      }
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .gallery img {
+    transition: none;
+  }
 }

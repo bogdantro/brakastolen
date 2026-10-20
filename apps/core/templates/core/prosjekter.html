@@ -10,32 +10,26 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'scss/store/prosjekter.css' %}">
 
-<section class="page-intro">
-  <h1>Prosjekter</h1>
-  <p>Hyttegrender og hytter på Brakastølen.</p>
+{% include 'core/page-header.html' with title="Prosjekter" lead="Hyttegrender og hytter på Brakastølen." image="images/projects/leve-hytter-vy-overblikk.jpg" image_alt="Leve-hytte i vinterlandskap med skiløpere" label="Brakastølen · Prosjekter" %}
+
+<section class="section">
+  <div class="content">
+    <nav class="filter" aria-label="Vis prosjekter">
+      <a href="{% url 'prosjekter' %}" {% if not category %}aria-current="page"{% endif %}>Alle</a>
+      {% for key, label in categories %}
+      <a href="{% url 'prosjekter' %}?kategori={{ key }}" {% if category == key %}aria-current="page"{% endif %}>{{ label }}</a>
+      {% endfor %}
+    </nav>
+
+    <ul class="project-list">
+      {% for project in projects %}
+      <li>{% include 'core/project-card.html' %}</li>
+      {% empty %}
+      <li class="empty">Ingen prosjekter her ennå. <a href="{% url 'prosjekter' %}" class="text-link">Se alle prosjekter</a></li>
+      {% endfor %}
+    </ul>
+  </div>
 </section>
 
-<nav class="filter" aria-label="Filtrer prosjekter">
-  <a href="{% url 'prosjekter' %}" {% if not category %}aria-current="page"{% endif %}>Alle</a>
-  {% for key, label in categories %}
-  <a href="{% url 'prosjekter' %}?kategori={{ key }}" {% if category == key %}aria-current="page"{% endif %}>{{ label }}</a>
-  {% endfor %}
-</nav>
-
-<section class="list">
-  <ul>
-    {% for project in projects %}
-    <li>
-      <a href="{% url 'prosjekt_detail' project.slug %}">
-        <img src="{{ project.image.url }}" alt="{{ project.title }}" loading="lazy">
-        <h2>{{ project.title }}</h2>
-        <p>{{ project.get_category_display }} · {{ project.get_status_display }}</p>
-        <p>{{ project.excerpt }}</p>
-      </a>
-    </li>
-    {% empty %}
-    <li>Ingen prosjekter her ennå.</li>
-    {% endfor %}
-  </ul>
-</section>
+{% include 'core/cta.html' with heading="Interessert i et av prosjektene?" text="Ta kontakt for prospekt eller en personlig visning." interest="viewing" button="Avtal visning" %}
 {% endblock %}
