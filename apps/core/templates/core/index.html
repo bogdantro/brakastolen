@@ -121,19 +121,51 @@
   </div>
 </section>
 
-<section class="activities-section section">
-  <div class="content split">
-    <div class="split-head">
-      <h2>Aktiviteter hele året</h2>
-      <span class="copper-rule" aria-hidden="true"></span>
-      <p>Vaset er et av de mest attraktive hytteområdene i Valdres – sommer og vinter.</p>
-      <a href="{% url 'aktiviteter' %}" class="text-link">Mer om aktivitetene</a>
+<section class="activities" aria-labelledby="activities-title">
+  <div class="content">
+    <div class="activities-head">
+      <h2 id="activities-title">Aktiviteter hele året</h2>
+      <div>
+        <p>Vaset er et av de mest attraktive hytteområdene i Valdres – med spennende aktiviteter både sommer og vinter, rett utenfor hytteveggen.</p>
+        <a href="{% url 'aktiviteter' %}" class="text-link">Mer om aktivitetene</a>
+      </div>
     </div>
-    <dl class="rows">
-      <div><dt>Alpint</dt><dd>9 nedfarter i ulike vanskelighetsgrader – et flott alternativ for barnefamilier.</dd></div>
-      <div><dt>Langrenn</dt><dd>Ca. 120 km preparerte løyper, fra lysløype i granskog til snaufjellet innenfor Gomobu.</dd></div>
-      <div><dt>Sykkel</dt><dd>Merkede sykkelløyper for hele familien fra Gomobu, og den nasjonale sykkelruta «Mjølkevegen».</dd></div>
-    </dl>
+
+    <ul class="activity-cards">
+      <li>
+        <a href="{% url 'aktiviteter' %}#alpint" class="activity-card">
+          <span class="activity-photo">
+            <img src="{% static 'images/misc/kiting-pa-vaset.jpg' %}" alt="Snøkiting på fjellet ved Vaset" loading="lazy">
+            <span class="activity-fact"><strong>9</strong> nedfarter</span>
+          </span>
+          <span class="season">Vinter</span>
+          <h3>Alpint</h3>
+          <p>Vaset skiheiser har nedfarter i ulike vanskelighetsgrader – et flott alternativ for barnefamilier og de som vil øve på rails eller hopp.</p>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'aktiviteter' %}#langrenn" class="activity-card">
+          <span class="activity-photo">
+            <img src="{% static 'images/misc/langrenn-vaset.jpg' %}" alt="Preparerte langrennsløyper over snaufjellet ved Vaset" loading="lazy">
+            <span class="activity-fact"><strong>120</strong> km løyper</span>
+          </span>
+          <span class="season">Vinter</span>
+          <h3>Langrenn</h3>
+          <p>Preparerte løyper fra lysløype i granskog til snaufjellet innenfor Gomobu – og helt opp på «Syni», 1137 moh.</p>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'aktiviteter' %}#sykkel" class="activity-card">
+          <span class="activity-photo">
+            <img src="{% static 'images/projects/tinde-hytte-04-12031241.jpg' %}" alt="Hytte med torvtak i sommerfjellet ved Vaset" loading="lazy">
+            <span class="activity-fact is-word"><strong>Mjølkevegen</strong> nasjonal sykkelrute</span>
+          </span>
+          <span class="season">Sommer</span>
+          <h3>Sykkel</h3>
+          <p>Flere titalls merkede sykkelløyper fra Gomobu for hele familien, og den nasjonale sykkelruta «Mjølkevegen».</p>
+        </a>
+      </li>
+    </ul>
   </div>
 </section>
 
@@ -159,17 +191,22 @@
 </section>
 {% endif %}
 
-<section class="faq-section section">
+<section class="faq-section section" aria-labelledby="faq-title">
   <div class="content split">
     <div class="split-head">
-      <h2>Ofte stilte spørsmål</h2>
+      <h2 id="faq-title">Ofte stilte spørsmål</h2>
       <span class="copper-rule" aria-hidden="true"></span>
+      <p>Det folk oftest lurer på før de kommer på visning.</p>
+      <div class="faq-contact">
+        <p>Finner du ikke svaret?</p>
+        <a href="tel:{{ business.phone }}" class="faq-phone">{{ business.phone_display }}</a>
+        <a href="mailto:{{ business.email }}" class="text-link">{{ business.email }}</a>
+      </div>
     </div>
     {% include 'core/faq-list.html' %}
   </div>
 </section>
 
-{% include 'core/cta.html' with heading="Vil du oppfylle din hyttedrøm?" text="Ta kontakt for en personlig visning av Brakastølen." interest="viewing" button="Avtal visning" %}
 {% endblock %}
 
 {% block scripts %}

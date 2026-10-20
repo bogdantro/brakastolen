@@ -333,54 +333,111 @@ h3 {
   color: #5C5956;
 }
 
-.faq-list details {
-  border-top: 1px solid rgba(20, 22, 22, 0.16);
+.faq-list {
+  border-top: 1px solid #0D1716;
 }
-.faq-list details:last-child {
+.faq-list details {
   border-bottom: 1px solid rgba(20, 22, 22, 0.16);
+  transition: background 0.3s ease;
+}
+.faq-list details[open] {
+  background: #FBF8F1;
 }
 .faq-list summary {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 24px;
-  padding: 24px 0;
+  gap: 28px;
+  padding: 26px 20px 26px 0;
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
-  font-size: clamp(21px, 1.6vw, 26px);
+  font-size: clamp(21px, 1.75vw, 29px);
   line-height: 1.2;
   color: #0D1716;
   cursor: pointer;
   list-style: none;
+  transition: color 0.25s ease, padding 0.3s ease;
 }
 .faq-list summary::-webkit-details-marker {
   display: none;
 }
+.faq-list summary:hover {
+  color: #5E7D5A;
+}
+.faq-list summary:hover .plus {
+  border-color: #002223;
+}
+.faq-list details[open] summary {
+  padding-left: 24px;
+}
 .faq-list .plus {
   position: relative;
   flex-shrink: 0;
-  width: 18px;
-  height: 18px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  border-radius: 50%;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 .faq-list .plus::before, .faq-list .plus::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 14px;
+  right: 14px;
   top: 50%;
-  height: 1px;
+  height: 1.5px;
+  margin-top: -0.75px;
   background: #002223;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 .faq-list .plus::after {
   transform: rotate(90deg);
+}
+.faq-list details[open] .plus {
+  background: #002223;
+  border-color: #002223;
+}
+.faq-list details[open] .plus::before, .faq-list details[open] .plus::after {
+  background: #F6F3E9;
 }
 .faq-list details[open] .plus::after {
   transform: rotate(0deg);
 }
 .faq-list details p {
-  padding: 0 48px 26px 0;
+  margin: 0 24px 0 24px;
+  padding: 0 60px 30px 22px;
+  border-left: 2px solid #90AE8C;
   color: #5C5956;
-  max-width: 40em;
+  font-size: 18px;
+  line-height: 1.65;
+  max-width: 44em;
+  animation: faq-open 0.35s ease;
+}
+
+@keyframes faq-open {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.faq-contact {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(20, 22, 22, 0.16);
+}
+.faq-contact p {
+  color: #5C5956;
+}
+.faq-contact .faq-phone {
+  display: block;
+  margin: 6px 0 4px;
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+  font-size: clamp(32px, 2.6vw, 44px);
+  color: #002223;
+  text-decoration: none;
 }
 
 .cta-band {
@@ -560,6 +617,19 @@ h3 {
 @media (max-width: 1139px) {
   .content {
     padding: 0 20px;
+  }
+  .faq-list summary {
+    padding-right: 0;
+    gap: 16px;
+  }
+  .faq-list details[open] summary {
+    padding-left: 14px;
+    padding-right: 10px;
+  }
+  .faq-list details p {
+    margin: 0 14px;
+    padding: 0 4px 24px 16px;
+    font-size: 17px;
   }
   .section {
     padding: 72px 0;
@@ -779,6 +849,9 @@ h3 {
   .faq-list .plus::before,
   .faq-list .plus::after {
     transition: none;
+  }
+  .faq-list details p {
+    animation: none;
   }
 }
 
