@@ -22,19 +22,12 @@
     {% endfor %}
   </div>
 
-  {% comment %} Cream blocks that step into the photo behind the heading, and the right-hand column {% endcomment %}
+  {% comment %} Cream block under the heading, so the place name and text have room beside the photo.
+  The heading lines carry their own cream background, so the steps fit any wording. {% endcomment %}
   <span class="step step-1" aria-hidden="true"></span>
-  <span class="step step-2" aria-hidden="true"></span>
-  <span class="side-column" aria-hidden="true"></span>
-
-  <div class="rail" aria-hidden="true">
-    <p class="counter"><span data-slide-current>01</span><span class="counter-rule"></span><span>{{ hero_images|length|stringformat:"02d" }}</span></p>
-    <span class="rail-line"></span>
-    <p class="rail-label">Vaset · Valdres</p>
-  </div>
 
   <div class="hero-text">
-    <h1><span class="line">Din</span> <span class="line line-2">plass</span> <span class="line line-3"><span class="green">i fjellet</span>.</span></h1>
+    <h1><span class="line">Stort utvalg</span> <span class="line line-2 green">av fantastiske</span> <span class="line line-3"><span class="green">tomter</span>.</span></h1>
     <p class="place">Brakastølen, Vaset · Valdres</p>
     <span class="copper-rule" aria-hidden="true"></span>
     <p class="lead">Storslått natur. Egen hyttedrøm.<br>Noen steder føles bare riktige.</p>
@@ -43,6 +36,12 @@
       Se ledige tomter
     </a>
   </div>
+
+  {% comment %}
+  Switched off at the client's request (20.10.2026). Styles are kept in home.scss –
+  remove this comment wrapper to bring them back.
+
+  <span class="side-column" aria-hidden="true"></span>
 
   <aside class="price-card" aria-label="Pris">
     <span class="copper-rule" aria-hidden="true"></span>
@@ -54,6 +53,7 @@
   <div class="side-text">
     <p class="script">Mer<br>enn et<br>sted.</p>
   </div>
+  {% endcomment %}
 
   <img class="winter" src="{% static 'images/misc/vaset-vinter-svarthvit.jpg' %}" alt="Vinterfjellet ved Vaset med preparerte skiløyper" loading="lazy">
 </section>

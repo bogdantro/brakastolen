@@ -153,8 +153,8 @@ h3 {
   display: inline-flex;
   align-items: center;
   gap: 24px;
-  // Same green as "i fjellet" in the hero heading
-  color: $sageDeep;
+  // The main brand green, like "i fjellet" in the hero heading
+  color: $primaryColor;
   text-decoration: none;
   font-weight: 500;
   font-size: 19px;
@@ -165,14 +165,15 @@ h3 {
     flex-shrink: 0;
     width: 64px;
     height: 64px;
-    background: $sageDeep;
+    background: $primaryColor;
     color: $white;
     border-radius: 50%;
     transition: background 0.3s ease, color 0.3s ease;
   }
 
   &:hover .circle {
-    background: $primaryColor;
+    background: $sage;
+    color: $primaryColor;
   }
 }
 
@@ -247,22 +248,9 @@ h3 {
       background: $sage;
     }
 
-    .rail {
-      color: rgba(246, 243, 233, 0.7);
-    }
 
-    .rail-line {
-      background: $borderOnDark !important;
-    }
   }
 
-  .rail-label {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    text-transform: uppercase;
-    letter-spacing: 0.3em;
-    white-space: nowrap;
-  }
 }
 
 // ------------------------------------------------------------
@@ -737,10 +725,6 @@ h3 {
       max-height: 520px;
     }
 
-    .rail {
-      display: none;
-    }
-
     .page-header-text {
       position: relative;
       padding: 0 20px 48px;
@@ -876,8 +860,7 @@ h3 {
     min-height: max(470px, u(640));
     padding: u(220) 0 u(90);
 
-    .page-header-photo,
-    .rail {
+    .page-header-photo {
       position: absolute;
     }
 
@@ -899,28 +882,6 @@ h3 {
       background: $background;
     }
 
-    .rail {
-      inset: 0 auto 0 0;
-      width: u(100);
-      z-index: 1;
-
-      .rail-line {
-        position: absolute;
-        left: u(78);
-        top: u(160);
-        bottom: 0;
-        width: 1px;
-        background: rgba(20, 22, 22, 0.55);
-      }
-
-      .rail-label {
-        position: absolute;
-        left: u(32);
-        top: u(190);
-        margin: 0;
-        font-size: u(13.5);
-      }
-    }
 
     .page-header-text {
       position: relative;

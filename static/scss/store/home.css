@@ -34,6 +34,18 @@
 .hero h1 .line {
   display: block;
   width: fit-content;
+  position: relative;
+  background: #F1EBDF;
+  white-space: nowrap;
+}
+.hero h1 .line:nth-child(1) {
+  z-index: 3;
+}
+.hero h1 .line:nth-child(2) {
+  z-index: 2;
+}
+.hero h1 .line:nth-child(3) {
+  z-index: 1;
 }
 .hero h1 .green {
   color: #5E7D5A;
@@ -93,7 +105,7 @@
     min-height: 380px;
     max-height: 640px;
   }
-  .hero .step, .hero .side-column, .hero .rail, .hero .side-text, .hero .winter {
+  .hero .step, .hero .side-column, .hero .side-text, .hero .winter {
     display: none;
   }
   .hero .price-card {
@@ -123,15 +135,14 @@
     margin-top: -34px;
   }
   .hero h1 {
-    font-size: clamp(64px, 17vw, 120px);
-    line-height: 0.86;
+    font-size: clamp(44px, 12.2vw, 92px);
+    line-height: 1.02;
   }
   .hero h1 .line {
-    background: #F1EBDF;
-    padding: 6px 14px 0 0;
+    padding: 4px 14px 0 0;
   }
-  .hero h1 .line-3 {
-    padding-left: 0.32em;
+  .hero h1 .line-2 {
+    margin-left: 0.3em;
   }
   .hero .place {
     font-size: 24px;
@@ -176,15 +187,9 @@
   }
   .hero .step-1 {
     left: calc(var(--u) * 495);
-    top: calc(var(--u) * 318);
-    width: calc(var(--u) * 118);
-    height: calc(var(--u) * 452);
-  }
-  .hero .step-2 {
-    left: calc(var(--u) * 612);
-    top: calc(var(--u) * 495);
-    width: calc(var(--u) * 138);
-    height: calc(var(--u) * 190);
+    top: calc(var(--u) * 330);
+    width: calc(var(--u) * 150);
+    height: calc(var(--u) * 440);
   }
   .hero .side-column {
     left: calc(var(--u) * 1488);
@@ -193,63 +198,21 @@
     bottom: 0;
     background: #F1EBDF;
   }
-  .hero .rail {
-    inset: 0 auto 0 0;
-    width: calc(var(--u) * 100);
-    color: #141616;
-  }
-  .hero .rail > * {
-    position: absolute;
-    margin: 0;
-  }
-  .hero .rail .counter {
-    left: calc(var(--u) * 26);
-    top: calc(var(--u) * 160);
-    width: calc(var(--u) * 34);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: calc(var(--u) * 17);
-    line-height: 1.25;
-    letter-spacing: 0.04em;
-  }
-  .hero .rail .counter-rule {
-    width: calc(var(--u) * 22);
-    height: 1px;
-    background: #141616;
-    margin: calc(var(--u) * 3) 0;
-  }
-  .hero .rail .rail-line {
-    left: calc(var(--u) * 78);
-    top: calc(var(--u) * 183);
-    width: 1px;
-    height: calc(var(--u) * 702);
-    background: rgba(20, 22, 22, 0.55);
-  }
-  .hero .rail .rail-label {
-    left: calc(var(--u) * 32);
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    text-transform: uppercase;
-    letter-spacing: 0.32em;
-    font-size: calc(var(--u) * 13.5);
-    white-space: nowrap;
-  }
-  .hero .rail .rail-label {
-    top: calc(var(--u) * 366);
-  }
   .hero .hero-text {
     left: calc(var(--u) * 114);
     top: calc(var(--u) * 182);
-    width: calc(var(--u) * 700);
+    width: max-content;
   }
   .hero h1 {
-    font-size: calc(var(--u) * 192);
-    line-height: calc(var(--u) * 151);
-    letter-spacing: -0.042em;
+    font-size: calc(var(--u) * 150);
+    line-height: calc(var(--u) * 132);
+    letter-spacing: -0.035em;
   }
-  .hero h1 .line-3 {
-    margin-left: calc(var(--u) * 62);
+  .hero h1 .line {
+    padding-right: calc(var(--u) * 30);
+  }
+  .hero h1 .line-2 {
+    margin-left: calc(var(--u) * 48);
   }
   .hero .place {
     font-size: calc(var(--u) * 34);

@@ -126,7 +126,7 @@ h3 {
   display: inline-flex;
   align-items: center;
   gap: 24px;
-  color: #5E7D5A;
+  color: #002223;
   text-decoration: none;
   font-weight: 500;
   font-size: 19px;
@@ -137,13 +137,14 @@ h3 {
   flex-shrink: 0;
   width: 64px;
   height: 64px;
-  background: #5E7D5A;
+  background: #002223;
   color: #F6F3E9;
   border-radius: 50%;
   transition: background 0.3s ease, color 0.3s ease;
 }
 .circle-link:hover .circle {
-  background: #002223;
+  background: #90AE8C;
+  color: #002223;
 }
 
 .page-header {
@@ -198,19 +199,6 @@ h3 {
 }
 .page-header.is-plain .copper-rule {
   background: #90AE8C;
-}
-.page-header.is-plain .rail {
-  color: rgba(246, 243, 233, 0.7);
-}
-.page-header.is-plain .rail-line {
-  background: rgba(246, 243, 233, 0.24) !important;
-}
-.page-header .rail-label {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  text-transform: uppercase;
-  letter-spacing: 0.3em;
-  white-space: nowrap;
 }
 
 .fact-strip {
@@ -597,9 +585,6 @@ h3 {
     min-height: 280px;
     max-height: 520px;
   }
-  .page-header .rail {
-    display: none;
-  }
   .page-header .page-header-text {
     position: relative;
     padding: 0 20px 48px;
@@ -699,8 +684,7 @@ h3 {
     min-height: max(470px, var(--u) * 640);
     padding: calc(var(--u) * 220) 0 calc(var(--u) * 90);
   }
-  .page-header .page-header-photo,
-  .page-header .rail {
+  .page-header .page-header-photo {
     position: absolute;
   }
   .page-header .page-header-photo {
@@ -717,26 +701,6 @@ h3 {
     width: calc(var(--u) * 210);
     bottom: 0;
     background: #F1EBDF;
-  }
-  .page-header .rail {
-    inset: 0 auto 0 0;
-    width: calc(var(--u) * 100);
-    z-index: 1;
-  }
-  .page-header .rail .rail-line {
-    position: absolute;
-    left: calc(var(--u) * 78);
-    top: calc(var(--u) * 160);
-    bottom: 0;
-    width: 1px;
-    background: rgba(20, 22, 22, 0.55);
-  }
-  .page-header .rail .rail-label {
-    position: absolute;
-    left: calc(var(--u) * 32);
-    top: calc(var(--u) * 190);
-    margin: 0;
-    font-size: calc(var(--u) * 13.5);
   }
   .page-header .page-header-text {
     position: relative;

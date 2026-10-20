@@ -15,7 +15,7 @@
 {% if not post.is_published %}<p class="draft-notice" role="status">Utkast – bare synlig for innloggede.</p>{% endif %}
 
 {% with meta=post.created_at|date:'j. F Y' %}
-{% include 'core/page-header.html' with title=post.title lead=post.excerpt image_url=post_image image_alt=post.image_alt|default:post.title label="Brakastølen · Nyheter" meta=meta %}
+{% include 'core/page-header.html' with title=post.title lead=post.excerpt image_url=post_image image_alt=post.image_alt|default:post.title meta=meta %}
 {% endwith %}
 
 <article class="section post">

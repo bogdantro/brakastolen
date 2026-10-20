@@ -44,12 +44,21 @@
     color: $heroText;
     letter-spacing: -0.015em;
 
+    // Each line sits on its own cream block, stepping out over the photo. Earlier lines are
+    // stacked above later ones, so a descender (the "p" or "j") is never covered by the next line.
     .line {
       display: block;
       width: fit-content;
+      position: relative;
+      background: $background;
+      white-space: nowrap;
     }
 
-    // "i fjellet" in the brand's sage green (deep enough to read on cream)
+    .line:nth-child(1) { z-index: 3; }
+    .line:nth-child(2) { z-index: 2; }
+    .line:nth-child(3) { z-index: 1; }
+
+    // "i fantastiske tomter" in the light brand green
     .green {
       color: $sageDeep;
     }
@@ -127,7 +136,7 @@
       max-height: 640px;
     }
 
-    .step, .side-column, .rail, .side-text, .winter {
+    .step, .side-column, .side-text, .winter {
       display: none;
     }
 
@@ -151,16 +160,14 @@
     }
 
     h1 {
-      font-size: clamp(64px, 17vw, 120px);
-      line-height: 0.86;
+      font-size: clamp(44px, 12.2vw, 92px);
+      line-height: 1.02;
 
-      // The cream steps of the desktop design, as backgrounds behind the lines
       .line {
-        background: $background;
-        padding: 6px 14px 0 0;
+        padding: 4px 14px 0 0;
       }
-      .line-3 {
-        padding-left: 0.32em;
+      .line-2 {
+        margin-left: 0.3em;
       }
     }
 
@@ -214,8 +221,7 @@
     .step {
       background: $background;
     }
-    .step-1 { left: u(495); top: u(318); width: u(118); height: u(452); }
-    .step-2 { left: u(612); top: u(495); width: u(138); height: u(190); }
+    .step-1 { left: u(495); top: u(330); width: u(150); height: u(440); }
 
     // Right-hand cream column under the price card
     .side-column {
@@ -227,67 +233,20 @@
     }
 
 
-    // Left rail: slide counter, vertical place name and coordinates
-    .rail {
-      inset: 0 auto 0 0;
-      width: u(100);
-      color: $black;
-
-      > * { position: absolute; margin: 0; }
-
-      .counter {
-        left: u(26);
-        top: u(160);
-        width: u(34);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-size: u(17);
-        line-height: 1.25;
-        letter-spacing: 0.04em;
-      }
-
-      .counter-rule {
-        width: u(22);
-        height: 1px;
-        background: $black;
-        margin: u(3) 0;
-      }
-
-      .rail-line {
-        left: u(78);
-        top: u(183);
-        width: 1px;
-        height: u(702);
-        background: rgba(20, 22, 22, 0.55);
-      }
-
-      .rail-label {
-        left: u(32);
-        writing-mode: vertical-rl;
-        transform: rotate(180deg);
-        text-transform: uppercase;
-        letter-spacing: 0.32em;
-        font-size: u(13.5);
-        white-space: nowrap;
-      }
-
-      .rail-label { top: u(366); }
-
-    }
 
     .hero-text {
       left: u(114);
       top: u(182);
-      width: u(700);
+      width: max-content;
     }
 
     h1 {
-      font-size: u(192);
-      line-height: u(151);
-      letter-spacing: -0.042em;
+      font-size: u(150);
+      line-height: u(132);
+      letter-spacing: -0.035em;
 
-      .line-3 { margin-left: u(62); }
+      .line { padding-right: u(30); }
+      .line-2 { margin-left: u(48); }
     }
 
     .place {

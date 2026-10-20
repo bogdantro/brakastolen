@@ -57,9 +57,9 @@
         color: $sage;
       }
 
-      // The page you're on: sage, with a short line under it
+      // The page you're on: a sage line under it (the text stays white – sage text
+      // would disappear against a bright sky in the photo)
       &[aria-current="page"] {
-        color: $sage;
 
         &::after {
           content: '';
@@ -262,7 +262,11 @@
       }
     }
 
+    // Desktop: the main brand green (#002223). On phones it stays sage, because the
+    // open menu panel is itself that green.
     .nav-cta {
+      background: $primaryColor;
+      color: $white;
       margin-left: u(48);
       height: u(52);
       padding: 0 u(26);
@@ -271,6 +275,11 @@
       svg {
         width: u(20);
         height: u(20);
+      }
+
+      &:hover {
+        background: $sage;
+        color: $primaryColor;
       }
     }
   }

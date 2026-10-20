@@ -121,7 +121,7 @@ class PageTests(MediaTestCase):
         response = self.client.get('/')
         # The heading is split into spans for the stepped layout; compare its visible text
         h1 = re.search(r'<h1>(.*?)</h1>', response.content.decode(), re.S).group(1)
-        self.assertEqual(' '.join(re.sub(r'<[^>]+>', '', h1).split()), 'Din plass i fjellet.')
+        self.assertEqual(' '.join(re.sub(r'<[^>]+>', '', h1).split()), 'Stort utvalg i fantastiske tomter.')
         self.assertContains(response, '900 000 kr')
 
     def test_hero_images_are_read_from_the_folder_in_natural_order(self):

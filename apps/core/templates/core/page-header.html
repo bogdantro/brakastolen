@@ -6,7 +6,6 @@
     - lead: optional short paragraph under the heading
     - image: a path in static/ (e.g. 'images/misc/langrenn-vaset.jpg') – or image_url for an uploaded photo
     - image_alt: description of the photo
-    - label: short vertical text in the left rail, e.g. "Brakastølen · Tomter"
     - meta: optional small line above the lead (dates, categories)
 {% endcomment %}
 <header class="page-header{% if not image and not image_url %} is-plain{% endif %}">
@@ -15,11 +14,6 @@
     <img src="{% if image %}{% static image %}{% else %}{{ image_url }}{% endif %}" alt="{{ image_alt }}" fetchpriority="high">
   </div>
   {% endif %}
-
-  <div class="rail" aria-hidden="true">
-    <span class="rail-line"></span>
-    {% if label %}<p class="rail-label">{{ label }}</p>{% endif %}
-  </div>
 
   <div class="page-header-text">
     <h1><span>{{ title }}</span></h1>

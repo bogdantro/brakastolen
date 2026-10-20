@@ -46,9 +46,6 @@
 .nav .links a:hover {
   color: #90AE8C;
 }
-.nav .links a[aria-current=page] {
-  color: #90AE8C;
-}
 .nav .links a[aria-current=page]::after {
   content: "";
   position: absolute;
@@ -214,6 +211,8 @@
     text-shadow: 0 1px 14px rgba(0, 0, 0, 0.45);
   }
   .nav .nav-cta {
+    background: #002223;
+    color: #F6F3E9;
     margin-left: calc(var(--u) * 48);
     height: calc(var(--u) * 52);
     padding: 0 calc(var(--u) * 26);
@@ -222,6 +221,10 @@
   .nav .nav-cta svg {
     width: calc(var(--u) * 20);
     height: calc(var(--u) * 20);
+  }
+  .nav .nav-cta:hover {
+    background: #90AE8C;
+    color: #002223;
   }
 }
 @media (prefers-reduced-motion: reduce) {
