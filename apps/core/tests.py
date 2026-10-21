@@ -127,7 +127,7 @@ class PageTests(MediaTestCase):
     def test_favicon_ico_points_to_the_real_icon(self):
         response = self.client.get('/favicon.ico')
         self.assertEqual(response.status_code, 301)
-        self.assertTrue(response['Location'].endswith('images/favicon/favicon-32.png'))
+        self.assertTrue(response['Location'].endswith('images/favicon/favicon.ico'))
 
     def test_tomter_has_the_plot_picker_with_the_plots(self):
         Plot.objects.create(number='T10', price=900000, area_m2=1400)

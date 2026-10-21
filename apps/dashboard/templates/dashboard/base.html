@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <title>{% block title %}Dashbord{% endblock %} – {{ business.name }}</title>
-  <link rel="icon" href="{% static 'images/favicon/favicon-32.png' %}" sizes="32x32" type="image/png">
+  {% include 'core/favicons.html' %}
   {% comment %} Same fonts and colours as the public site and the dashboard login. {% endcomment %}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

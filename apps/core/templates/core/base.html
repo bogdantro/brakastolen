@@ -34,9 +34,7 @@
   {% schema_site %}
   {% block schema %}{% endblock %}
 
-  <link rel="icon" href="{% static 'images/favicon/favicon-32.png' %}" sizes="32x32" type="image/png">
-  <link rel="icon" href="{% static 'images/favicon/favicon-192.png' %}" sizes="192x192" type="image/png">
-  <link rel="apple-touch-icon" href="{% static 'images/favicon/apple-touch-icon.png' %}">
+  {% include 'core/favicons.html' %}
 
   <!-- Fonts: loaded without blocking the first paint; noscript covers browsers without JS.
        Matched to the design reference: DM Serif Display, Newsreader, La Belle Aurore. -->
