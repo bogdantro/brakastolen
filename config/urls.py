@@ -59,8 +59,7 @@ urlpatterns = [
     # The project pages were replaced by the suppliers on the Hytter page
     path('prosjekter/', moved_to('hytter')),
     re_path(r'^prosjekter/[\w-]+/(?:deling\.jpg)?$', moved_to('hytter')),
-    # Browsers ask for /favicon.ico by themselves (e.g. on the sitemap), whatever the page links to
-    path('favicon.ico', RedirectView.as_view(url=settings.STATIC_URL + 'images/favicon/favicon.ico', permanent=True)),
+    path('favicon.ico', views.favicon, name='favicon'),
 
     path('dashboard/', include('apps.dashboard.urls')),
     path('admin/', admin.site.urls),

@@ -216,6 +216,12 @@ AI_CRAWLERS = [
 LLMS_FULL_CACHE_SECONDS = 60 * 60
 
 
+def favicon(request):
+    """Browsers ask for /favicon.ico by themselves (e.g. on the sitemap), whatever the page links to.
+    static() gives the live file name, with its content hash."""
+    return redirect(static('images/favicon/favicon.ico'), permanent=True)
+
+
 def robots_txt(request):
     if not settings.ALLOW_INDEXING:
         # Test/staging domain: keep every search engine and AI crawler out

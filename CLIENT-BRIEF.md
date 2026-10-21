@@ -289,7 +289,7 @@ the plot table – the client should confirm current status per plot, then enter
 
 ## 8. Missing or uncertain – ask the client
 
-1. **Current plot list**: which plots are free, reserved or sold today, with size and price (§6 is from 2022).
+1. ~~**Current plot list**~~ – answered: the 54 plots on the old site's live plot map (size, price, sold) are loaded by `seed_plots`. Ask the client to confirm the categories (Byggetrinn 1: plots 11–34, Byggetrinn 2: 35–66, from the 2022 map).
 2. **El-bike campaign**: still running? End date? (Seeded as a draft.)
 3. **Text for the three old posts** (reguleringsplan, skogsavvirkning, bærår) – or delete them.
 4. **Tinde photos** `tinde-hytte-01…09`: they sit in the Tinde section on the old site, and the map shows

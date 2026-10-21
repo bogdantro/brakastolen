@@ -378,9 +378,20 @@ USE_TZ = True
 # Static & media files
 # ------------------------------------------------------------------
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# On the live server every static file gets a content hash in its name (style.3f2a1c.css), so
+# browsers may cache it for a year and still get the new file the moment it changes. It needs
+# `collectstatic` to have run, so local development (DEBUG=True) keeps plain file names.
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {
+        'BACKEND': ('django.contrib.staticfiles.storage.StaticFilesStorage' if DEBUG
+                    else 'whitenoise.storage.CompressedManifestStaticFilesStorage'),
+    },
+}
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
