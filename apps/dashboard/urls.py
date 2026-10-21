@@ -25,8 +25,10 @@ urlpatterns = [
 
     path('tomter/', views.dashboard_plots, name='dashboard_plots'),
     path('tomter/ny/', views.dashboard_plot_create, name='dashboard_plot_create'),
+    path('tomter/flere/', views.dashboard_plots_bulk, name='dashboard_plots_bulk'),
+    path('tomter/kategorier/', views.dashboard_plot_categories, name='dashboard_plot_categories'),
     path('tomter/<int:pk>/rediger/', views.dashboard_plot_edit, name='dashboard_plot_edit'),
-    path('tomter/<int:pk>/status/', views.dashboard_plot_status, name='dashboard_plot_status'),
+    path('tomter/<int:pk>/hurtig/', views.dashboard_plot_quick, name='dashboard_plot_quick'),
     path('tomter/<int:pk>/slett/', views.dashboard_plot_delete, name='dashboard_plot_delete'),
 
     path('nyheter/', views.dashboard_blog, name='dashboard_blog'),

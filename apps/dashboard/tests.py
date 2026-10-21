@@ -13,7 +13,7 @@ from django.utils import timezone
 from PIL import Image
 
 from apps.blog.models import Blog
-from apps.core.models import Inquiry, InquiryNote, Plot, Project, ProjectImage
+from apps.core.models import Inquiry, InquiryNote, Plot, PlotCategory, Project, ProjectImage
 
 from .models import ActivityLog, LoginAttempt
 
@@ -342,13 +342,145 @@ class PlotTests(DashboardTestCase):
         self.client.post(reverse('dashboard_plot_delete', args=[plot.pk]))
         self.assertFalse(Plot.objects.exists())
 
-    def test_quick_status_change_is_logged(self):
-        plot = Plot.objects.create(number='7')
-        self.client.post(reverse('dashboard_plot_status', args=[plot.pk]), {'status': 'sold'})
-        plot.refresh_from_db()
-        self.assertEqual(plot.status, 'sold')
-        self.assertTrue(ActivityLog.objects.filter(action='Endret tomt til «Solgt»').exists())
+    def test_price_can_be_typed_the_norwegian_way(self):
+        self.client.post(reverse('dashboard_plot_create'), {'number': '67', 'status': 'available', 'price': '1 450 000'})
+        self.assertEqual(Plot.objects.get(number='67').price, 1450000)
 
+
+class PlotQuickEditTests(DashboardTestCase):
+    """Changes straight from the plots list: one field at a time, saved and logged."""
+
+    def setUp(self):
+        super().setUp()
+        self.category = PlotCategory.objects.create(name='Byggetrinn 1')
+        self.plot = Plot.objects.create(number='11', price=1500000, area_m2=1600, category=self.category)
+        self.url = reverse('dashboard_plot_quick', args=[self.plot.pk])
+
+    def post_json(self, data):
+        return self.client.post(self.url, data, HTTP_ACCEPT='application/json')
+
+    def test_mark_as_sold(self):
+        response = self.post_json({'status': 'sold'})
+        self.assertEqual(response.json()['plot']['status'], 'sold')
+        self.assertEqual(response.json()['summary']['sold'], 1)
+        self.plot.refresh_from_db()
+        self.assertEqual(self.plot.status, 'sold')
+        self.assertTrue(ActivityLog.objects.filter(action='Markerte tomt 11 som solgt').exists())
+
+    def test_change_price_only_touches_the_price(self):
+        response = self.post_json({'price': '1.450.000 kr'})
+        self.assertEqual(response.json()['plot']['priceDisplay'], '1 450 000 kr')
+        self.plot.refresh_from_db()
+        self.assertEqual((self.plot.price, self.plot.area_m2, self.plot.category), (1450000, 1600, self.category))
+        self.assertTrue(ActivityLog.objects.filter(action='Endret prisen på tomt 11 til 1 450 000 kr').exists())
+
+    def test_empty_price_means_ask_for_price(self):
+        self.post_json({'price': ''})
+        self.plot.refresh_from_db()
+        self.assertIsNone(self.plot.price)
+
+    def test_bad_price_is_refused_and_nothing_changes(self):
+        response = self.post_json({'price': 'mange penger'})
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(response.json()['ok'])
+        self.plot.refresh_from_db()
+        self.assertEqual(self.plot.price, 1500000)
+
+    def test_change_and_remove_category(self):
+        other = PlotCategory.objects.create(name='Byggetrinn 2')
+        self.post_json({'category': other.pk})
+        self.plot.refresh_from_db()
+        self.assertEqual(self.plot.category, other)
+        self.post_json({'category': ''})
+        self.plot.refresh_from_db()
+        self.assertIsNone(self.plot.category)
+        self.assertTrue(ActivityLog.objects.filter(action='Fjernet kategorien på tomt 11').exists())
+
+    def test_unchanged_value_is_not_logged(self):
+        self.post_json({'status': 'available'})
+        self.assertFalse(ActivityLog.objects.exists())
+
+    def test_without_javascript_it_redirects_back_to_the_list(self):
+        response = self.client.post(self.url, {'status': 'reserved', 'next': '/dashboard/tomter/?status=available'})
+        self.assertRedirects(response, '/dashboard/tomter/?status=available', fetch_redirect_response=False)
+
+    def test_next_never_leads_off_the_site(self):
+        response = self.client.post(self.url, {'status': 'reserved', 'next': 'https://evil.example/'})
+        self.assertRedirects(response, reverse('dashboard_plots'), fetch_redirect_response=False)
+
+    def test_get_is_not_allowed(self):
+        self.assertEqual(self.client.get(self.url).status_code, 405)
+
+
+class PlotListTests(DashboardTestCase):
+    def setUp(self):
+        super().setUp()
+        self.phase1 = PlotCategory.objects.create(name='Byggetrinn 1')
+        self.phase2 = PlotCategory.objects.create(name='Byggetrinn 2')
+        Plot.objects.create(number='9', price=900000, category=self.phase1)
+        Plot.objects.create(number='11', price=1500000, category=self.phase1, status='sold')
+        Plot.objects.create(number='35', price=1400000, category=self.phase2)
+
+    def numbers(self, query=''):
+        response = self.client.get(reverse('dashboard_plots') + query)
+        return [p.number for p in response.context['plots']]
+
+    def test_numbers_sort_as_numbers(self):
+        self.assertEqual(self.numbers(), ['9', '11', '35'])
+
+    def test_filters(self):
+        self.assertEqual(self.numbers('?status=available'), ['9', '35'])
+        self.assertEqual(self.numbers(f'?category={self.phase2.pk}'), ['35'])
+        self.assertEqual(self.numbers('?q=3'), ['35'])
+        self.assertEqual(self.numbers('?sort=price_desc'), ['11', '35', '9'])
+
+    def test_summary_counts_value_of_available_plots_only(self):
+        summary = self.client.get(reverse('dashboard_plots')).context['summary']
+        self.assertEqual((summary['available'], summary['sold']), (2, 1))
+        self.assertEqual(summary['available_value'], 2300000)
+
+    def test_bulk_mark_as_sold(self):
+        ids = list(Plot.objects.filter(number__in=['9', '35']).values_list('pk', flat=True))
+        self.client.post(reverse('dashboard_plots_bulk'), {'plots': ids, 'status': 'sold'})
+        self.assertEqual(Plot.objects.filter(status='sold').count(), 3)
+        self.assertTrue(ActivityLog.objects.filter(action='Markerte 2 tomter som solgt', target='tomt 9, 35').exists())
+
+    def test_bulk_move_to_category(self):
+        ids = list(Plot.objects.values_list('pk', flat=True))
+        self.client.post(reverse('dashboard_plots_bulk'), {'plots': ids, 'action': 'category', 'category': self.phase2.pk})
+        self.assertEqual(Plot.objects.filter(category=self.phase2).count(), 3)
+
+    def test_bulk_without_plots_explains_what_to_do(self):
+        response = self.client.post(reverse('dashboard_plots_bulk'), {'status': 'sold'}, follow=True)
+        self.assertContains(response, 'Velg minst én tomt')
+        self.assertEqual(Plot.objects.filter(status='sold').count(), 1)
+
+    def test_categories_can_be_added_renamed_and_deleted(self):
+        url = reverse('dashboard_plot_categories')
+        self.client.post(url, {'action': 'add', 'name': 'Byggetrinn 3'})
+        new = PlotCategory.objects.get(name='Byggetrinn 3')
+        self.client.post(url, {'action': 'rename', 'category_id': self.phase1.pk, 'name': 'Trinn 1'})
+        self.phase1.refresh_from_db()
+        self.assertEqual(self.phase1.name, 'Trinn 1')
+        self.client.post(url, {'action': 'delete', 'category_id': self.phase1.pk})
+        self.assertFalse(PlotCategory.objects.filter(pk=self.phase1.pk).exists())
+        self.assertEqual(Plot.objects.filter(category__isnull=True).count(), 2)
+        self.assertTrue(PlotCategory.objects.filter(pk=new.pk).exists())
+
+    def test_duplicate_category_name_is_refused(self):
+        response = self.client.post(reverse('dashboard_plot_categories'),
+                                    {'action': 'add', 'name': 'Byggetrinn 1'}, follow=True)
+        self.assertContains(response, 'Det finnes allerede en kategori med dette navnet.')
+
+    def test_overview_shows_the_sales_map(self):
+        Plot.objects.filter(number='9').update(map_x=100, map_y=100, map_shape='M90 90 L110 90 L110 110 Z')
+        response = self.client.get(reverse('dashboard_home'))
+        self.assertEqual([p['number'] for p in response.context['map_plots']], ['9'])
+        self.assertEqual(response.context['plot_summary']['sold'], 1)
+        self.assertContains(response, 'sales-map-data')
+
+
+class PlotGroupTests(DashboardTestCase):
     def test_only_cabin_groups_can_hold_plots(self):
         make_project(title='En hytte', category='hytte')
         group = make_project(title='Et felt', category='hyttegrend')

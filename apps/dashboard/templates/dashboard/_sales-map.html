@@ -1,0 +1,17 @@
+{% comment %}
+    The sales map: every plot on the site plan, coloured by status (dashboard.js draws the plots
+    from the JSON in #sales-map-data). Clicking a plot opens it – or, on the plots page, jumps
+    to its row in the list.
+    Parameter: map_id – id for the <svg> element.
+{% endcomment %}
+<div class="sales-map" data-sales-map>
+  <div class="sales-map-frame">
+    {% include 'core/plot-map-svg.html' with map_id=map_id %}
+    <div class="map-tip" data-map-tip hidden></div>
+  </div>
+  <ul class="map-key" aria-label="Fargene i kartet">
+    <li><span class="swatch status-available" aria-hidden="true"></span>Ledig</li>
+    <li><span class="swatch status-reserved" aria-hidden="true"></span>Reservert</li>
+    <li><span class="swatch status-sold" aria-hidden="true"></span>Solgt</li>
+  </ul>
+</div>

@@ -180,14 +180,12 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     // ------------------------------------------------------------
-    // The map – one shape per plot that has a position
+    // The map – one shape per plot that has a position: its real outline from
+    // the site plan, or a standard parcel turned to the road
     // ------------------------------------------------------------
     function buildMap(){
         plots.forEach(function(plot, index){
             if (plot.x === null || plot.y === null) return;
-            // Slightly different sizes so the plots don't look stamped out
-            const width = 52 + (index % 3) * 2;
-            const height = 38 + (index % 2) * 2;
 
             const group = document.createElementNS(SVG_NS, 'g');
             group.setAttribute('class', 'plot');
@@ -196,22 +194,31 @@ document.addEventListener('DOMContentLoaded', function(){
             group.setAttribute('aria-label', plotLabel(plot) + ', ' + plot.statusLabel.toLowerCase());
             group.dataset.id = plot.id;
 
-            const placed = document.createElementNS(SVG_NS, 'g');
-            placed.setAttribute('transform', 'translate(' + plot.x + ' ' + plot.y + ') rotate(' + plot.rotation + ')');
-
             const shape = document.createElementNS(SVG_NS, 'path');
             shape.setAttribute('class', 'parcel');
-            shape.setAttribute('d', 'M' + (-width / 2) + ' ' + (-height / 2) + ' L' + (width / 2 - 7) + ' ' + (-height / 2) +
-                ' L' + (width / 2) + ' ' + (height / 2 - 5) + ' L' + (-width / 2 + 5) + ' ' + (height / 2) + ' Z');
-
             const label = document.createElementNS(SVG_NS, 'text');
             label.setAttribute('class', 'parcel-number');
-            label.setAttribute('y', '1');
             label.textContent = plot.number;
 
-            placed.appendChild(shape);
-            placed.appendChild(label);
-            group.appendChild(placed);
+            if (plot.shape) {
+                shape.setAttribute('d', plot.shape);
+                label.setAttribute('x', plot.x);
+                label.setAttribute('y', plot.y + 1);
+                group.appendChild(shape);
+                group.appendChild(label);
+            } else {
+                // Slightly different sizes so the plots don't look stamped out
+                const width = 52 + (index % 3) * 2;
+                const height = 38 + (index % 2) * 2;
+                const placed = document.createElementNS(SVG_NS, 'g');
+                placed.setAttribute('transform', 'translate(' + plot.x + ' ' + plot.y + ') rotate(' + plot.rotation + ')');
+                shape.setAttribute('d', 'M' + (-width / 2) + ' ' + (-height / 2) + ' L' + (width / 2 - 7) + ' ' + (-height / 2) +
+                    ' L' + (width / 2) + ' ' + (height / 2 - 5) + ' L' + (-width / 2 + 5) + ' ' + (height / 2) + ' Z');
+                label.setAttribute('y', '1');
+                placed.appendChild(shape);
+                placed.appendChild(label);
+                group.appendChild(placed);
+            }
 
             group.addEventListener('click', function(){ choose(plot.id, true); });
             group.addEventListener('keydown', function(e){

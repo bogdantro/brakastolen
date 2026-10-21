@@ -1,52 +1,227 @@
 {% extends 'dashboard/base.html' %}
+{% load dashboard_tags %}
 {% block title %}Tomter{% endblock %}
 
 {% block content %}
-<div class="page-head">
-  <h1>Tomter</h1>
-  <a href="{% url 'dashboard_plot_create' %}" class="button">Ny tomt</a>
-</div>
-<p>Tomtene vises i tabellen på siden «Tomter» på nettsiden. Endre status her når en tomt blir reservert eller solgt.</p>
+<header class="page-head">
+  <div>
+    <h1>Tomter</h1>
+    <p class="page-lead">Endre pris, størrelse, status og kategori rett i listen – endringene lagres med en gang og vises på nettsiden.</p>
+  </div>
+  <div class="page-actions">
+    <a href="{% url 'dashboard_plot_create' %}" class="button">Legg til tomt</a>
+  </div>
+</header>
 
-<nav class="tabs small" aria-label="Status">
-  <a href="{% url 'dashboard_plots' %}" {% if not status %}aria-current="page"{% endif %}>Alle</a>
-  {% for key, label in statuses %}
-  <a href="?status={{ key }}" {% if status == key %}aria-current="page"{% endif %}>{{ label }}</a>
+<section class="figures" aria-label="Tomtene i tall">
+  {% for s in summary.statuses %}
+  <a href="?status={{ s.key }}" class="figure figure-{{ s.key }}{% if f.status == s.key %} is-active{% endif %}">
+    <span class="figure-number" data-count="{{ s.key }}">{{ s.count }}</span>
+    <span class="figure-label">{{ s.plural }} tomter</span>
+  </a>
   {% endfor %}
-</nav>
+  <div class="figure figure-value">
+    <span class="figure-number" data-count="value">{{ summary.available_value|millions }}</span>
+    <span class="figure-label">samlet verdi av ledige tomter</span>
+    {% if summary.price_from %}<span class="figure-sub">{{ summary.price_from|thousands }} – {{ summary.price_to|thousands }} kr per tomt</span>{% endif %}
+  </div>
+  <div class="share-bar" aria-hidden="true">
+    {% for s in summary.statuses %}<span class="share-{{ s.key }}" style="flex-grow: {{ s.count }}" data-share="{{ s.key }}"></span>{% endfor %}
+  </div>
+</section>
 
-<table class="table">
-  <thead>
-    <tr><th scope="col">Tomt</th><th scope="col">Hyttegrend</th><th scope="col">Areal</th><th scope="col">Pris</th><th scope="col">I kartet</th><th scope="col">Status</th><th scope="col"><span class="visually-hidden">Handlinger</span></th></tr>
-  </thead>
-  <tbody>
-    {% for plot in plots %}
-    <tr>
-      <td><a href="{% url 'dashboard_plot_edit' plot.pk %}">{{ plot.number }}</a></td>
-      <td>{{ plot.project.title|default:'–' }}</td>
-      <td>{{ plot.area_display|default:'–' }}</td>
-      <td>{{ plot.price_display|default:'–' }}</td>
-      <td>{{ plot.is_on_map|yesno:'Ja,Nei – bare i listen' }}</td>
-      <td>
-        <form method="post" action="{% url 'dashboard_plot_status' plot.pk %}" class="inline">
-          {% csrf_token %}
-          <label for="plot-status-{{ plot.pk }}" class="visually-hidden">Status for tomt {{ plot.number }}</label>
-          <select name="status" id="plot-status-{{ plot.pk }}" class="input" data-autosubmit>
-            {% for key, label in statuses %}<option value="{{ key }}" {% if plot.status == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+<div class="plots-layout">
+  <div class="plots-main">
+    <form method="get" class="filter-bar" data-filter-form>
+      <nav class="segmented" aria-label="Vis tomter etter status">
+        <a href="?{% if f.category %}category={{ f.category }}&{% endif %}{% if f.q %}q={{ f.q|urlencode }}&{% endif %}sort={{ f.sort }}" {% if not f.status %}aria-current="page"{% endif %}>Alle <span>{{ summary.total }}</span></a>
+        {% for s in summary.statuses %}
+        <a href="?status={{ s.key }}{% if f.category %}&category={{ f.category }}{% endif %}{% if f.q %}&q={{ f.q|urlencode }}{% endif %}&sort={{ f.sort }}" {% if f.status == s.key %}aria-current="page"{% endif %}>{{ s.label }} <span>{{ s.count }}</span></a>
+        {% endfor %}
+      </nav>
+      {% if f.status %}<input type="hidden" name="status" value="{{ f.status }}">{% endif %}
+      <div class="filter-fields">
+        <label class="filter-field">
+          <span>Kategori</span>
+          <select name="category" class="input" data-autosubmit>
+            <option value="">Alle kategorier</option>
+            {% for c in categories %}<option value="{{ c.pk }}" {% if f.category == c.pk|stringformat:'s' %}selected{% endif %}>{{ c.name }} ({{ c.plot_count }})</option>{% endfor %}
+            {% if uncategorised %}<option value="none" {% if f.category == 'none' %}selected{% endif %}>Uten kategori ({{ uncategorised }})</option>{% endif %}
           </select>
-          <noscript><button type="submit" class="button secondary">Lagre</button></noscript>
-        </form>
-      </td>
-      <td>
-        <form method="post" action="{% url 'dashboard_plot_delete' plot.pk %}" class="inline" data-confirm="Slette tomt {{ plot.number }}?">
-          {% csrf_token %}
-          <button type="submit" class="link-button">Slett</button>
-        </form>
-      </td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="7">Ingen tomter lagt inn ennå. Trykk «Ny tomt» for å legge til den første.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+        </label>
+        <label class="filter-field">
+          <span>Sorter</span>
+          <select name="sort" class="input" data-autosubmit>
+            {% for key, label in sorts.items %}<option value="{{ key }}" {% if f.sort == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+          </select>
+        </label>
+        <label class="filter-field filter-search">
+          <span>Søk</span>
+          <input type="search" name="q" value="{{ f.q }}" class="input" placeholder="Tomtenummer eller merknad">
+        </label>
+        <button type="submit" class="button secondary">Vis</button>
+        {% if filtered %}<a href="{% url 'dashboard_plots' %}" class="text-link">Nullstill</a>{% endif %}
+      </div>
+    </form>
+
+    <p class="list-count">{% if filtered %}{{ plots|length }} av {{ summary.total }} tomter{% else %}{{ plots|length }} tomter{% endif %}</p>
+
+    {% comment %} One small form per row: the row's inputs belong to it through form="row-…". The forms
+         come before the table, so each row's status buttons are their own group from the start. {% endcomment %}
+    <div hidden>
+      {% for plot in plots %}
+      <form method="post" action="{% url 'dashboard_plot_quick' plot.pk %}" id="row-{{ plot.pk }}" data-row-form="{{ plot.pk }}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ this_url }}#tomt-{{ plot.pk }}">
+      </form>
+      {% endfor %}
+    </div>
+
+    <form method="post" action="{% url 'dashboard_plots_bulk' %}" id="bulk-form" class="bulk-form" data-bulk-form>
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ this_url }}">
+
+      <div class="table-wrap">
+        <table class="plot-table">
+          <thead>
+            <tr>
+              <th scope="col" class="col-check">
+                <input type="checkbox" data-check-all aria-label="Velg alle tomtene i listen" hidden>
+              </th>
+              <th scope="col">Tomt</th>
+              <th scope="col">Kategori</th>
+              <th scope="col" class="col-num">Størrelse</th>
+              <th scope="col" class="col-num">Pris</th>
+              <th scope="col">Status</th>
+              <th scope="col"><span class="visually-hidden">Lagret</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for plot in plots %}
+            <tr class="plot-row status-{{ plot.status }}" id="tomt-{{ plot.pk }}" data-plot-row="{{ plot.pk }}">
+              <td class="col-check">
+                <input type="checkbox" name="plots" value="{{ plot.pk }}" aria-label="Velg tomt {{ plot.number }}">
+              </td>
+              <th scope="row" class="col-plot">
+                <a href="{% url 'dashboard_plot_edit' plot.pk %}" class="plot-number" title="Åpne tomt {{ plot.number }}">{{ plot.number }}</a>
+                {% if plot.note %}<small class="plot-note">{{ plot.note }}</small>{% endif %}
+                {% if plot.project %}<small class="plot-note">{{ plot.project.title }}</small>{% endif %}
+              </th>
+              <td>
+                <select name="category" form="row-{{ plot.pk }}" class="input cell-input" aria-label="Kategori for tomt {{ plot.number }}" data-quick>
+                  <option value="">Uten kategori</option>
+                  {% for c in categories %}<option value="{{ c.pk }}" {% if plot.category_id == c.pk %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+                </select>
+              </td>
+              <td class="col-num">
+                <span class="unit-input">
+                  <input type="number" name="area_m2" form="row-{{ plot.pk }}" value="{{ plot.area_m2|default_if_none:'' }}" min="0" step="10" class="input cell-input" aria-label="Størrelse på tomt {{ plot.number }} i kvadratmeter" data-quick>
+                  <span aria-hidden="true">m²</span>
+                </span>
+              </td>
+              <td class="col-num">
+                <span class="unit-input">
+                  <input type="text" name="price" form="row-{{ plot.pk }}" value="{{ plot.price|thousands }}" inputmode="numeric" autocomplete="off" class="input cell-input" placeholder="Ingen pris" aria-label="Pris for tomt {{ plot.number }} i kroner" data-quick data-price>
+                  <span aria-hidden="true">kr</span>
+                </span>
+              </td>
+              <td>
+                <fieldset class="status-switch">
+                  <legend class="visually-hidden">Status for tomt {{ plot.number }}</legend>
+                  {% for key, label in statuses %}
+                  <input type="radio" name="status" value="{{ key }}" id="status-{{ plot.pk }}-{{ key }}" form="row-{{ plot.pk }}" {% if plot.status == key %}checked{% endif %} data-quick>
+                  <label for="status-{{ plot.pk }}-{{ key }}" class="opt-{{ key }}">{{ label }}</label>
+                  {% endfor %}
+                </fieldset>
+              </td>
+              <td class="col-state">
+                <span class="row-state" data-row-state aria-live="polite"></span>
+                <noscript><button type="submit" form="row-{{ plot.pk }}" class="button small secondary">Lagre</button></noscript>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="empty-cell">
+                {% if filtered %}
+                Ingen tomter passer filteret. <a href="{% url 'dashboard_plots' %}">Vis alle tomtene</a>
+                {% else %}
+                Ingen tomter lagt inn ennå. <a href="{% url 'dashboard_plot_create' %}">Legg til den første</a>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if plots %}
+      <div class="bulk-bar" data-bulk-bar>
+        <p class="bulk-count" data-bulk-count>Kryss av tomter i listen for å endre flere samtidig.</p>
+        <div class="bulk-group">
+          <span class="bulk-label">Merk som</span>
+          {% for key, label in statuses %}
+          <button type="submit" name="status" value="{{ key }}" class="button small bulk-{{ key }}">{{ label }}</button>
+          {% endfor %}
+        </div>
+        <div class="bulk-group">
+          <label for="bulk-category" class="bulk-label">Flytt til</label>
+          <select name="category" id="bulk-category" class="input">
+            <option value="">Uten kategori</option>
+            {% for c in categories %}<option value="{{ c.pk }}">{{ c.name }}</option>{% endfor %}
+          </select>
+          <button type="submit" name="action" value="category" class="button small secondary">Flytt</button>
+        </div>
+      </div>
+      {% endif %}
+    </form>
+
+  </div>
+
+  <aside class="plots-side">
+    <section class="panel map-panel">
+      <div class="panel-head">
+        <h2>Salgskart</h2>
+        <p class="panel-note">Trykk på en tomt for å finne den i listen.</p>
+      </div>
+      {% include 'dashboard/_sales-map.html' with map_id='sales-map' %}
+    </section>
+
+    <section class="panel" id="kategorier">
+      <div class="panel-head">
+        <h2>Kategorier</h2>
+        <p class="panel-note">Vises sammen med tomten på nettsiden.</p>
+      </div>
+      <ul class="category-list">
+        {% for c in categories %}
+        <li>
+          <form method="post" action="{% url 'dashboard_plot_categories' %}" class="category-row">
+            {% csrf_token %}
+            <input type="hidden" name="category_id" value="{{ c.pk }}">
+            <label for="cat-{{ c.pk }}" class="visually-hidden">Navn på kategorien</label>
+            <input type="text" name="name" id="cat-{{ c.pk }}" value="{{ c.name }}" class="input" maxlength="80" required>
+            <span class="category-count">{{ c.plot_count }} tomt{{ c.plot_count|pluralize:'er' }}</span>
+            <button type="submit" name="action" value="rename" class="button small secondary">Lagre</button>
+            <button type="submit" name="action" value="delete" class="icon-button" formnovalidate
+                    data-confirm-click="Slette kategorien «{{ c.name }}»? Tomtene blir liggende, bare uten kategori."
+                    aria-label="Slett kategorien {{ c.name }}">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></svg>
+            </button>
+          </form>
+        </li>
+        {% empty %}
+        <li class="muted">Ingen kategorier ennå.</li>
+        {% endfor %}
+      </ul>
+      <form method="post" action="{% url 'dashboard_plot_categories' %}" class="category-add">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="add">
+        <label for="new-category" class="visually-hidden">Ny kategori</label>
+        <input type="text" name="name" id="new-category" class="input" maxlength="80" placeholder="Ny kategori, f.eks. Byggetrinn 3" required>
+        <button type="submit" class="button small">Legg til</button>
+      </form>
+    </section>
+  </aside>
+</div>
+
+{{ map_plots|json_script:"sales-map-data" }}
 {% endblock %}

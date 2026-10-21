@@ -1,86 +1,141 @@
 {% extends 'dashboard/base.html' %}
+{% load dashboard_tags %}
 {% block title %}Oversikt{% endblock %}
 
 {% block content %}
-<h1>Oversikt</h1>
-
-<ul class="stats">
-  <li><a href="{% url 'dashboard_inquiries' %}"><strong>{{ unread_count }}</strong> uleste henvendelser</a></li>
-  <li><a href="{% url 'dashboard_inquiries' %}"><strong>{{ open_count }}</strong> åpne salg</a></li>
-  {% for item in plots %}
-  <li><a href="{% url 'dashboard_plots' %}"><strong>{{ item.count }}</strong> {{ item.label|lower }}{{ item.count|pluralize:"e" }} tomt{{ item.count|pluralize:"er" }}</a></li>
-  {% endfor %}
-  <li><a href="{% url 'dashboard_projects' %}"><strong>{{ project_count }}</strong> publiserte prosjekter</a></li>
-  <li><a href="{% url 'dashboard_projects' %}?status=draft"><strong>{{ draft_count }}</strong> utkast</a></li>
-</ul>
-
-<section class="panel">
-  <h2>Henvendelser per uke</h2>
-  <p>{{ weekly.total }} de siste 12 ukene.</p>
-  <div class="chart" role="img" aria-label="Søylediagram: henvendelser per uke de siste 12 ukene">
-    {% for bar in weekly.bars %}
-    <div class="bar{% if bar.current %} current{% endif %}" title="Uke {{ bar.week }} ({{ bar.start|date:'j.n' }}–{{ bar.end|date:'j.n' }}): {{ bar.count }}">
-      <span class="fill" style="height: {{ bar.height }}%"></span>
-      <span class="count">{{ bar.count }}</span>
-      <span class="label">Uke {{ bar.week }}</span>
-    </div>
-    {% endfor %}
+<header class="page-head">
+  <div>
+    <h1>{{ greeting }}{% if user.first_name %}, {{ user.first_name }}{% endif %}</h1>
+    <p class="page-lead">{{ today|date:'l j. F Y'|capfirst }}</p>
   </div>
+  <div class="page-actions">
+    <a href="{% url 'dashboard_plots' %}" class="button secondary">Endre tomter</a>
+    <a href="{% url 'dashboard_blog_create' %}" class="button">Skriv nyhet</a>
+  </div>
+</header>
+
+<section class="figures" aria-label="Nøkkeltall">
+  <a href="{% url 'dashboard_inquiries' %}" class="figure{% if unread_count %} figure-alert{% endif %}">
+    <span class="figure-number">{{ unread_count }}</span>
+    <span class="figure-label">{{ unread_count|pluralize:'ulest henvendelse,uleste henvendelser' }}</span>
+  </a>
+  <a href="{% url 'dashboard_inquiries' %}" class="figure">
+    <span class="figure-number">{{ open_count }}</span>
+    <span class="figure-label">åpne salg{% if open_count %} i arbeid{% endif %}</span>
+  </a>
+  <a href="{% url 'dashboard_plots' %}?status=available" class="figure figure-available">
+    <span class="figure-number">{{ plot_summary.available }}<small> av {{ plot_summary.total }}</small></span>
+    <span class="figure-label">tomter ledige</span>
+  </a>
+  <a href="{% url 'dashboard_plots' %}?status=sold" class="figure figure-sold">
+    <span class="figure-number">{{ plot_summary.sold }}</span>
+    <span class="figure-label">tomter solgt</span>
+  </a>
 </section>
 
-<section class="panel">
-  <h2>Salgsstatus</h2>
-  <ul class="status-bars">
-    {% for status in statuses %}
-    <li>
-      <a href="{% url 'dashboard_inquiries' %}?status={{ status.key }}">
-        <span class="status-label status-{{ status.key }}">{{ status.label }}</span>
-        <span class="track"><span class="fill" style="width: {{ status.width }}%"></span></span>
-        <span>{{ status.count }}</span>
-      </a>
-    </li>
-    {% endfor %}
-  </ul>
-</section>
+<div class="overview-grid">
+  <section class="panel map-panel overview-map">
+    <div class="panel-head">
+      <h2>Salgskart</h2>
+      <a href="{% url 'dashboard_plots' %}" class="text-link">Alle tomter</a>
+    </div>
+    {% include 'dashboard/_sales-map.html' with map_id='sales-map' %}
+    {% if plot_summary.total %}
+    <dl class="map-facts">
+      <div><dt>Ledige tomter er verdt</dt><dd>{{ plot_summary.available_value|millions }}</dd></div>
+      {% if plot_summary.price_from %}<div><dt>Prisene går fra</dt><dd>{{ plot_summary.price_from|thousands }} til {{ plot_summary.price_to|thousands }} kr</dd></div>{% endif %}
+    </dl>
+    {% endif %}
+  </section>
 
-<section class="panel">
-  <h2>Siste henvendelser</h2>
-  <ul class="rows">
-    {% for inquiry in latest_inquiries %}
-    <li>
-      <a href="{% url 'dashboard_inquiry_detail' inquiry.pk %}">
-        {% if not inquiry.is_read %}<span class="dot" aria-label="Ulest">●</span>{% endif %}
-        <strong>{{ inquiry.name }}</strong> – {{ inquiry.get_interest_display }}
-        <span class="status-label status-{{ inquiry.status }}">{{ inquiry.get_status_display }}</span>
-        <time>{{ inquiry.created_at|date:'d.m.Y H:i' }}</time>
-      </a>
-    </li>
-    {% empty %}
-    <li>Ingen henvendelser ennå.</li>
-    {% endfor %}
-  </ul>
-</section>
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Siste henvendelser</h2>
+      <a href="{% url 'dashboard_inquiries' %}" class="text-link">Innboksen</a>
+    </div>
+    <ul class="inquiry-list">
+      {% for inquiry in latest_inquiries %}
+      <li class="{% if not inquiry.is_read %}is-unread{% endif %}">
+        <a href="{% url 'dashboard_inquiry_detail' inquiry.pk %}">
+          <span class="inquiry-name">{% if not inquiry.is_read %}<span class="dot" aria-hidden="true"></span><span class="visually-hidden">Ulest: </span>{% endif %}{{ inquiry.name }}</span>
+          <span class="inquiry-about">{{ inquiry.get_interest_display }}{% if inquiry.plot %}, tomt {{ inquiry.plot.number }}{% endif %}</span>
+          <span class="status-label status-{{ inquiry.status }}">{{ inquiry.get_status_display }}</span>
+          <time datetime="{{ inquiry.created_at|date:'c' }}">{{ inquiry.created_at|date:'j.n. H:i' }}</time>
+        </a>
+      </li>
+      {% empty %}
+      <li class="empty">Ingen henvendelser ennå. Når noen fyller ut kontaktskjemaet eller ber om visning, dukker de opp her.</li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
 
+<div class="overview-grid thirds">
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Henvendelser per uke</h2>
+      <span class="panel-note">{{ weekly.total }} de siste 12 ukene</span>
+    </div>
+    <div class="chart" role="img" aria-label="Søylediagram: henvendelser per uke de siste 12 ukene, til sammen {{ weekly.total }}">
+      {% for bar in weekly.bars %}
+      <div class="bar{% if bar.current %} current{% endif %}" title="Uke {{ bar.week }} ({{ bar.start|date:'j.n' }}–{{ bar.end|date:'j.n' }}): {{ bar.count }}">
+        <span class="count">{% if bar.count %}{{ bar.count }}{% endif %}</span>
+        <span class="fill" style="height: {{ bar.height }}%"></span>
+        <span class="label">{{ bar.week }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Salgsløpet</h2>
+      <a href="{% url 'dashboard_inquiries' %}" class="text-link">Henvendelser</a>
+    </div>
+    <ul class="status-bars">
+      {% for status in statuses %}
+      <li>
+        <a href="{% url 'dashboard_inquiries' %}?status={{ status.key }}">
+          <span class="status-name">{{ status.label }}</span>
+          <span class="track"><span class="fill status-{{ status.key }}" style="width: {{ status.width }}%"></span></span>
+          <span class="status-count">{{ status.count }}</span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Siste aktivitet</h2>
+      <a href="{% url 'dashboard_activity' %}" class="text-link">Alt</a>
+    </div>
+    <ul class="mini-list timeline">
+      {% for entry in recent_activity %}
+      <li>
+        <span>{{ entry.action }}{% if entry.target %} – {% if entry.url %}<a href="{{ entry.url }}">{{ entry.target }}</a>{% else %}{{ entry.target }}{% endif %}{% endif %}</span>
+        <small>{{ entry.who }}, {{ entry.created_at|date:'j.n. H:i' }}</small>
+      </li>
+      {% empty %}
+      <li class="muted">Ingen aktivitet ennå.</li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+
+{% if top_projects %}
 <section class="panel">
-  <h2>Mest sette prosjekter</h2>
-  <ol class="rows">
+  <div class="panel-head">
+    <h2>Mest sette prosjekter</h2>
+    <a href="{% url 'dashboard_projects' %}" class="text-link">Prosjekter</a>
+  </div>
+  <ol class="mini-list ranked">
     {% for project in top_projects %}
-    <li><a href="{% url 'dashboard_project_edit' project.pk %}">{{ project.title }}</a> – {{ project.view_count }} visninger</li>
-    {% empty %}
-    <li>Ingen visninger registrert ennå.</li>
+    <li><a href="{% url 'dashboard_project_edit' project.pk %}">{{ project.title }}</a> <small>{{ project.view_count }} visninger</small></li>
     {% endfor %}
   </ol>
 </section>
+{% endif %}
 
-<section class="panel">
-  <h2>Siste aktivitet</h2>
-  <ul class="rows">
-    {% for entry in recent_activity %}
-    <li>{{ entry.created_at|date:'d.m H:i' }} – {{ entry.who }}: {{ entry.action }} {% if entry.url %}<a href="{{ entry.url }}">{{ entry.target }}</a>{% else %}{{ entry.target }}{% endif %}</li>
-    {% empty %}
-    <li>Ingen aktivitet ennå.</li>
-    {% endfor %}
-  </ul>
-  <a href="{% url 'dashboard_activity' %}">Se all aktivitet</a>
-</section>
+{{ map_plots|json_script:"sales-map-data" }}
 {% endblock %}

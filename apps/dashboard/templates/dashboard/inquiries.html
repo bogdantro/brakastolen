@@ -2,49 +2,62 @@
 {% block title %}Henvendelser{% endblock %}
 
 {% block content %}
-<h1>Henvendelser</h1>
+<header class="page-head">
+  <div>
+    <h1>Henvendelser</h1>
+    <p class="page-lead">Alt som kommer inn fra kontaktskjemaet og «Avtal visning» i tomtekartet.</p>
+  </div>
+  <div class="page-actions">
+    <a href="?{{ export_query }}&export=csv" class="button secondary">Last ned til Excel</a>
+  </div>
+</header>
 
-<nav class="tabs" aria-label="Mapper">
+<nav class="segmented boxes" aria-label="Mapper">
   {% for b in boxes %}
-  <a href="?box={{ b.key }}" {% if box == b.key %}aria-current="page"{% endif %}>{{ b.label }} ({{ b.count }})</a>
+  <a href="?box={{ b.key }}" {% if box == b.key %}aria-current="page"{% endif %}>{{ b.label }} <span>{{ b.count }}</span></a>
   {% endfor %}
 </nav>
 
-<nav class="tabs small" aria-label="Status">
-  <a href="?box={{ box }}" {% if not status %}aria-current="page"{% endif %}>Alle</a>
-  {% for p in pipeline %}
-  <a href="?box={{ box }}&status={{ p.key }}" {% if status == p.key %}aria-current="page"{% endif %}>{{ p.label }} ({{ p.count }})</a>
-  {% endfor %}
-</nav>
-
-<form method="get" class="toolbar">
+<form method="get" class="filter-bar">
   <input type="hidden" name="box" value="{{ box }}">
-  {% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
-  <label for="q" class="visually-hidden">Søk</label>
-  <input type="search" id="q" name="q" value="{{ q }}" class="input" placeholder="Søk i navn, e-post, telefon eller beskjed">
-  <button type="submit" class="button">Søk</button>
-  <a href="?{{ export_query }}&export=csv" class="button secondary">Last ned som Excel (CSV)</a>
+  <div class="filter-fields">
+    <label class="filter-field">
+      <span>Status</span>
+      <select name="status" class="input" data-autosubmit>
+        <option value="">Alle statuser</option>
+        {% for p in pipeline %}<option value="{{ p.key }}" {% if status == p.key %}selected{% endif %}>{{ p.label }} ({{ p.count }})</option>{% endfor %}
+      </select>
+    </label>
+    <label class="filter-field filter-search">
+      <span>Søk</span>
+      <input type="search" name="q" value="{{ q }}" class="input" placeholder="Navn, e-post, telefon eller beskjed">
+    </label>
+    <button type="submit" class="button secondary">Søk</button>
+    {% if q or status %}<a href="?box={{ box }}" class="text-link">Nullstill</a>{% endif %}
+  </div>
 </form>
 
-<table class="table">
-  <thead>
-    <tr><th scope="col">Navn</th><th scope="col">Interessert i</th><th scope="col">Status</th><th scope="col">Mottatt</th></tr>
-  </thead>
-  <tbody>
-    {% for inquiry in inquiries %}
-    <tr class="{% if not inquiry.is_read %}unread{% endif %}">
-      <td>
-        <a href="{% url 'dashboard_inquiry_detail' inquiry.pk %}">{% if not inquiry.is_read %}<span class="dot" aria-label="Ulest">●</span> {% endif %}{{ inquiry.name }}</a>
-        <br><small>{{ inquiry.email }}{% if inquiry.phone %} · {{ inquiry.phone }}{% endif %}</small>
-        {% if inquiry.is_spam %}<br><small>Spam-grunn: {{ inquiry.spam_reason|default:'ukjent' }}</small>{% endif %}
-      </td>
-      <td>{{ inquiry.get_interest_display }}{% if inquiry.plot %}<br><small>Tomt {{ inquiry.plot.number }}</small>{% endif %}</td>
-      <td><span class="status-label status-{{ inquiry.status }}">{{ inquiry.get_status_display }}</span></td>
-      <td>{{ inquiry.created_at|date:'d.m.Y H:i' }}</td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="4">{% if q %}Ingen treff på «{{ q }}».{% else %}Ingen henvendelser her.{% endif %}</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr><th scope="col">Navn</th><th scope="col">Gjelder</th><th scope="col">Status</th><th scope="col">Mottatt</th></tr>
+    </thead>
+    <tbody>
+      {% for inquiry in inquiries %}
+      <tr class="{% if not inquiry.is_read %}is-unread{% endif %}">
+        <td>
+          <a href="{% url 'dashboard_inquiry_detail' inquiry.pk %}" class="row-link">{% if not inquiry.is_read %}<span class="dot" aria-hidden="true"></span><span class="visually-hidden">Ulest: </span>{% endif %}{{ inquiry.name }}</a>
+          <small class="cell-sub">{{ inquiry.email }}{% if inquiry.phone %}, {{ inquiry.phone }}{% endif %}</small>
+          {% if inquiry.is_spam %}<small class="cell-sub">Spam-grunn: {{ inquiry.spam_reason|default:'ukjent' }}</small>{% endif %}
+        </td>
+        <td>{{ inquiry.get_interest_display }}{% if inquiry.plot %}<small class="cell-sub">Tomt {{ inquiry.plot.number }}</small>{% endif %}</td>
+        <td><span class="status-label status-{{ inquiry.status }}">{{ inquiry.get_status_display }}</span></td>
+        <td class="nowrap"><time datetime="{{ inquiry.created_at|date:'c' }}">{{ inquiry.created_at|date:'j.n.Y H:i' }}</time></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="empty-cell">{% if q %}Ingen treff på «{{ q }}».{% else %}Ingen henvendelser her.{% endif %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

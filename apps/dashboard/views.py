@@ -17,14 +17,20 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from apps.blog.models import Blog
-from apps.core.models import Inquiry, InquiryNote, Plot, Project, ProjectImage
+from apps.core.models import Inquiry, InquiryNote, Plot, PlotCategory, Project, ProjectImage
 from apps.core.seo import BUSINESS
+from apps.core.views import wants_json
 
-from .forms import BlogForm, DashboardLoginForm, InquiryNoteForm, PlotForm, ProjectForm
+from .forms import (
+    BlogForm, DashboardLoginForm, InquiryNoteForm, PlotBulkForm, PlotCategoryForm, PlotForm, PlotQuickForm,
+    ProjectForm,
+)
 from .models import ActivityLog, LoginAttempt
+from .templatetags.dashboard_tags import millions
 
 # Login rate limiting: this many failed attempts from one IP address
 # within the window locks that address out until the window has passed.
@@ -149,14 +155,18 @@ def status_breakdown():
 def dashboard_home(request):
     inbox = Inquiry.objects.filter(is_spam=False, is_archived=False)
     projects = Project.objects.active()
-    plot_counts = dict(Plot.objects.values_list('status').annotate(n=Count('id')))
+    hour = timezone.localtime().hour
+    greeting = 'God morgen' if 5 <= hour < 10 else 'God dag' if hour < 18 else 'God kveld'
     return render(request, 'dashboard/home.html', {
+        'greeting': greeting,
+        'today': timezone.localdate(),
         'inquiry_count': inbox.count(),
         'unread_count': inbox.filter(is_read=False).count(),
         'open_count': inbox.filter(status__in=['new', 'contacted', 'viewing', 'prospectus_sent']).count(),
         'project_count': projects.filter(is_published=True).count(),
         'draft_count': projects.filter(is_published=False).count(),
-        'plots': [{'label': label, 'count': plot_counts.get(key, 0)} for key, label in Plot.STATUS_CHOICES],
+        'plot_summary': plot_summary(),
+        'map_plots': plot_map_data(Plot.objects.select_related('category')),
         'latest_inquiries': inbox[:5],
         'weekly': weekly_inquiry_chart(),
         'statuses': status_breakdown(),
@@ -552,19 +562,272 @@ def dashboard_project_image_delete(request, pk):
 # Plots
 # ------------------------------------------------------------------
 
+PLOT_SORTS = {
+    'number': 'Tomtenummer',
+    'price': 'Pris, lavest først',
+    'price_desc': 'Pris, høyest først',
+    'area_desc': 'Størst først',
+    'updated': 'Sist endret',
+}
+
+
+PLOT_STATUS_PLURALS = {'available': 'Ledige', 'reserved': 'Reserverte', 'sold': 'Solgte'}
+
+
+def plot_number_key(plot):
+    """'7' < '11' < 'T3': numbers in numeric order, then the rest alphabetically."""
+    digits = re.match(r'\d+', plot.number)
+    return (0, int(digits.group()), plot.number) if digits else (1, 0, plot.number)
+
+
+def sort_plots(plots, sort):
+    plots = sorted(plots, key=plot_number_key)
+    if sort == 'price':
+        plots.sort(key=lambda p: (p.price is None, p.price or 0))
+    elif sort == 'price_desc':
+        plots.sort(key=lambda p: p.price or 0, reverse=True)
+    elif sort == 'area_desc':
+        plots.sort(key=lambda p: p.area_m2 or 0, reverse=True)
+    elif sort == 'updated':
+        plots.sort(key=lambda p: p.updated_at, reverse=True)
+    return plots
+
+
+def plot_summary():
+    """Counts per status and what the plots still for sale are worth, for the overview and the list."""
+    counts = dict(Plot.objects.values_list('status').annotate(n=Count('id')))
+    prices = list(Plot.objects.filter(status='available', price__isnull=False).values_list('price', flat=True))
+    total = sum(counts.values())
+    return {
+        'total': total,
+        'statuses': [
+            {'key': key, 'label': label, 'plural': PLOT_STATUS_PLURALS[key], 'count': counts.get(key, 0),
+             'share': round(counts.get(key, 0) / total * 100) if total else 0}
+            for key, label in Plot.STATUS_CHOICES
+        ],
+        'available': counts.get('available', 0),
+        'sold': counts.get('sold', 0),
+        'available_value': sum(prices),
+        'price_from': min(prices, default=None),
+        'price_to': max(prices, default=None),
+    }
+
+
+def plot_map_data(plots):
+    """The plots for the dashboard's sales map (dashboard.js), as plain JSON-friendly values."""
+    return [{
+        'id': plot.pk,
+        'number': plot.number,
+        'status': plot.status,
+        'statusLabel': plot.get_status_display(),
+        'price': plot.price_display,
+        'area': plot.area_display,
+        'category': plot.category.name if plot.category else '',
+        'x': plot.map_x,
+        'y': plot.map_y,
+        'rotation': plot.map_rotation,
+        'shape': plot.map_shape,
+        'url': reverse('dashboard_plot_edit', args=[plot.pk]),
+    } for plot in plots if plot.is_on_map]
+
+
+def back_to_plots(request):
+    """Where to return after a change from the list: the same filtered list, else the plain one."""
+    target = request.POST.get('next', '')
+    if target and url_has_allowed_host_and_scheme(target, allowed_hosts={request.get_host()},
+                                                  require_https=request.is_secure()):
+        return target
+    return reverse('dashboard_plots')
+
+
 @staff_required
 def dashboard_plots(request):
-    plots = Plot.objects.select_related('project')
+    all_plots = Plot.objects.select_related('project', 'category')
+    plots = all_plots
     status = request.GET.get('status', '')
+    category = request.GET.get('category', '')
+    q = request.GET.get('q', '').strip()
+    sort = request.GET.get('sort', 'number')
+
     if status in dict(Plot.STATUS_CHOICES):
         plots = plots.filter(status=status)
     else:
         status = ''
+    if category == 'none':
+        plots = plots.filter(category__isnull=True)
+    elif category.isdigit():
+        plots = plots.filter(category_id=int(category))
+    else:
+        category = ''
+    if q:
+        plots = plots.filter(Q(number__icontains=q) | Q(note__icontains=q))
+    if sort not in PLOT_SORTS:
+        sort = 'number'
+
     return render(request, 'dashboard/plots.html', {
-        'plots': plots,
-        'status': status,
+        'plots': sort_plots(plots, sort),
+        'summary': plot_summary(),
+        'map_plots': plot_map_data(all_plots),
+        'categories': PlotCategory.objects.annotate(plot_count=Count('plots')),
+        'uncategorised': all_plots.filter(category__isnull=True).count(),
         'statuses': Plot.STATUS_CHOICES,
+        'sorts': PLOT_SORTS,
+        'f': {'status': status, 'category': category, 'q': q, 'sort': sort},
+        'filtered': any([status, category, q]),
+        'this_url': request.get_full_path(),
     })
+
+
+def plot_change_text(plot, name):
+    """The activity log line for one changed field."""
+    if name == 'status':
+        return f'Markerte tomt {plot.number} som {plot.get_status_display().lower()}'
+    if name == 'price':
+        return f'Endret prisen på tomt {plot.number} til {plot.price_display or "ingen pris"}'
+    if name == 'area_m2':
+        return f'Endret størrelsen på tomt {plot.number} til {plot.area_display or "ukjent"}'
+    if name == 'category':
+        if plot.category:
+            return f'Flyttet tomt {plot.number} til «{plot.category.name}»'
+        return f'Fjernet kategorien på tomt {plot.number}'
+    return f'Oppdaterte tomt {plot.number}'
+
+
+def form_error_text(form):
+    return ' '.join(str(error) for errors in form.errors.values() for error in errors)
+
+
+@staff_required
+@require_POST
+def dashboard_plot_quick(request, pk):
+    """Change one or more of status, price, size and category straight from the list.
+    Answers with JSON for the list's autosave, or redirects back for a plain form post."""
+    plot = get_object_or_404(Plot.objects.select_related('category'), pk=pk)
+    names = [name for name in PlotQuickForm.EDITABLE if name in request.POST]
+    as_json = wants_json(request)
+    if not names:
+        if as_json:
+            return JsonResponse({'ok': False, 'error': 'Ingenting å lagre.'}, status=400)
+        return redirect(back_to_plots(request))
+
+    form = PlotQuickForm.for_fields(names, request.POST, instance=plot)
+    if not form.is_valid():
+        error = form_error_text(form)
+        if as_json:
+            return JsonResponse({'ok': False, 'error': error, 'fields': list(form.errors)}, status=400)
+        messages.error(request, f'Tomt {plot.number} ble ikke lagret: {error}')
+        return redirect(back_to_plots(request))
+
+    changed = form.changed_data
+    if changed:
+        form.save()
+        edit_url = reverse('dashboard_plot_edit', args=[plot.pk])
+        for name in changed:
+            log_activity(request, plot_change_text(plot, name), str(plot), edit_url)
+
+    texts = [plot_change_text(plot, name) + '.' for name in changed]
+    if as_json:
+        summary = plot_summary()
+        return JsonResponse({
+            'ok': True,
+            'changed': changed,
+            'message': ' '.join(texts) or 'Ingen endring.',
+            'plot': {
+                'status': plot.status,
+                'statusLabel': plot.get_status_display(),
+                'price': plot.price,
+                'priceDisplay': plot.price_display,
+                'area': plot.area_m2,
+                'category': plot.category_id,
+                'categoryName': plot.category.name if plot.category else '',
+            },
+            # The figures above the list follow along without a reload
+            'summary': {
+                **{item['key']: item['count'] for item in summary['statuses']},
+                'value': millions(summary['available_value']),
+            },
+        })
+    if texts:
+        messages.success(request, ' '.join(texts))
+    return redirect(back_to_plots(request))
+
+
+@staff_required
+@require_POST
+def dashboard_plots_bulk(request):
+    """Mark several plots sold (or another status), or move them to a category, in one go."""
+    data = request.POST.copy()
+    # «Merk som Solgt» etc. are buttons named status; «Flytt» sends action=category
+    data.setdefault('action', 'status')
+    form = PlotBulkForm(data)
+    if not form.is_valid():
+        messages.error(request, form_error_text(form))
+        return redirect(back_to_plots(request))
+
+    plots = sorted(form.cleaned_data['plots'], key=plot_number_key)
+    numbers = ', '.join(p.number for p in plots)
+    count = len(plots)
+    noun = 'tomt' if count == 1 else 'tomter'
+    selected = Plot.objects.filter(pk__in=[p.pk for p in plots])
+
+    if form.cleaned_data['action'] == 'status':
+        new_status = form.cleaned_data['status']
+        if not new_status:
+            messages.error(request, 'Velg hvilken status tomtene skal få.')
+            return redirect(back_to_plots(request))
+        selected.update(status=new_status, updated_at=timezone.now())
+        text = f'Markerte {count} {noun} som {dict(Plot.STATUS_CHOICES)[new_status].lower()}'
+    else:
+        category = form.cleaned_data['category']
+        selected.update(category=category, updated_at=timezone.now())
+        if category:
+            text = f'Flyttet {count} {noun} til «{category.name}»'
+        else:
+            text = f'Fjernet kategorien på {count} {noun}'
+
+    log_activity(request, text, f'tomt {numbers}', reverse('dashboard_plots'))
+    messages.success(request, f'{text} ({numbers}).')
+    return redirect(back_to_plots(request))
+
+
+@staff_required
+@require_POST
+def dashboard_plot_categories(request):
+    """Add, rename or delete a plot category. Deleting keeps the plots, just without a category."""
+    action = request.POST.get('action')
+    target = reverse('dashboard_plots') + '#kategorier'
+
+    if action == 'add':
+        form = PlotCategoryForm(request.POST)
+        if form.is_valid():
+            category = form.save(commit=False)
+            category.order = next_order(PlotCategory)
+            category.save()
+            log_activity(request, 'La til tomtekategori', category.name, target)
+            messages.success(request, f'Kategorien «{category.name}» ble lagt til.')
+        else:
+            messages.error(request, form_error_text(form))
+        return redirect(target)
+
+    category = get_object_or_404(PlotCategory, pk=request.POST.get('category_id') or 0)
+    if action == 'rename':
+        old_name = category.name
+        form = PlotCategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            if category.name != old_name:
+                log_activity(request, f'Endret navn på tomtekategori fra «{old_name}»', category.name, target)
+                messages.success(request, f'«{old_name}» heter nå «{category.name}».')
+        else:
+            messages.error(request, form_error_text(form))
+    elif action == 'delete':
+        name = category.name
+        count = category.plots.count()
+        category.delete()
+        log_activity(request, 'Slettet tomtekategori', name, target)
+        left = f' {count} {"tomt står" if count == 1 else "tomter står"} nå uten kategori.' if count else ''
+        messages.success(request, f'«{name}» ble slettet.{left}')
+    return redirect(target)
 
 
 def other_plots_on_map(plot=None):
@@ -572,7 +835,8 @@ def other_plots_on_map(plot=None):
     plots = Plot.objects.filter(map_x__isnull=False, map_y__isnull=False)
     if plot is not None:
         plots = plots.exclude(pk=plot.pk)
-    return [{'number': p.number, 'x': p.map_x, 'y': p.map_y, 'rotation': p.map_rotation} for p in plots]
+    return [{'number': p.number, 'x': p.map_x, 'y': p.map_y, 'rotation': p.map_rotation, 'shape': p.map_shape}
+            for p in plots]
 
 
 @staff_required
@@ -583,7 +847,7 @@ def dashboard_plot_create(request):
         plot.order = next_order(Plot)
         plot.save()
         log_activity(request, 'La til tomt', str(plot), reverse('dashboard_plot_edit', args=[plot.pk]))
-        messages.success(request, f'«{plot}» ble lagt til.')
+        messages.success(request, f'Tomt {plot.number} ble lagt til.')
         return redirect(reverse('dashboard_plots'))
     return render(request, 'dashboard/plot_form.html', {'form': form, 'plot': None, 'map_plots': other_plots_on_map()})
 
@@ -591,28 +855,20 @@ def dashboard_plot_create(request):
 @staff_required
 def dashboard_plot_edit(request, pk):
     plot = get_object_or_404(Plot, pk=pk)
+    edit_url = reverse('dashboard_plot_edit', args=[plot.pk])
     form = PlotForm(request.POST or None, instance=plot)
     if request.method == 'POST' and form.is_valid():
         form.save()
-        log_activity(request, 'Oppdaterte tomt', str(plot), reverse('dashboard_plot_edit', args=[plot.pk]))
-        messages.success(request, f'«{plot}» ble oppdatert.')
+        log_activity(request, 'Oppdaterte tomt', str(plot), edit_url)
+        messages.success(request, f'Tomt {plot.number} ble oppdatert.')
         return redirect(reverse('dashboard_plots'))
-    return render(request, 'dashboard/plot_form.html', {'form': form, 'plot': plot, 'map_plots': other_plots_on_map(plot)})
-
-
-@staff_required
-@require_POST
-def dashboard_plot_status(request, pk):
-    """Quick status change from the list: Ledig / Reservert / Solgt."""
-    plot = get_object_or_404(Plot, pk=pk)
-    new_status = request.POST.get('status')
-    if new_status in dict(Plot.STATUS_CHOICES) and new_status != plot.status:
-        plot.status = new_status
-        plot.save(update_fields=['status', 'updated_at'])
-        log_activity(request, f'Endret tomt til «{plot.get_status_display()}»', str(plot),
-                     reverse('dashboard_plot_edit', args=[plot.pk]))
-        messages.success(request, f'«{plot}» er nå {plot.get_status_display().lower()}.')
-    return redirect(reverse('dashboard_plots'))
+    return render(request, 'dashboard/plot_form.html', {
+        'form': form,
+        'plot': plot,
+        'map_plots': other_plots_on_map(plot),
+        'inquiries': Inquiry.objects.filter(plot=plot, is_spam=False)[:10],
+        'history': ActivityLog.objects.select_related('user').filter(url=edit_url)[:8],
+    })
 
 
 @staff_required

@@ -1,29 +1,118 @@
 {% extends 'dashboard/base.html' %}
-{% block title %}{% if plot %}{{ plot }}{% else %}Ny tomt{% endif %}{% endblock %}
+{% block title %}{% if plot %}Tomt {{ plot.number }}{% else %}Ny tomt{% endif %}{% endblock %}
 
 {% block content %}
-<p><a href="{% url 'dashboard_plots' %}">← Alle tomter</a></p>
-<h1>{% if plot %}{{ plot }}{% else %}Ny tomt{% endif %}</h1>
+<a href="{% url 'dashboard_plots' %}{% if plot %}#tomt-{{ plot.pk }}{% endif %}" class="back-link">Alle tomter</a>
+<header class="page-head">
+  <div>
+    <h1>{% if plot %}Tomt {{ plot.number }}{% else %}Ny tomt{% endif %}</h1>
+    {% if plot %}<p class="page-lead">Sist endret {{ plot.updated_at|date:'j. F Y \k\l. H:i' }}{% if plot.category %} · {{ plot.category.name }}{% endif %}</p>{% endif %}
+  </div>
+  {% if plot %}<span class="status-pill status-{{ plot.status }}">{{ plot.get_status_display }}</span>{% endif %}
+</header>
 
-<form method="post" class="stack" novalidate>
+<form method="post" class="plot-edit" novalidate>
   {% csrf_token %}
-  {% for field in form.visible_fields %}{% if field.name != 'map_rotation' %}{% include 'dashboard/_field.html' %}{% endif %}{% endfor %}
-  {{ form.map_x }}{{ form.map_y }}
+  {% if form.errors %}<p class="message error" role="alert">Noe må rettes før tomten kan lagres – se feltene merket under.</p>{% endif %}
+  {{ form.map_x }}{{ form.map_y }}{{ form.map_shape }}
 
-  <fieldset class="plot-placer" data-plot-placer>
-    <legend>Plassering i tomtevelgeren på forsiden</legend>
-    <p>Trykk i kartet der tomten ligger. De andre tomtene vises blekt. Uten plassering vises tomten bare i listen.</p>
-    <div class="placer-map">
-      {% include 'core/plot-map-svg.html' with map_id='placer-map' %}
-    </div>
-    <div class="placer-controls">
-      {% include 'dashboard/_field.html' with field=form.map_rotation %}
-      <button type="button" class="button secondary" data-placer-clear>Fjern fra kartet</button>
-      <p class="placer-status" role="status" data-placer-status></p>
-    </div>
-  </fieldset>
+  <div class="edit-columns">
+    <div class="edit-main">
+      <section class="panel">
+        <h2>Salg</h2>
+        <fieldset class="field status-field">
+          <legend>Status</legend>
+          <div class="status-switch large">
+            {% for radio in form.status %}
+            {{ radio.tag }}<label for="{{ radio.id_for_label }}" class="opt-{{ radio.data.value }}">{{ radio.choice_label }}</label>
+            {% endfor %}
+          </div>
+          {{ form.status.errors }}
+        </fieldset>
+        <div class="field-row">
+          {% include 'dashboard/_field.html' with field=form.price %}
+          {% include 'dashboard/_field.html' with field=form.area_m2 %}
+        </div>
+      </section>
 
-  <button type="submit" class="button">Lagre</button>
+      <section class="panel">
+        <h2>Om tomten</h2>
+        <div class="field-row">
+          {% include 'dashboard/_field.html' with field=form.number %}
+          {% include 'dashboard/_field.html' with field=form.category %}
+        </div>
+        <div class="field-row">
+          {% include 'dashboard/_field.html' with field=form.altitude %}
+          {% include 'dashboard/_field.html' with field=form.project %}
+        </div>
+        {% include 'dashboard/_field.html' with field=form.note %}
+      </section>
+
+      <div class="form-actions">
+        <button type="submit" class="button">Lagre tomten</button>
+        <a href="{% url 'dashboard_plots' %}" class="text-link">Avbryt</a>
+      </div>
+    </div>
+
+    <div class="edit-side">
+      <fieldset class="panel plot-placer" data-plot-placer>
+        <legend class="panel-legend">Plassering i tomtekartet</legend>
+        <p class="panel-note">Tomtekartet på nettsiden. De andre tomtene vises blekt. Uten plassering vises tomten bare i listen.</p>
+        <div class="placer-map">
+          {% include 'core/plot-map-svg.html' with map_id='placer-map' %}
+        </div>
+        <p class="placer-status" role="status" data-placer-status></p>
+        <div class="placer-controls">
+          <div data-rotation-field>{% include 'dashboard/_field.html' with field=form.map_rotation %}</div>
+          {% if plot and plot.map_shape %}
+          <button type="button" class="button small secondary" data-placer-reset data-x="{{ plot.map_x|stringformat:'s' }}" data-y="{{ plot.map_y|stringformat:'s' }}" hidden>Bruk omrisset fra tomtekartet</button>
+          {% endif %}
+          <button type="button" class="button small secondary" data-placer-clear>Fjern fra kartet</button>
+        </div>
+      </fieldset>
+
+      {% if plot %}
+      <section class="panel">
+        <h2>Henvendelser om tomten</h2>
+        <ul class="mini-list">
+          {% for inquiry in inquiries %}
+          <li>
+            <a href="{% url 'dashboard_inquiry_detail' inquiry.pk %}">{{ inquiry.name }}</a>
+            <span class="status-label status-{{ inquiry.status }}">{{ inquiry.get_status_display }}</span>
+            <time datetime="{{ inquiry.created_at|date:'c' }}">{{ inquiry.created_at|date:'j.n.Y' }}</time>
+          </li>
+          {% empty %}
+          <li class="muted">Ingen har spurt om denne tomten ennå.</li>
+          {% endfor %}
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>Historikk</h2>
+        <ul class="mini-list timeline">
+          {% for entry in history %}
+          <li><span>{{ entry.action }}</span> <small>{{ entry.who }}, {{ entry.created_at|date:'j.n.Y H:i' }}</small></li>
+          {% empty %}
+          <li class="muted">Ingen endringer registrert ennå.</li>
+          {% endfor %}
+        </ul>
+      </section>
+      {% endif %}
+    </div>
+  </div>
 </form>
+
+{% if plot %}
+<section class="danger-zone">
+  <div>
+    <h2>Slett tomten</h2>
+    <p>Tomten forsvinner fra nettsiden og listen. Henvendelser om den beholdes. Er den solgt, bruk heller status «Solgt».</p>
+  </div>
+  <form method="post" action="{% url 'dashboard_plot_delete' plot.pk %}" data-confirm="Slette tomt {{ plot.number }} for godt?">
+    {% csrf_token %}
+    <button type="submit" class="button danger">Slett tomt {{ plot.number }}</button>
+  </form>
+</section>
+{% endif %}
 {{ map_plots|json_script:"placer-other-plots" }}
 {% endblock %}

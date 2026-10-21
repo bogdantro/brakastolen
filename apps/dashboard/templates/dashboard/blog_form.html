@@ -2,28 +2,45 @@
 {% block title %}{% if post %}{{ post.title }}{% else %}Ny nyhet{% endif %}{% endblock %}
 
 {% block content %}
-<p><a href="{% url 'dashboard_blog' %}">← Alle nyheter</a></p>
-<div class="page-head">
-  <h1>{% if post %}{{ post.title }}{% else %}Ny nyhet{% endif %}</h1>
-  {% if post %}<a href="{{ post.get_absolute_url }}" target="_blank" rel="noopener" class="button secondary">Se på nettsiden</a>{% endif %}
-</div>
+<a href="{% url 'dashboard_blog' %}" class="back-link">Alle nyheter</a>
+<header class="page-head">
+  <div>
+    <h1>{% if post %}{{ post.title }}{% else %}Ny nyhet{% endif %}</h1>
+    {% if post %}<p class="page-lead">{{ post.is_published|yesno:'Publisert,Utkast – vises ikke på nettsiden ennå' }}</p>{% endif %}
+  </div>
+  {% if post %}<div class="page-actions"><a href="{{ post.get_absolute_url }}" target="_blank" rel="noopener" class="button secondary">Se på nettsiden</a></div>{% endif %}
+</header>
 
-<form method="post" enctype="multipart/form-data" class="stack" novalidate>
+<form method="post" enctype="multipart/form-data" novalidate>
   {% csrf_token %}
   {% if form.errors %}<p class="message error" role="alert">Noe må rettes før nyheten kan lagres – se feltene merket under.</p>{% endif %}
-  {% include 'dashboard/_field.html' with field=form.title %}
-  {% include 'dashboard/_field.html' with field=form.author %}
-  {% include 'dashboard/_field.html' with field=form.excerpt %}
-  {% include 'dashboard/_field.html' with field=form.text %}
-  {% if post and post.image %}<img src="{{ post.image.url }}" alt="Nåværende bilde" width="240">{% endif %}
-  {% include 'dashboard/_field.html' with field=form.image %}
-  {% include 'dashboard/_field.html' with field=form.image_alt %}
-  <label class="checkbox">{{ form.is_published }} {{ form.is_published.label }}</label>
-  <details>
-    <summary>Google og deling (valgfritt)</summary>
-    {% include 'dashboard/_field.html' with field=form.meta_title %}
-    {% include 'dashboard/_field.html' with field=form.meta_description %}
-  </details>
-  <button type="submit" class="button">Lagre</button>
+  <div class="edit-columns">
+    <div class="edit-main">
+      <section class="panel">
+        {% include 'dashboard/_field.html' with field=form.title %}
+        {% include 'dashboard/_field.html' with field=form.excerpt %}
+        {% include 'dashboard/_field.html' with field=form.text %}
+      </section>
+    </div>
+    <div class="edit-side">
+      <section class="panel">
+        <h2>Publisering</h2>
+        <label class="checkbox">{{ form.is_published }} {{ form.is_published.label }}</label>
+        {% include 'dashboard/_field.html' with field=form.author %}
+        <button type="submit" class="button wide">Lagre</button>
+      </section>
+      <section class="panel">
+        <h2>Bilde</h2>
+        {% if post and post.image %}<img src="{{ post.image.url }}" alt="Nåværende bilde" class="current-image">{% endif %}
+        {% include 'dashboard/_field.html' with field=form.image %}
+        {% include 'dashboard/_field.html' with field=form.image_alt %}
+      </section>
+      <details class="panel">
+        <summary>Google og deling</summary>
+        {% include 'dashboard/_field.html' with field=form.meta_title %}
+        {% include 'dashboard/_field.html' with field=form.meta_description %}
+      </details>
+    </div>
+  </div>
 </form>
 {% endblock %}

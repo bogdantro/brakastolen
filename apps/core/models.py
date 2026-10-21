@@ -235,6 +235,20 @@ class PlotQuerySet(models.QuerySet):
         return self.filter(status='available')
 
 
+class PlotCategory(models.Model):
+    """A grouping of plots the client chooses, e.g. «Byggetrinn 1» – shown with each plot."""
+    name = models.CharField('Navn', max_length=80, unique=True)
+    order = models.PositiveIntegerField('Rekkefølge', default=0)
+
+    class Meta:
+        verbose_name = 'Tomtekategori'
+        verbose_name_plural = 'Tomtekategorier'
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        return self.name
+
+
 class Plot(models.Model):
     STATUS_CHOICES = [
         ('available', 'Ledig'),
@@ -245,6 +259,10 @@ class Plot(models.Model):
     project = models.ForeignKey(
         Project, related_name='plots', on_delete=models.SET_NULL, null=True, blank=True,
         verbose_name='Hyttegrend', limit_choices_to={'category': 'hyttegrend', 'deleted_at__isnull': True},
+    )
+    category = models.ForeignKey(
+        PlotCategory, related_name='plots', on_delete=models.SET_NULL, null=True, blank=True,
+        verbose_name='Kategori',
     )
     number = models.CharField('Tomtenummer', max_length=20)
     status = models.CharField('Status', max_length=20, choices=STATUS_CHOICES, default='available')
@@ -257,6 +275,9 @@ class Plot(models.Model):
     map_x = models.FloatField('Plassering i kartet (x)', null=True, blank=True)
     map_y = models.FloatField('Plassering i kartet (y)', null=True, blank=True)
     map_rotation = models.FloatField('Rotasjon i kartet (grader)', default=-20)
+    # The plot's real outline from the site plan, as SVG path data in the same units.
+    # Plots without one are drawn as a standard parcel at map_x / map_y.
+    map_shape = models.TextField('Omriss i kartet', blank=True)
     order = models.PositiveIntegerField('Rekkefølge', default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -271,6 +292,13 @@ class Plot(models.Model):
     def __str__(self):
         group = f'{self.project.title} – ' if self.project else ''
         return f'{group}tomt {self.number}'
+
+    @property
+    def group_name(self):
+        """What the plot belongs to, for visitors: its category, else its cabin group."""
+        if self.category:
+            return self.category.name
+        return self.project.title if self.project else ''
 
     @property
     def price_display(self):
@@ -291,7 +319,7 @@ class Plot(models.Model):
         return {
             'id': self.pk,
             'number': self.number,
-            'group': self.project.title if self.project else '',
+            'group': self.group_name,
             'status': self.status,
             'statusLabel': self.get_status_display(),
             'area': self.area_m2,
@@ -301,4 +329,5 @@ class Plot(models.Model):
             'x': self.map_x,
             'y': self.map_y,
             'rotation': self.map_rotation,
+            'shape': self.map_shape,
         }

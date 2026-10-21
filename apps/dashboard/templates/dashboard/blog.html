@@ -2,24 +2,36 @@
 {% block title %}Nyheter{% endblock %}
 
 {% block content %}
-<div class="page-head">
-  <h1>Nyheter</h1>
-  <a href="{% url 'dashboard_blog_create' %}" class="button">Ny nyhet</a>
-</div>
+<header class="page-head">
+  <div>
+    <h1>Nyheter</h1>
+    <p class="page-lead">Nyhetene på siden «Nyheter». Utkast vises ikke før de publiseres.</p>
+  </div>
+  <div class="page-actions">
+    <a href="{% url 'dashboard_blog_create' %}" class="button">Skriv nyhet</a>
+  </div>
+</header>
 
-<ul class="rows">
+<ul class="card-list">
   {% for post in posts %}
   <li>
-    <a href="{% url 'dashboard_blog_edit' post.pk %}"><strong>{{ post.title }}</strong></a>
-    <span class="status-label {% if post.is_published %}status-won{% else %}status-new{% endif %}">{{ post.is_published|yesno:'Publisert,Utkast' }}</span>
-    <time>{{ post.created_at|date:'d.m.Y' }}</time>
-    <form method="post" action="{% url 'dashboard_blog_delete' post.pk %}" class="inline" data-confirm="Slette «{{ post.title }}» for godt?">
+    {% if post.image %}<img src="{{ post.image.url }}" alt="" width="112" height="76" loading="lazy">{% else %}<span class="card-placeholder" aria-hidden="true"></span>{% endif %}
+    <div class="card-body">
+      <a href="{% url 'dashboard_blog_edit' post.pk %}" class="card-title">{{ post.title }}</a>
+      <span class="card-meta"><time datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:'j. F Y' }}</time>{% if post.author %}, {{ post.author }}{% endif %}</span>
+    </div>
+    <div class="card-tags">
+      <span class="status-label {% if post.is_published %}status-won{% else %}status-new{% endif %}">{{ post.is_published|yesno:'Publisert,Utkast' }}</span>
+    </div>
+    <form method="post" action="{% url 'dashboard_blog_delete' post.pk %}" data-confirm="Slette «{{ post.title }}» for godt?">
       {% csrf_token %}
-      <button type="submit" class="link-button">Slett</button>
+      <button type="submit" class="icon-button" aria-label="Slett «{{ post.title }}»">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></svg>
+      </button>
     </form>
   </li>
   {% empty %}
-  <li>Ingen nyheter ennå.</li>
+  <li class="empty">Ingen nyheter ennå. <a href="{% url 'dashboard_blog_create' %}">Skriv den første</a>.</li>
   {% endfor %}
 </ul>
 {% endblock %}

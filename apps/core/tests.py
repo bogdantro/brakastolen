@@ -653,18 +653,34 @@ class PlotPickerTests(MediaTestCase):
         self.assertIn('Tomt: tomt 21', mail.outbox[0].body)
 
 
-class SeedPlotsDemoTests(TestCase):
-    @override_settings(DEBUG=False)
-    def test_example_plots_never_load_on_a_live_server(self):
-        from django.core.management.base import CommandError
-        with self.assertRaises(CommandError):
-            call_command('seed_plots_demo', stdout=io.StringIO())
-        self.assertFalse(Plot.objects.exists())
+class SeedPlotsTests(TestCase):
+    def test_loads_the_real_plots_with_outlines_and_categories(self):
+        call_command('seed_plots', stdout=io.StringIO())
+        self.assertEqual(Plot.objects.count(), 54)
+        self.assertEqual(Plot.objects.filter(status='sold').count(), 12)
+        self.assertEqual(Plot.objects.get(number='64').price, 900000)
+        plot = Plot.objects.get(number='13')
+        self.assertEqual((plot.status, plot.category.name), ('sold', 'Byggetrinn 1'))
+        self.assertEqual(Plot.objects.get(number='35').category.name, 'Byggetrinn 2')
+        self.assertTrue(all(p.map_shape.startswith('M') and p.is_on_map for p in Plot.objects.all()))
 
-    @override_settings(DEBUG=True)
-    def test_example_plots_load_locally_and_only_once(self):
-        call_command('seed_plots_demo', stdout=io.StringIO())
-        call_command('seed_plots_demo', stdout=io.StringIO())
-        self.assertEqual(Plot.objects.count(), 26)
-        self.assertFalse(Plot.objects.get(number='13').price)
-        self.assertEqual(Plot.objects.get(number='13').status, 'sold')
+    def test_running_again_keeps_the_clients_changes(self):
+        call_command('seed_plots', stdout=io.StringIO())
+        Plot.objects.filter(number='11').update(price=1234000, status='reserved')
+        call_command('seed_plots', stdout=io.StringIO())
+        plot = Plot.objects.get(number='11')
+        self.assertEqual((plot.price, plot.status), (1234000, 'reserved'))
+        self.assertEqual(Plot.objects.count(), 54)
+
+    def test_overwrite_resets_to_the_websites_values(self):
+        call_command('seed_plots', stdout=io.StringIO())
+        Plot.objects.filter(number='11').update(price=1234000)
+        call_command('seed_plots', overwrite=True, stdout=io.StringIO())
+        self.assertEqual(Plot.objects.get(number='11').price, 1500000)
+
+    def test_dry_run_changes_nothing_and_example_plots_are_removed(self):
+        Plot.objects.create(number='99', note='Eksempeldata fra designskissen')
+        call_command('seed_plots', dry_run=True, stdout=io.StringIO())
+        self.assertEqual(Plot.objects.count(), 1)
+        call_command('seed_plots', stdout=io.StringIO())
+        self.assertFalse(Plot.objects.filter(number='99').exists())

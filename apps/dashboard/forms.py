@@ -1,8 +1,11 @@
+import re
+
 from django import forms
 
 from apps.blog.models import Blog
-from apps.core.models import Plot, Project
+from apps.core.models import Plot, PlotCategory, Project
 from apps.core.richtext import sanitize_html
+from apps.core.text import format_number
 
 RICH_FIELDS = ('description', 'description_2')
 
@@ -84,33 +87,109 @@ class ProjectForm(forms.ModelForm):
         return cleaned
 
 
+class NokField(forms.IntegerField):
+    """A price typed the Norwegian way: '1 500 000', '1.500.000 kr' or '1500000' -> 1500000.
+    Shown back with spaces between the thousands."""
+
+    widget = forms.TextInput
+
+    def to_python(self, value):
+        if isinstance(value, str):
+            value = re.sub(r'(?i)\s|\.|,-|kr', '', value)  # \s also covers non-breaking spaces
+        return super().to_python(value)
+
+    def prepare_value(self, value):
+        if isinstance(value, int):
+            return format_number(value)
+        return value
+
+    def widget_attrs(self, widget):
+        # Text input, so no min/max/step from IntegerField – just a numeric keyboard on phones
+        return {'inputmode': 'numeric', 'autocomplete': 'off'}
+
+
 class PlotForm(forms.ModelForm):
+    price = NokField(label='Pris (kr)', required=False, min_value=0)
+
     class Meta:
         model = Plot
-        fields = ['project', 'number', 'status', 'area_m2', 'price', 'altitude', 'note', 'map_x', 'map_y', 'map_rotation']
+        fields = ['number', 'category', 'project', 'status', 'area_m2', 'price', 'altitude', 'note',
+                  'map_x', 'map_y', 'map_rotation', 'map_shape']
         widgets = {
+            'number': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. 67'}),
+            'category': forms.Select(attrs={'class': 'input'}),
             'project': forms.Select(attrs={'class': 'input'}),
-            'number': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. 7'}),
-            'status': forms.Select(attrs={'class': 'input'}),
+            'status': forms.RadioSelect,
             'area_m2': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 1400', 'min': 0}),
-            'price': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 900000', 'min': 0}),
             'altitude': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 980', 'min': 0}),
             'note': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Rett ved langrennssporet'}),
             # Set by clicking on the map in the plot form (dashboard.js)
             'map_x': forms.HiddenInput,
             'map_y': forms.HiddenInput,
+            'map_shape': forms.HiddenInput,
             'map_rotation': forms.NumberInput(attrs={'class': 'input', 'step': 1, 'min': -180, 'max': 180}),
         }
+        labels = {'area_m2': 'Størrelse (m²)', 'project': 'Hyttegrend'}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['price'].widget.attrs.update({'class': 'input', 'placeholder': 'F.eks. 1 500 000'})
+        self.fields['price'].help_text = 'Tomt uten pris vises som «Ta kontakt for pris».'
+        self.fields['category'].empty_label = 'Uten kategori'
         self.fields['project'].empty_label = 'Ikke i en hyttegrend'
+        self.fields['project'].help_text = 'Bare hvis tomten hører til en egen hyttegrend, som Ulven.'
         self.fields['map_rotation'].required = False
 
     def clean_map_rotation(self):
         """Empty -> the default angle, so a plot can always be saved without touching the map."""
         value = self.cleaned_data.get('map_rotation')
         return Plot._meta.get_field('map_rotation').default if value is None else value
+
+
+class PlotQuickForm(forms.ModelForm):
+    """One or more of a plot's sales fields, changed straight from the plots list.
+    Only the fields actually sent are validated and saved (see `for_fields`)."""
+
+    price = NokField(label='Pris (kr)', required=False, min_value=0)
+
+    EDITABLE = ('status', 'price', 'area_m2', 'category')
+
+    class Meta:
+        model = Plot
+        fields = ['status', 'price', 'area_m2', 'category']
+
+    @classmethod
+    def for_fields(cls, names, *args, **kwargs):
+        form = cls(*args, **kwargs)
+        for name in list(form.fields):
+            if name not in names:
+                del form.fields[name]
+        return form
+
+
+class PlotBulkForm(forms.Form):
+    """The same change for several plots at once, from the plots list."""
+
+    ACTIONS = [
+        ('status', 'Endre status'),
+        ('category', 'Endre kategori'),
+    ]
+
+    plots = forms.ModelMultipleChoiceField(queryset=Plot.objects.all(), error_messages={
+        'required': 'Velg minst én tomt i listen først.',
+    })
+    action = forms.ChoiceField(choices=ACTIONS)
+    status = forms.ChoiceField(choices=Plot.STATUS_CHOICES, required=False)
+    category = forms.ModelChoiceField(queryset=PlotCategory.objects.all(), required=False,
+                                      empty_label='Uten kategori')
+
+
+class PlotCategoryForm(forms.ModelForm):
+    class Meta:
+        model = PlotCategory
+        fields = ['name']
+        widgets = {'name': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Byggetrinn 3'})}
+        error_messages = {'name': {'unique': 'Det finnes allerede en kategori med dette navnet.'}}
 
 
 class BlogForm(forms.ModelForm):

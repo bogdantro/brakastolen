@@ -6,36 +6,97 @@
   <meta name="robots" content="noindex, nofollow">
   <title>{% block title %}Dashbord{% endblock %} – {{ business.name }}</title>
   <link rel="icon" href="{% static 'images/favicon/favicon-32.png' %}" sizes="32x32" type="image/png">
+  {% comment %} Same fonts and colours as the public site and the dashboard login. {% endcomment %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'scss/dashboard/dashboard.css' %}">
 </head>
 <body class="dashboard">
+  <a href="#main" class="skip-link">Hopp til innholdet</a>
   {% if user.is_authenticated and user.is_staff %}
-  <aside class="sidebar">
-    <a href="{% url 'dashboard_home' %}" class="brand">{{ business.name }}</a>
-    <nav aria-label="Dashbord-meny">
+  {% with name=request.resolver_match.url_name %}
+  <header class="topbar">
+    <a href="{% url 'dashboard_home' %}" class="topbar-brand">
+      <img src="{% static 'images/logo/logo-mark-hvit.png' %}" alt="" width="34" height="24">
+      <span>{{ business.name }}</span>
+    </a>
+    <button type="button" class="menu-button" aria-expanded="false" aria-controls="sidebar" data-menu-button>
+      <span aria-hidden="true"></span><span aria-hidden="true"></span>
+      <span class="visually-hidden">Meny</span>
+    </button>
+  </header>
+
+  <aside class="sidebar" id="sidebar">
+    <a href="{% url 'dashboard_home' %}" class="brand">
+      <img src="{% static 'images/logo/logo-mark-hvit.png' %}" alt="" width="46" height="32">
+      <span>
+        <span class="brand-name">{{ business.name }}</span>
+        <span class="brand-sub">Dashbord</span>
+      </span>
+    </a>
+
+    <nav aria-label="Dashbord-meny" class="side-nav">
       <ul>
-        <li><a href="{% url 'dashboard_home' %}" {% if request.resolver_match.url_name == 'dashboard_home' %}aria-current="page"{% endif %}>Oversikt</a></li>
         <li>
-          <a href="{% url 'dashboard_inquiries' %}" {% if 'inquir' in request.resolver_match.url_name %}aria-current="page"{% endif %}>Henvendelser</a>
-          {% if sidebar_unread %}<span class="badge" aria-label="{{ sidebar_unread }} uleste">{{ sidebar_unread }}</span>{% endif %}
+          <a href="{% url 'dashboard_home' %}" {% if name == 'dashboard_home' %}aria-current="page"{% endif %}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z"/></svg>
+            Oversikt
+          </a>
         </li>
-        <li><a href="{% url 'dashboard_plots' %}" {% if 'plot' in request.resolver_match.url_name %}aria-current="page"{% endif %}>Tomter</a></li>
-        <li><a href="{% url 'dashboard_projects' %}" {% if 'project' in request.resolver_match.url_name %}aria-current="page"{% endif %}>Prosjekter</a></li>
-        <li><a href="{% url 'dashboard_blog' %}" {% if 'blog' in request.resolver_match.url_name %}aria-current="page"{% endif %}>Nyheter</a></li>
-        <li><a href="{% url 'dashboard_activity' %}" {% if request.resolver_match.url_name == 'dashboard_activity' %}aria-current="page"{% endif %}>Aktivitet</a></li>
+        <li>
+          <a href="{% url 'dashboard_plots' %}" {% if 'plot' in name %}aria-current="page"{% endif %}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/></svg>
+            Tomter
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'dashboard_inquiries' %}" {% if 'inquir' in name %}aria-current="page"{% endif %}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13l3-8h12l3 8v6H3zM3 13h5l1 3h6l1-3h5"/></svg>
+            Henvendelser
+            {% if sidebar_unread %}<span class="badge"><span class="visually-hidden">, </span>{{ sidebar_unread }}<span class="visually-hidden"> uleste</span></span>{% endif %}
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'dashboard_projects' %}" {% if 'project' in name %}aria-current="page"{% endif %}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7M5 9.5V20h14V9.5M10 20v-6h4v6"/></svg>
+            Prosjekter
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'dashboard_blog' %}" {% if 'blog' in name %}aria-current="page"{% endif %}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11v16H5zM16 8h3v10a2 2 0 01-2 2M8 8h5M8 12h5M8 16h3"/></svg>
+            Nyheter
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'dashboard_activity' %}" {% if name == 'dashboard_activity' %}aria-current="page"{% endif %}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>
+            Aktivitet
+          </a>
+        </li>
       </ul>
     </nav>
+
     <div class="account">
-      <a href="/" target="_blank" rel="noopener">Se nettsiden</a>
-      <form method="post" action="{% url 'dashboard_logout' %}">
-        {% csrf_token %}
-        <button type="submit" class="link-button">Logg ut ({{ user.get_full_name|default:user.username }})</button>
-      </form>
+      <a href="/" target="_blank" rel="noopener" class="account-site">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>
+        Se nettsiden<span class="visually-hidden"> (åpnes i ny fane)</span>
+      </a>
+      <div class="account-user">
+        <span class="avatar" aria-hidden="true">{{ user.get_full_name|default:user.username|slice:':1'|upper }}</span>
+        <span class="account-name">{{ user.get_full_name|default:user.username }}</span>
+        <form method="post" action="{% url 'dashboard_logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="logout">Logg ut</button>
+        </form>
+      </div>
     </div>
   </aside>
+  {% endwith %}
   {% endif %}
 
-  <main class="main" id="main">
+  <main class="main" id="main" tabindex="-1">
     {% if messages %}
     <div class="messages" role="status">
       {% for message in messages %}<p class="message {{ message.tags }}">{{ message }}</p>{% endfor %}
@@ -44,6 +105,7 @@
     {% block content %}{% endblock %}
   </main>
 
+  <div class="toast" role="status" aria-live="polite" data-toast hidden></div>
   <script src="{% static 'js/dashboard.js' %}" defer></script>
 </body>
 </html>

@@ -2,46 +2,63 @@
 {% block title %}Prosjekter{% endblock %}
 
 {% block content %}
-<div class="page-head">
-  <h1>Prosjekter</h1>
-  <a href="{% url 'dashboard_project_create' %}" class="button">Nytt prosjekt</a>
-</div>
+<header class="page-head">
+  <div>
+    <h1>Prosjekter</h1>
+    <p class="page-lead">Hyttegrender og hyttemodeller på siden «Prosjekter».{% if not filtered %} Dra i håndtaket for å endre rekkefølgen på nettsiden.{% endif %}</p>
+  </div>
+  <div class="page-actions">
+    {% if trash_count %}<a href="{% url 'dashboard_project_trash' %}" class="button secondary">Papirkurv ({{ trash_count }})</a>{% endif %}
+    <a href="{% url 'dashboard_project_create' %}" class="button">Nytt prosjekt</a>
+  </div>
+</header>
 
-<form method="get" class="toolbar">
-  <label for="q" class="visually-hidden">Søk</label>
-  <input type="search" id="q" name="q" value="{{ f.q }}" class="input" placeholder="Søk i tittel eller sted">
-  <label for="category" class="visually-hidden">Kategori</label>
-  <select name="category" id="category" class="input">
-    <option value="">Alle kategorier</option>
-    {% for key, label in categories %}<option value="{{ key }}" {% if f.category == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
-  </select>
-  <label for="status" class="visually-hidden">Status</label>
-  <select name="status" id="status" class="input">
-    <option value="">Publisert og utkast</option>
-    <option value="published" {% if f.status == 'published' %}selected{% endif %}>Bare publiserte</option>
-    <option value="draft" {% if f.status == 'draft' %}selected{% endif %}>Bare utkast</option>
-  </select>
-  <button type="submit" class="button">Filtrer</button>
-  {% if filtered %}<a href="{% url 'dashboard_projects' %}">Nullstill</a>{% endif %}
+<form method="get" class="filter-bar">
+  <div class="filter-fields">
+    <label class="filter-field">
+      <span>Kategori</span>
+      <select name="category" class="input" data-autosubmit>
+        <option value="">Alle kategorier</option>
+        {% for key, label in categories %}<option value="{{ key }}" {% if f.category == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+    </label>
+    <label class="filter-field">
+      <span>Synlighet</span>
+      <select name="status" class="input" data-autosubmit>
+        <option value="">Publisert og utkast</option>
+        <option value="published" {% if f.status == 'published' %}selected{% endif %}>Bare publiserte</option>
+        <option value="draft" {% if f.status == 'draft' %}selected{% endif %}>Bare utkast</option>
+      </select>
+    </label>
+    <label class="filter-field filter-search">
+      <span>Søk</span>
+      <input type="search" name="q" value="{{ f.q }}" class="input" placeholder="Tittel eller sted">
+    </label>
+    <button type="submit" class="button secondary">Vis</button>
+    {% if filtered %}<a href="{% url 'dashboard_projects' %}" class="text-link">Nullstill</a>{% endif %}
+  </div>
 </form>
 
-<p>{{ projects|length }} av {{ total }} prosjekter.{% if not filtered %} Dra i ☰ for å endre rekkefølgen på nettsiden.{% endif %}
-  {% if trash_count %}<a href="{% url 'dashboard_project_trash' %}">Papirkurv ({{ trash_count }})</a>{% endif %}</p>
+<p class="list-count">{{ projects|length }} av {{ total }} prosjekter</p>
 
-<ul class="rows sortable" {% if not filtered %}data-reorder-url="{% url 'dashboard_projects_reorder' %}"{% endif %}>
+<ul class="card-list sortable" {% if not filtered %}data-reorder-url="{% url 'dashboard_projects_reorder' %}"{% endif %}>
   {% csrf_token %}
   {% for project in projects %}
   <li data-id="{{ project.pk }}" {% if not filtered %}draggable="true"{% endif %}>
-    {% if not filtered %}<span class="handle" aria-hidden="true">☰</span>{% endif %}
-    <img src="{{ project.image.url }}" alt="" width="80" height="54" loading="lazy">
-    <a href="{% url 'dashboard_project_edit' project.pk %}"><strong>{{ project.title }}</strong></a>
-    <span>{{ project.get_category_display }} · {{ project.get_status_display }}</span>
-    <span class="status-label {% if project.is_published %}status-won{% else %}status-new{% endif %}">{{ project.is_published|yesno:'Publisert,Utkast' }}</span>
-    {% if project.is_featured %}<span class="status-label">På forsiden</span>{% endif %}
-    <span>{{ project.view_count }} visninger</span>
+    {% if not filtered %}<span class="handle" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01"/></svg></span>{% endif %}
+    <img src="{{ project.image.url }}" alt="" width="112" height="76" loading="lazy">
+    <div class="card-body">
+      <a href="{% url 'dashboard_project_edit' project.pk %}" class="card-title">{{ project.title }}</a>
+      <span class="card-meta">{{ project.get_category_display }}, {{ project.get_status_display|lower }}{% if project.location %} – {{ project.location }}{% endif %}</span>
+    </div>
+    <div class="card-tags">
+      <span class="status-label {% if project.is_published %}status-won{% else %}status-new{% endif %}">{{ project.is_published|yesno:'Publisert,Utkast' }}</span>
+      {% if project.is_featured %}<span class="status-label">På forsiden</span>{% endif %}
+    </div>
+    <span class="card-views">{{ project.view_count }} visninger</span>
   </li>
   {% empty %}
-  <li>Ingen prosjekter{% if filtered %} som passer filteret{% endif %}.</li>
+  <li class="empty">Ingen prosjekter{% if filtered %} som passer filteret{% endif %}.</li>
   {% endfor %}
 </ul>
 {% endblock %}

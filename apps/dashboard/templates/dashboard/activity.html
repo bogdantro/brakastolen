@@ -2,21 +2,27 @@
 {% block title %}Aktivitet{% endblock %}
 
 {% block content %}
-<h1>Aktivitet</h1>
-<p>{{ failed_logins }} mislykkede innloggingsforsøk de siste 7 dagene.</p>
+<header class="page-head">
+  <div>
+    <h1>Aktivitet</h1>
+    <p class="page-lead">Hvem som har gjort hva i dashbordet. {{ failed_logins }} mislykkede innloggingsforsøk de siste 7 dagene.</p>
+  </div>
+</header>
 
-<table class="table">
-  <thead><tr><th scope="col">Tid</th><th scope="col">Hvem</th><th scope="col">Hva</th></tr></thead>
-  <tbody>
-    {% for entry in entries %}
-    <tr>
-      <td>{{ entry.created_at|date:'d.m.Y H:i' }}</td>
-      <td>{{ entry.who }}</td>
-      <td>{{ entry.action }} {% if entry.url %}<a href="{{ entry.url }}">{{ entry.target }}</a>{% else %}{{ entry.target }}{% endif %}</td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="3">Ingen aktivitet ennå.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="table-wrap">
+  <table class="data-table">
+    <thead><tr><th scope="col">Tid</th><th scope="col">Hvem</th><th scope="col">Hva</th></tr></thead>
+    <tbody>
+      {% for entry in entries %}
+      <tr>
+        <td class="nowrap"><time datetime="{{ entry.created_at|date:'c' }}">{{ entry.created_at|date:'j.n.Y H:i' }}</time></td>
+        <td class="nowrap">{{ entry.who }}</td>
+        <td>{{ entry.action }}{% if entry.target %} – {% if entry.url %}<a href="{{ entry.url }}">{{ entry.target }}</a>{% else %}{{ entry.target }}{% endif %}{% endif %}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="3" class="empty-cell">Ingen aktivitet ennå.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}
