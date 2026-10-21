@@ -99,23 +99,7 @@
   </div>
 </section>
 
-{% if cabins %}
-<section class="section cabins-list" aria-labelledby="cabins-list-title">
-  <div class="content">
-    <div class="section-head">
-      <h2 id="cabins-list-title">Hytter på Brakastølen</h2>
-      <a href="{% url 'prosjekter' %}" class="text-link">Alle prosjekter</a>
-    </div>
-    <ul class="project-list">
-      {% for project in cabins %}
-      <li>{% include 'core/project-card.html' %}</li>
-      {% endfor %}
-    </ul>
-  </div>
-</section>
-{% endif %}
-
-<section class="section partners-section" aria-labelledby="partners-title">
+<section class="section partners-section" id="partnere" aria-labelledby="partners-title">
   <div class="content">
     <div class="section-head">
       <h2 id="partners-title">Våre samarbeidspartnere</h2>

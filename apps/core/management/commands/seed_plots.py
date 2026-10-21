@@ -67,7 +67,7 @@ class Command(BaseCommand):
                 'map_y': row['map_y'],
                 'map_shape': row['map_shape'],
             }
-            plot = Plot.objects.filter(number=row['number'], project__isnull=True).first()
+            plot = Plot.objects.filter(number=row['number']).first()
             if plot is None:
                 Plot.objects.create(number=row['number'], order=order, **values)
                 report['created'] += 1

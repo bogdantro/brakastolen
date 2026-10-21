@@ -123,19 +123,5 @@
   </section>
 </div>
 
-{% if top_projects %}
-<section class="panel">
-  <div class="panel-head">
-    <h2>Mest sette prosjekter</h2>
-    <a href="{% url 'dashboard_projects' %}" class="text-link">Prosjekter</a>
-  </div>
-  <ol class="mini-list ranked">
-    {% for project in top_projects %}
-    <li><a href="{% url 'dashboard_project_edit' project.pk %}">{{ project.title }}</a> <small>{{ project.view_count }} visninger</small></li>
-    {% endfor %}
-  </ol>
-</section>
-{% endif %}
-
 {{ map_plots|json_script:"sales-map-data" }}
 {% endblock %}

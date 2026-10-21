@@ -9,22 +9,16 @@ from django.dispatch import receiver
 from apps.blog.models import Blog
 
 from .images import shrink_upload
-from .models import Project, ProjectImage
 
 logger = logging.getLogger(__name__)
 
 IMAGE_FIELDS = {
-    Project: ['image', 'og_image'],
-    ProjectImage: ['image'],
     Blog: ['image'],
 }
 
-# Project photos are stored as WebP – the smallest format all current browsers show.
-# The share image (og_image) stays JPEG: LinkedIn and some apps don't show WebP previews.
-WEBP_FIELDS = {
-    (Project, 'image'),
-    (ProjectImage, 'image'),
-}
+# Fields stored as WebP – the smallest format all current browsers show. News photos stay
+# JPEG: they double as the share image, and LinkedIn and some apps don't show WebP previews.
+WEBP_FIELDS = set()
 
 
 @receiver(pre_save)

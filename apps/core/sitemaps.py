@@ -5,11 +5,10 @@ from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 
 from apps.blog.models import Blog
-from .models import Project
 
 # Every public page with a fixed URL. llms.py uses the same list.
 PUBLIC_PAGES = [
-    'hjemme', 'tomter', 'hytter', 'prosjekter', 'om_vaset', 'aktiviteter',
+    'hjemme', 'tomter', 'hytter', 'om_vaset', 'aktiviteter',
     'om_oss', 'nyheter', 'kontakt', 'personvern',
 ]
 
@@ -32,19 +31,6 @@ class PageSitemap(SiteSitemap):
         return reverse(item)
 
 
-class ProjectSitemap(SiteSitemap):
-    changefreq = 'monthly'
-
-    def items(self):
-        return Project.objects.public()
-
-    def location(self, project):
-        return reverse('prosjekt_detail', args=[project.slug])
-
-    def lastmod(self, project):
-        return project.updated_at
-
-
 class BlogSitemap(SiteSitemap):
     changefreq = 'monthly'
 
@@ -57,6 +43,5 @@ class BlogSitemap(SiteSitemap):
 
 SITEMAPS = {
     'pages': PageSitemap,
-    'projects': ProjectSitemap,
     'blog': BlogSitemap,
 }

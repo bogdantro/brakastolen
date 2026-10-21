@@ -5,7 +5,7 @@
 {% include 'core/seo.html' with title="Hyttetomter på Vaset i Valdres – sol og utsikt | Brakastølen" description="Hyttetomter på Brakastølen, Vaset i Valdres. 900–1050 moh., utsikt mot Jotunheimen og sol fra morgen til kveld. Tomter fra 900 000 kr, uten byggeklausul." %}
 {% endblock %}
 
-{% block schema %}{% schema_home featured_projects %}{% endblock %}
+{% block schema %}{% schema_home %}{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'scss/store/home.css' %}">
@@ -106,19 +106,35 @@
   </div>
 </section>
 
-<section class="projects-section section">
+<section class="suppliers section" aria-labelledby="suppliers-title">
   <div class="content">
     <div class="section-head">
-      <h2>Prosjekter på Brakastølen</h2>
-      <a href="{% url 'prosjekter' %}" class="text-link">Se alle prosjekter</a>
+      <h2 id="suppliers-title">Våre hytteleverandører</h2>
+      <a href="{% url 'hytter' %}" class="text-link">Les om hyttene</a>
     </div>
-    <ul class="project-list">
-      {% for project in featured_projects %}
-      <li>{% include 'core/project-card.html' %}</li>
-      {% empty %}
-      <li class="empty">Nye prosjekter kommer snart.</li>
-      {% endfor %}
+    <ul class="supplier-cards">
+      <li class="supplier-card">
+        <a href="{% url 'hytter' %}#tinde" class="supplier-photo" tabindex="-1" aria-hidden="true">
+          <img src="{% static 'images/projects/tinde-vaset-3939.jpg' %}" alt="" loading="lazy">
+        </a>
+        <p class="supplier-kicker">Hytteleverandør</p>
+        <h3><a href="{% url 'hytter' %}#tinde">Tinde Hytter</a></h3>
+        <p class="tagline">Stedet for dine beste stunder</p>
+        <p>Serier av kvalitetshytter, alle med hver sine særtrekk – bygget spesielt for deg og dine.</p>
+        <a href="https://www.tindehytter.no" class="text-link" target="_blank" rel="noopener">tindehytter.no<span class="visually-hidden"> (åpnes i ny fane)</span></a>
+      </li>
+      <li class="supplier-card">
+        <a href="{% url 'hytter' %}#leve" class="supplier-photo" tabindex="-1" aria-hidden="true">
+          <img src="{% static 'images/projects/leve-hytter-vy-overblikk.jpg' %}" alt="" loading="lazy">
+        </a>
+        <p class="supplier-kicker">Hytteleverandør</p>
+        <h3><a href="{% url 'hytter' %}#leve">Leve Hytter</a></h3>
+        <p class="tagline">Tidløst design og solid håndverk</p>
+        <p>Hytteserien Vy er tegnet sammen med en av Norges fremste arkitekter, i flere grunnmodeller og størrelser.</p>
+        <a href="https://www.levehytter.no" class="text-link" target="_blank" rel="noopener">levehytter.no<span class="visually-hidden"> (åpnes i ny fane)</span></a>
+      </li>
     </ul>
+    <p class="supplier-more">Også med på Brakastølen: Telemarkhytter, Øverbygg, Nordlyshytter og Familiehytta i FAUN Gruppen, og Slidre Bygg &amp; Prosjektering. <a href="{% url 'hytter' %}#partnere" class="text-link">Alle samarbeidspartnere</a></p>
   </div>
 </section>
 

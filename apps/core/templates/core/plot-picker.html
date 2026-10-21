@@ -96,46 +96,87 @@
   </div>
 
   <dialog class="picker-dialog" data-picker-dialog aria-labelledby="picker-dialog-title">
-    <form method="post" action="{% url 'kontakt' %}" class="form" data-picker-form novalidate>
-      <div class="dialog-head">
-        <h3 id="picker-dialog-title">Avtal visning</h3>
-        <button type="button" class="dialog-close" data-dialog-close aria-label="Lukk">×</button>
-      </div>
-      <p class="dialog-intro" data-dialog-intro>Send en uforpliktende forespørsel om visning.</p>
+    <div class="dialog-shell">
+      <aside class="dialog-plot" aria-label="Tomten du spør om">
+        <div class="dialog-map" data-dialog-map aria-hidden="true"></div>
+        <p class="dialog-plot-name" data-dialog-plot-name>Tomt</p>
+        <dl class="dialog-facts" data-dialog-facts></dl>
+        <ol class="dialog-steps">
+          <li>Du sender forespørselen</li>
+          <li>Vi tar kontakt og avtaler et tidspunkt</li>
+          <li>Vi viser deg tomten på Vaset</li>
+        </ol>
+        <p class="dialog-call">Heller ringe? <a href="tel:{{ business.phone }}">{{ business.phone_display }}</a></p>
+      </aside>
 
-      {% csrf_token %}
-      {{ picker_form.form_ts }}
-      {{ picker_form.plot }}
-      <input type="hidden" name="interest" value="viewing">
-      <div class="hp-field" aria-hidden="true">
-        <label for="{{ picker_form.hp_check.id_for_label }}">Ikke fyll ut dette feltet</label>
-        {{ picker_form.hp_check }}
-      </div>
+      <div class="dialog-main">
+        <button type="button" class="dialog-close" data-dialog-close aria-label="Lukk">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
 
-      <div class="field">
-        <label for="{{ picker_form.name.id_for_label }}">Navn <span class="required" aria-hidden="true">*</span></label>
-        {{ picker_form.name }}
-      </div>
-      <div class="field">
-        <label for="{{ picker_form.email.id_for_label }}">E-post <span class="required" aria-hidden="true">*</span></label>
-        {{ picker_form.email }}
-      </div>
-      <div class="field">
-        <label for="{{ picker_form.phone.id_for_label }}">Telefon <span class="optional">(valgfritt)</span></label>
-        {{ picker_form.phone }}
-      </div>
-      <div class="field">
-        <label for="{{ picker_form.message.id_for_label }}">Beskjed <span class="optional">(valgfritt)</span></label>
-        {{ picker_form.message }}
-      </div>
-      <div class="field checkbox">
-        {{ picker_form.consent }}
-        <label for="{{ picker_form.consent.id_for_label }}">Jeg godtar <a href="{% url 'personvern' %}" target="_blank">personvernerklæringen</a> <span class="required" aria-hidden="true">*</span></label>
-      </div>
+        <form method="post" action="{% url 'kontakt' %}" class="form" data-picker-form novalidate>
+          <div class="dialog-head">
+            <h3 id="picker-dialog-title">Avtal visning</h3>
+            <p class="dialog-intro" data-dialog-intro>Uforpliktende – vi tar kontakt for å finne et tidspunkt som passer.</p>
+          </div>
 
-      <p class="form-status" role="status" data-form-status hidden></p>
-      <button type="submit" class="button">Send forespørsel {% include 'core/arrow.svg' %}</button>
-    </form>
+          {% csrf_token %}
+          {{ picker_form.form_ts }}
+          {{ picker_form.plot }}
+          <input type="hidden" name="interest" value="viewing">
+          <div class="hp-field" aria-hidden="true">
+            <label for="{{ picker_form.hp_check.id_for_label }}">Ikke fyll ut dette feltet</label>
+            {{ picker_form.hp_check }}
+          </div>
+
+          <div class="field-pair">
+            <div class="field">
+              <label for="{{ picker_form.name.id_for_label }}">Navn <span class="required" aria-hidden="true">*</span></label>
+              {{ picker_form.name }}
+            </div>
+            <div class="field">
+              <label for="{{ picker_form.phone.id_for_label }}">Telefon <span class="optional">(valgfritt)</span></label>
+              {{ picker_form.phone }}
+            </div>
+          </div>
+          <div class="field">
+            <label for="{{ picker_form.email.id_for_label }}">E-post <span class="required" aria-hidden="true">*</span></label>
+            {{ picker_form.email }}
+          </div>
+          <fieldset class="field when-field">
+            <legend>Når passer det best? <span class="optional">(valgfritt)</span></legend>
+            <div class="chips">
+              <input type="radio" name="when" value="Hverdager" id="picker-when-weekday"><label for="picker-when-weekday">Hverdager</label>
+              <input type="radio" name="when" value="Helg" id="picker-when-weekend"><label for="picker-when-weekend">Helg</label>
+              <input type="radio" name="when" value="Når som helst" id="picker-when-any"><label for="picker-when-any">Når som helst</label>
+            </div>
+          </fieldset>
+          <div class="field">
+            <label for="{{ picker_form.message.id_for_label }}">Beskjed <span class="optional">(valgfritt)</span></label>
+            {{ picker_form.message }}
+          </div>
+          <div class="field checkbox">
+            {{ picker_form.consent }}
+            <label for="{{ picker_form.consent.id_for_label }}">Jeg godtar <a href="{% url 'personvern' %}" target="_blank">personvernerklæringen</a> <span class="required" aria-hidden="true">*</span></label>
+          </div>
+
+          <p class="form-status" role="status" data-form-status hidden></p>
+          <button type="submit" class="button">Send forespørsel {% include 'core/arrow.svg' %}</button>
+        </form>
+
+        <div class="dialog-done" data-dialog-done hidden tabindex="-1">
+          <span class="done-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+          </span>
+          <h3 data-done-title>Takk!</h3>
+          <p data-done-text></p>
+          <div class="done-actions">
+            <button type="button" class="button" data-dialog-close>Se flere tomter</button>
+            <a href="tel:{{ business.phone }}" class="text-link">Ring {{ business.phone_display }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </dialog>
 
   {{ picker_plots|json_script:"plot-picker-data" }}

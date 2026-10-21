@@ -141,17 +141,17 @@ permanent (301) in `config/urls.py` and tested in `RedirectTests`.
 | `/#nyheter` | `/nyheter/` | anchor |
 | `/#kontakt` | `/kontakt/` | anchor |
 | `/oversiktskart/` | `/tomter/` (map at `#tomtekart`) | 301 |
-| `/vare-finn-annonser/` | `/prosjekter/` | 301 |
+| `/vare-finn-annonser/` | `/hytter/` | 301 |
 | `/personvernerklaering/` | `/personvern/` | 301 |
 | `/reguleringsplan-vedtatt/` | `/nyheter/` | 301 – post is a draft until it gets real text |
 | `/skogsavvirkning-pabegynt/` | `/nyheter/` | 301 – same |
 | `/baerar-i-ar/` | `/nyheter/` | 301 – same |
 | `/category/ukategorisert/`, `/author/webmaster/`, `/feed/` | `/nyheter/` | 301 |
 | `/wp-sitemap.xml`, `/wp-sitemap-*.xml` | `/sitemap.xml` | 301 |
-| `/portfolio/<demo>/` (16 pages), `/portfolio_cat/<x>/` (5) | `/prosjekter/` | theme demo leftovers |
+| `/portfolio/<demo>/` (16 pages), `/portfolio_cat/<x>/` (5) | `/hytter/` | theme demo leftovers |
 | `/classic-help-center/`, `/page-404-custom/`, `/page_category/classic/` | `/` | theme demo leftovers |
 
-New pages: `/tomter/`, `/hytter/`, `/prosjekter/` (+ `/prosjekter/<slug>/`), `/om-vaset/`,
+New pages: `/tomter/`, `/hytter/` (the cabin suppliers, as on the old site), `/om-vaset/`,
 `/aktiviteter/`, `/om-oss/`, `/nyheter/` (+ `/nyheter/<id>/<slug>/`), `/kontakt/`, `/personvern/`,
 plus `/sitemap.xml`, `/robots.txt`, `/llms.txt`, `/llms-full.txt`, `/dashboard/`.
 
@@ -278,8 +278,9 @@ the plot table – the client should confirm current status per plot, then enter
 ## 7. What was built from this
 
 - `seo.py`: `BUSINESS`, `PARTNERS`, `FAQ` (7 questions, answers only from the client's own text).
-- Seeded projects (`seed_projects`): **Ulven hyttegrend** (hyttegrend, 10 plots), **Tinde Hytter på
-  Brakastølen** (12 photos), **Leve Hytter – Vy-serien** (6 photos).
+- No project pages: like the old site, the cabin suppliers (Tinde Hytter, Leve Hytter) and partners are
+  presented on `/hytter/` and on the homepage. `/prosjekter/…` URLs redirect there (301).
+- Plots (`seed_plots`): the 54 plots on the old site's plot map, with size, price, sold status and outline.
 - Seeded news (`seed_blog`): published – "Ulven hyttegrend", "Våre samarbeidspartnere på Brakastølen";
   drafts – "Kampanje: to gratis el-sykler med hyttetomta" (end date unknown) and the three old posts
   with only a title (original dates 30.06.2020 kept).

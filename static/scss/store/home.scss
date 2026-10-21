@@ -793,3 +793,116 @@
     .cabins-card { margin-right: 40px; max-width: 600px; padding: 40px; }
   }
 }
+
+// ------------------------------------------------------------
+// Our cabin suppliers – Tinde and Leve, each with a photo, linking on to the Hytter page
+// ------------------------------------------------------------
+.suppliers {
+  .supplier-cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  .supplier-photo {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+    margin-bottom: 22px;
+    background: $sand;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1.2s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.03);
+    }
+  }
+
+  .supplier-kicker {
+    margin: 0 0 6px;
+    font-size: 15px;
+    color: $sageDeep;
+  }
+
+  h3 {
+    margin: 0;
+    font-family: $fontDisplay;
+    font-weight: 400;
+    font-size: clamp(30px, 2.6vw, 42px);
+    line-height: 1.1;
+
+    a {
+      color: $heroText;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 6px;
+      }
+    }
+  }
+
+  .tagline {
+    margin: 8px 0 14px;
+    font-family: $fontDisplay;
+    font-size: 21px;
+    color: $sageDeep;
+  }
+
+  .supplier-card > p:not([class]) {
+    margin: 0 0 16px;
+    max-width: 30em;
+    color: $mutedText;
+  }
+
+  .supplier-more {
+    margin: 0;
+    padding-top: 26px;
+    border-top: 1px solid $border;
+    color: $mutedText;
+
+    .text-link {
+      margin-left: 6px;
+      white-space: nowrap;
+    }
+  }
+}
+
+@media (max-width: 1139px) {
+  .suppliers {
+    .supplier-cards {
+      gap: 48px;
+      margin-bottom: 40px;
+    }
+  }
+}
+
+@media (min-width: 700px) and (max-width: 1139px) {
+  .suppliers .supplier-cards {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media only screen and (min-width: 1140px) {
+  .suppliers {
+    .supplier-cards {
+      grid-template-columns: 1fr 1fr;
+      gap: u(56);
+      margin-bottom: u(56);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .suppliers .supplier-photo img {
+    transition: none;
+  }
+}

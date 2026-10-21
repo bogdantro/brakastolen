@@ -23,9 +23,6 @@ urlpatterns = [
     path('', views.hjemme, name='hjemme'),
     path('tomter/', views.tomter, name='tomter'),
     path('hytter/', views.hytter, name='hytter'),
-    path('prosjekter/', views.prosjekter, name='prosjekter'),
-    path('prosjekter/<slug:slug>/', views.prosjekt_detail, name='prosjekt_detail'),
-    path('prosjekter/<slug:slug>/deling.jpg', views.prosjekt_share_image, name='prosjekt_share_image'),
     path('om-vaset/', views.om_vaset, name='om_vaset'),
     path('aktiviteter/', views.aktiviteter, name='aktiviteter'),
     path('om-oss/', views.om_oss, name='om_oss'),
@@ -43,7 +40,7 @@ urlpatterns = [
     # Old URLs from the previous WordPress website – permanent redirects keep their Google ranking.
     # The full list with reasons is in CLIENT-BRIEF.md ("Page map").
     path('oversiktskart/', moved_to('tomter')),
-    path('vare-finn-annonser/', moved_to('prosjekter')),
+    path('vare-finn-annonser/', moved_to('hytter')),
     path('personvernerklaering/', moved_to('personvern')),
     path('reguleringsplan-vedtatt/', moved_to('nyheter')),
     path('skogsavvirkning-pabegynt/', moved_to('nyheter')),
@@ -54,10 +51,16 @@ urlpatterns = [
     path('wp-sitemap.xml', moved_to('sitemap')),
     re_path(r'^wp-sitemap-[\w-]+\.xml$', moved_to('sitemap')),
     # Leftover demo pages from the WordPress theme
-    re_path(r'^portfolio(?:_cat)?/[\w-]+/?$', moved_to('prosjekter')),
+    re_path(r'^portfolio(?:_cat)?/[\w-]+/?$', moved_to('hytter')),
     path('page_category/classic/', moved_to('hjemme')),
     path('classic-help-center/', moved_to('hjemme')),
     path('page-404-custom/', moved_to('hjemme')),
+
+    # The project pages were replaced by the suppliers on the Hytter page
+    path('prosjekter/', moved_to('hytter')),
+    re_path(r'^prosjekter/[\w-]+/(?:deling\.jpg)?$', moved_to('hytter')),
+    # Browsers ask for /favicon.ico by themselves (e.g. on the sitemap), whatever the page links to
+    path('favicon.ico', RedirectView.as_view(url=settings.STATIC_URL + 'images/favicon/favicon-32.png', permanent=True)),
 
     path('dashboard/', include('apps.dashboard.urls')),
     path('admin/', admin.site.urls),

@@ -452,23 +452,92 @@ document.addEventListener('DOMContentLoaded', function(){
         status.hidden = false;
     }
 
+    // The chosen plot, cut out of the site plan and zoomed in, for the dialog's side panel
+    const MINI_MAP_SIZE = [240, 170];
+    const planImage = svg.querySelector('image');
+
+    function drawMiniMap(plot){
+        const box = root.querySelector('[data-dialog-map]');
+        box.replaceChildren();
+        if (plot.x === null || plot.y === null || !planImage) {
+            box.hidden = true;
+            return;
+        }
+        box.hidden = false;
+        const mini = document.createElementNS(SVG_NS, 'svg');
+        mini.setAttribute('viewBox', [plot.x - MINI_MAP_SIZE[0] / 2, plot.y - MINI_MAP_SIZE[1] / 2,
+            MINI_MAP_SIZE[0], MINI_MAP_SIZE[1]].join(' '));
+        const image = document.createElementNS(SVG_NS, 'image');
+        image.setAttribute('href', planImage.getAttribute('href'));
+        image.setAttribute('width', '960');
+        image.setAttribute('height', '760');
+        mini.appendChild(image);
+        // The other plots, faintly, so the chosen one is seen among its neighbours
+        plots.forEach(function(other){
+            if (!other.shape || other.id === plot.id) return;
+            const path = document.createElementNS(SVG_NS, 'path');
+            path.setAttribute('d', other.shape);
+            path.setAttribute('class', 'mini-other status-' + other.status);
+            mini.appendChild(path);
+        });
+        const chosen = document.createElementNS(SVG_NS, 'path');
+        chosen.setAttribute('class', 'mini-chosen');
+        chosen.setAttribute('d', plot.shape || ('M' + (plot.x - 24) + ' ' + (plot.y - 18) + ' h48 v36 h-48 Z'));
+        mini.appendChild(chosen);
+        const label = document.createElementNS(SVG_NS, 'text');
+        label.setAttribute('x', plot.x);
+        label.setAttribute('y', plot.y + 1);
+        label.textContent = plot.number;
+        mini.appendChild(label);
+        box.appendChild(mini);
+    }
+
+    function fillPlotPanel(plot){
+        root.querySelector('[data-dialog-plot-name]').textContent = plotLabel(plot);
+        const facts = root.querySelector('[data-dialog-facts]');
+        facts.replaceChildren();
+        const rows = [];
+        if (plot.group) rows.push(['Område', plot.group]);
+        if (plot.area) rows.push(['Størrelse', formatArea(plot.area)]);
+        if (plot.altitude) rows.push(['Høyde', plot.altitude + ' moh.']);
+        rows.push(['Pris', plot.price ? formatPrice(plot.price) + ' + omk.' : 'Ta kontakt']);
+        rows.forEach(function(row){
+            const item = el('div');
+            item.appendChild(el('dt', '', row[0]));
+            item.appendChild(el('dd', '', row[1]));
+            facts.appendChild(item);
+        });
+        drawMiniMap(plot);
+    }
+
+    const doneView = root.querySelector('[data-dialog-done]');
+
     function openDialog(plot){
         clearErrors();
         status.hidden = true;
         submit.disabled = false;
+        form.hidden = false;
+        doneView.hidden = true;
         form.elements.plot.value = plot.id;
+        fillPlotPanel(plot);
         root.querySelector('[data-dialog-intro]').textContent =
-            'Send en uforpliktende forespørsel om visning av ' + plotLabel(plot).toLowerCase() +
-            (plot.area ? ' (' + formatArea(plot.area) + ')' : '') + '.';
-        if (!form.elements.message.value) {
-            form.elements.message.value = 'Hei! Jeg ønsker mer informasjon og gjerne en visning av ' + plotLabel(plot).toLowerCase() + '.';
+            'Uforpliktende visning av ' + plotLabel(plot).toLowerCase() + '. Vi tar kontakt for å finne et tidspunkt som passer.';
+        const suggestion = 'Hei! Jeg ønsker mer informasjon og gjerne en visning av ' + plotLabel(plot).toLowerCase() + '.';
+        // Keep what the visitor wrote themselves; only swap our own suggestion for the new plot
+        const message = form.elements.message;
+        if (!message.value || message.value === message.dataset.suggested) {
+            message.value = suggestion;
+            message.dataset.suggested = suggestion;
         }
+        document.documentElement.classList.add('dialog-open');
         if (typeof dialog.showModal === 'function') {
             dialog.showModal();
         } else {
             dialog.setAttribute('open', '');
         }
-        form.elements.name.focus();
+        // Start at the top, with the heading in view, even if the form was scrolled last time
+        dialog.querySelector('.dialog-main').scrollTop = 0;
+        form.elements.name.focus({preventScroll: true});
     }
 
     function closeDialog(){
@@ -476,14 +545,31 @@ document.addEventListener('DOMContentLoaded', function(){
             dialog.close();
         } else {
             dialog.removeAttribute('open');
+            document.documentElement.classList.remove('dialog-open');
         }
     }
 
-    root.querySelector('[data-dialog-close]').addEventListener('click', closeDialog);
-    // A click on the dimmed background (outside the form) closes the dialog
+    // Escape, the close buttons and «Se flere tomter» all end here
+    dialog.addEventListener('close', function(){
+        document.documentElement.classList.remove('dialog-open');
+    });
+    root.querySelectorAll('[data-dialog-close]').forEach(function(button){
+        button.addEventListener('click', closeDialog);
+    });
+    // A click on the dimmed background (outside the dialog's box) closes it
     dialog.addEventListener('click', function(e){
         if (e.target === dialog) closeDialog();
     });
+
+    function showDone(name, plotName){
+        const firstName = name.trim().split(/\s+/)[0];
+        root.querySelector('[data-done-title]').textContent = firstName ? 'Takk, ' + firstName + '!' : 'Takk!';
+        root.querySelector('[data-done-text]').textContent =
+            'Forespørselen om visning av ' + plotName.toLowerCase() + ' er sendt. Vi tar kontakt med deg så snart som mulig for å avtale tid.';
+        form.hidden = true;
+        doneView.hidden = false;
+        doneView.focus();
+    }
 
     form.addEventListener('submit', function(e){
         e.preventDefault();
@@ -511,9 +597,17 @@ document.addEventListener('DOMContentLoaded', function(){
         submit.disabled = true;
         showStatus('Sender ...', false);
 
+        // «Når passer det best?» goes into the message, so it reaches the inquiry as plain text
+        const body = new FormData(form);
+        const when = body.get('when');
+        body.delete('when');
+        if (when) body.set('message', (body.get('message') + '\n\nPasser best: ' + when).trim());
+        const sentName = form.elements.name.value;
+        const sentPlot = root.querySelector('[data-dialog-plot-name]').textContent;
+
         fetch(form.action, {
             method: 'POST',
-            body: new FormData(form),
+            body: body,
             headers: {'Accept': 'application/json', 'X-CSRFToken': form.elements.csrfmiddlewaretoken.value},
             credentials: 'same-origin',
         }).then(function(response){
@@ -523,8 +617,10 @@ document.addEventListener('DOMContentLoaded', function(){
             return response.json().then(function(data){ return {ok: response.ok, data: data}; });
         }).then(function(result){
             if (result.ok && result.data.ok) {
-                showStatus(result.data.message, false);
+                status.hidden = true;
                 form.elements.message.value = '';
+                form.querySelectorAll('input[name="when"]').forEach(function(input){ input.checked = false; });
+                showDone(sentName, sentPlot);
                 return;
             }
             const fields = result.data.fields || {};

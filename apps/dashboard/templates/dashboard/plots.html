@@ -105,7 +105,6 @@
               <th scope="row" class="col-plot">
                 <a href="{% url 'dashboard_plot_edit' plot.pk %}" class="plot-number" title="Åpne tomt {{ plot.number }}">{{ plot.number }}</a>
                 {% if plot.note %}<small class="plot-note">{{ plot.note }}</small>{% endif %}
-                {% if plot.project %}<small class="plot-note">{{ plot.project.title }}</small>{% endif %}
               </th>
               <td>
                 <select name="category" form="row-{{ plot.pk }}" class="input cell-input" aria-label="Kategori for tomt {{ plot.number }}" data-quick>

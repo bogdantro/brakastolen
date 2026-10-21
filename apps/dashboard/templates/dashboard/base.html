@@ -58,12 +58,6 @@
           </a>
         </li>
         <li>
-          <a href="{% url 'dashboard_projects' %}" {% if 'project' in name %}aria-current="page"{% endif %}>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7M5 9.5V20h14V9.5M10 20v-6h4v6"/></svg>
-            Prosjekter
-          </a>
-        </li>
-        <li>
           <a href="{% url 'dashboard_blog' %}" {% if 'blog' in name %}aria-current="page"{% endif %}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11v16H5zM16 8h3v10a2 2 0 01-2 2M8 8h5M8 12h5M8 16h3"/></svg>
             Nyheter

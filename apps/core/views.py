@@ -1,4 +1,3 @@
-import hashlib
 import logging
 import os
 import re
@@ -7,9 +6,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.staticfiles import finders
 from django.core.cache import cache
-from django.db.models import F
-from django.http import FileResponse, Http404, HttpResponse, HttpResponseServerError, JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.http import HttpResponse, HttpResponseServerError, JsonResponse
+from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.templatetags.static import static
 from django.urls import reverse
@@ -21,7 +19,7 @@ from apps.blog.models import Blog
 
 from . import notify
 from .forms import InquiryForm
-from .models import Inquiry, Plot, Project
+from .models import Inquiry, Plot
 from .seo import BUSINESS, FAQ, PARTNERS, site_url
 
 log = logging.getLogger(__name__)
@@ -32,12 +30,7 @@ log = logging.getLogger(__name__)
 # ------------------------------------------------------------------
 
 def custom_404(request, exception):
-    try:
-        featured_projects = list(Project.objects.public().filter(is_featured=True)[:3])
-    except Exception:  # a broken database must not turn a 404 into a 500
-        log.warning('Could not load projects for the 404 page', exc_info=True)
-        featured_projects = []
-    return render(request, '404.html', {'featured_projects': featured_projects}, status=404)
+    return render(request, '404.html', status=404)
 
 
 def custom_500(request):
@@ -79,7 +72,7 @@ def hero_images():
 def plot_picker_context():
     """What core/plot-picker.html needs. Pages that include it must be @never_cache,
     because its viewing form carries a CSRF token."""
-    plots = Plot.objects.public().select_related('project')
+    plots = Plot.objects.public().select_related('category')
     return {
         'picker_plots': [plot.as_picker_data() for plot in plots],
         'picker_form': InquiryForm(initial={'interest': 'viewing'}, auto_id='picker_%s'),
@@ -90,7 +83,6 @@ def plot_picker_context():
 def hjemme(request):
     return render(request, 'core/index.html', {
         'hero_images': hero_images(),
-        'featured_projects': Project.objects.public().filter(is_featured=True)[:6],
         'latest_posts': Blog.objects.public()[:3],
         'faq': FAQ,
         **plot_picker_context(),
@@ -99,9 +91,8 @@ def hjemme(request):
 
 @never_cache  # the plot picker's viewing form carries a CSRF token, which must never be stale
 def tomter(request):
-    plots = Plot.objects.public().select_related('project')
+    plots = Plot.objects.public().select_related('category')
     return render(request, 'core/tomter.html', {
-        'groups': Project.objects.public().filter(category='hyttegrend'),
         'plots': plots,
         'available_plots': plots.filter(status='available').count(),
         'faq': FAQ[:4],
@@ -110,8 +101,7 @@ def tomter(request):
 
 
 def hytter(request):
-    cabins = Project.objects.public().filter(category='hytte')
-    return render(request, 'core/hytter.html', {'cabins': cabins, 'partners': PARTNERS})
+    return render(request, 'core/hytter.html', {'partners': PARTNERS})
 
 
 def om_vaset(request):
@@ -128,84 +118,6 @@ def om_oss(request):
 
 def personvern(request):
     return render(request, 'core/personvern.html')
-
-
-# ------------------------------------------------------------------
-# Projects
-# ------------------------------------------------------------------
-
-def prosjekter(request):
-    category = request.GET.get('kategori', '')
-    projects = Project.objects.public()
-    if category in dict(Project.CATEGORY_CHOICES):
-        projects = projects.filter(category=category)
-    else:
-        category = ''
-    return render(request, 'core/prosjekter.html', {
-        'projects': projects,
-        'categories': Project.CATEGORY_CHOICES,
-        'category': category,
-    })
-
-
-# Link previews, crawlers and speed tests are not people looking at a project
-BOT_MARKERS = ('bot', 'crawl', 'spider', 'slurp', 'preview', 'facebookexternalhit', 'lighthouse')
-
-
-def prosjekt_detail(request, slug):
-    is_staff = request.user.is_authenticated and request.user.is_staff
-    # Staff can preview drafts; visitors only ever see published projects.
-    projects = Project.objects.active() if is_staff else Project.objects.public()
-    project = get_object_or_404(projects, slug=slug)
-
-    user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
-    if not is_staff and user_agent and not any(marker in user_agent for marker in BOT_MARKERS):
-        Project.objects.filter(pk=project.pk).update(view_count=F('view_count') + 1)
-
-    other_projects = Project.objects.public().exclude(pk=project.pk)[:3]
-    # Main photos are WebP; link previews need JPEG, so fall back to the generated share image
-    if project.og_image:
-        share_image = project.og_image.url
-    else:
-        share_image = reverse('prosjekt_share_image', args=[project.slug])
-    return render(request, 'core/prosjekt-detail.html', {
-        'project': project,
-        'page_title': f'{project.meta_title or project.title} | {BUSINESS["name"]}',
-        'page_description': project.meta_description or project.excerpt,
-        'share_image': share_image,
-        'is_draft': not project.is_published,
-        'gallery': project.gallery_images.all(),
-        'plots': project.plots.all() if project.category == 'hyttegrend' else [],
-        'other_projects': other_projects,
-    })
-
-
-SHARE_SIZE = (1200, 630)
-
-
-def prosjekt_share_image(request, slug):
-    """A JPEG link preview of the main photo, for projects without their own share image.
-    Main photos are WebP, which LinkedIn and some apps don't show as a preview."""
-    from PIL import Image, ImageOps
-    project = get_object_or_404(Project.objects.public(), slug=slug)
-    if not project.image:
-        raise Http404
-    # A new main photo gets a new file name, so an old preview is never reused
-    key = hashlib.sha1(project.image.name.encode()).hexdigest()[:12]
-    target = os.path.join(settings.MEDIA_ROOT, 'projects', 'share', f'{project.pk}-{key}.jpg')
-    if not os.path.exists(target):
-        try:
-            with Image.open(project.image.path) as image:
-                image = ImageOps.fit(ImageOps.exif_transpose(image).convert('RGB'), SHARE_SIZE, Image.LANCZOS)
-                os.makedirs(os.path.dirname(target), exist_ok=True)
-                tmp = target + '.tmp'
-                image.save(tmp, 'JPEG', quality=85, optimize=True, progressive=True)
-                os.replace(tmp, target)
-        except (OSError, ValueError):
-            raise Http404
-    response = FileResponse(open(target, 'rb'), content_type='image/jpeg')
-    response['Cache-Control'] = 'public, max-age=86400'
-    return response
 
 
 # ------------------------------------------------------------------

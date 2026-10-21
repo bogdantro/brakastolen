@@ -11,7 +11,7 @@ python -m venv .venv
 pip install -r requirements.txt
 cp .env.example .env              # then set DEBUG=True and ALLOW_INDEXING=False in .env
 python manage.py migrate
-python manage.py seed_projects    # Ulven hyttegrend, Tinde Hytter, Leve Hytter (with photos)
+python manage.py seed_plots       # the 54 plots from the current website, with map outlines
 python manage.py seed_blog        # news from the old site (placeholders as drafts)
 python manage.py createsuperuser  # tick "staff" – this is the dashboard login
 python manage.py runserver

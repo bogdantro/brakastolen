@@ -13,14 +13,6 @@
 <section class="section error-page">
   <div class="content">
     {% include 'core/error-links.html' %}
-    {% if featured_projects %}
-    <div class="section-head"><h2>Prosjekter på Brakastølen</h2></div>
-    <ul class="project-list">
-      {% for project in featured_projects %}
-      <li>{% include 'core/project-card.html' %}</li>
-      {% endfor %}
-    </ul>
-    {% endif %}
   </div>
 </section>
 {% endblock %}

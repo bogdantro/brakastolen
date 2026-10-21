@@ -48,7 +48,7 @@ def schema_site():
 
 @register.simple_tag
 def schema_breadcrumbs(*args):
-    """{% schema_breadcrumbs "Prosjekter" "/prosjekter/" "Ulven hyttegrend" "/prosjekter/ulven-hyttegrend/" %}"""
+    """{% schema_breadcrumbs "Nyheter" "/nyheter/" "Reguleringsplan vedtatt" "/nyheter/3/reguleringsplan-vedtatt/" %}"""
     items = list(zip(args[0::2], args[1::2]))
     return render_jsonld(seo.graph(seo.breadcrumb_schema(items)))
 
@@ -68,8 +68,8 @@ def schema_faq():
 
 
 @register.simple_tag
-def schema_home(featured_projects=None):
-    """Homepage: the page itself, the offer catalogue, featured projects and the FAQ."""
+def schema_home():
+    """Homepage: the page itself, the offer catalogue and the FAQ."""
     page = webpage('WebPage', '/', f"{seo.BUSINESS['name']} – hyttetomter på Vaset i Valdres")
     page['description'] = seo.BUSINESS['description']
     page['mainEntity'] = {'@id': seo.organization_id()}
@@ -87,20 +87,7 @@ def schema_home(featured_projects=None):
         ],
     }
     business = {'@id': seo.organization_id(), 'hasOfferCatalog': {'@id': seo.site_url() + '/#offers'}}
-    nodes = [page, business, catalog]
-    if featured_projects:
-        nodes.append({
-            '@type': 'ItemList',
-            '@id': seo.site_url() + '/#projects',
-            'name': 'Utvalgte prosjekter',
-            'itemListElement': [
-                {'@type': 'ListItem', 'position': i, 'name': p.title,
-                 'url': seo.absolute(reverse('prosjekt_detail', args=[p.slug]))}
-                for i, p in enumerate(featured_projects, start=1)
-            ],
-        })
-    nodes.append(seo.faq_schema())
-    return render_jsonld(seo.graph(*nodes))
+    return render_jsonld(seo.graph(page, business, catalog, seo.faq_schema()))
 
 
 @register.simple_tag
@@ -150,62 +137,6 @@ def schema_about():
 def schema_contact():
     page = webpage('ContactPage', reverse('kontakt'), f"Kontakt {seo.BUSINESS['name']}")
     return render_jsonld(seo.graph(page, seo.breadcrumb_schema([('Kontakt', reverse('kontakt'))])))
-
-
-@register.simple_tag
-def schema_projects(projects):
-    page = webpage('CollectionPage', reverse('prosjekter'), 'Prosjekter på Brakastølen')
-    page['mainEntity'] = {
-        '@type': 'ItemList',
-        'itemListElement': [
-            {'@type': 'ListItem', 'position': i, 'name': p.title,
-             'url': seo.absolute(reverse('prosjekt_detail', args=[p.slug]))}
-            for i, p in enumerate(projects, start=1)
-        ],
-    }
-    return render_jsonld(seo.graph(page, seo.breadcrumb_schema([('Prosjekter', reverse('prosjekter'))])))
-
-
-@register.simple_tag
-def schema_project(project):
-    path = reverse('prosjekt_detail', args=[project.slug])
-    url = seo.absolute(path)
-    images = [seo.absolute(project.image.url)] if project.image else []
-    images += [seo.absolute(img.image.url) for img in project.gallery_images.all()[:10]]
-    work = {
-        '@type': 'Accommodation' if project.category == 'hytte' else 'Place',
-        '@id': url + '#project',
-        'name': project.title,
-        'description': project.meta_description or project.excerpt or plain(project.description, 300),
-        'url': url,
-        'image': images,
-        'containedInPlace': {'@id': seo.place_id()},
-    }
-    facts = []
-    for name, label, unit in (('area_m2', 'Bruksareal', 'm²'), ('plot_m2', 'Tomteareal', 'm²'),
-                              ('bedrooms', 'Soverom', ''), ('bathrooms', 'Bad', ''),
-                              ('year_built', 'Byggeår', ''), ('plot_count', 'Antall tomter', '')):
-        value = getattr(project, name)
-        if value:
-            facts.append({'@type': 'PropertyValue', 'name': label, 'value': value, **({'unitText': unit} if unit else {})})
-    for name, label in (('supplier', 'Hytteleverandør'), ('altitude', 'Høyde over havet'), ('access', 'Adkomst')):
-        if getattr(project, name):
-            facts.append({'@type': 'PropertyValue', 'name': label, 'value': getattr(project, name)})
-    if project.extras:
-        facts.append({'@type': 'PropertyValue', 'name': 'Ekstra', 'value': ', '.join(project.extras)})
-    if facts:
-        work['additionalProperty'] = facts
-    nodes = [work, seo.breadcrumb_schema([('Prosjekter', reverse('prosjekter')), (project.title, path)])]
-    if project.price and project.status == 'for_sale':
-        nodes.append({
-            '@type': 'Offer',
-            'itemOffered': {'@id': url + '#project'},
-            'price': project.price,
-            'priceCurrency': 'NOK',
-            'availability': 'https://schema.org/InStock',
-            'seller': {'@id': seo.organization_id()},
-        })
-    return render_jsonld(seo.graph(*nodes))
 
 
 def blog_posting(post, full=False):

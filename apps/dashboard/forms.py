@@ -3,12 +3,9 @@ import re
 from django import forms
 
 from apps.blog.models import Blog
-from apps.core.models import Plot, PlotCategory, Project
+from apps.core.models import Plot, PlotCategory
 from apps.core.richtext import sanitize_html
 from apps.core.text import format_number
-
-RICH_FIELDS = ('description', 'description_2')
-
 
 class RichTextarea(forms.Textarea):
     """A textarea that dashboard.js upgrades to a small formatting editor."""
@@ -25,66 +22,6 @@ def counted(max_length, rows=None):
     if rows:
         return forms.Textarea(attrs={**attrs, 'rows': rows})
     return forms.TextInput(attrs=attrs)
-
-
-class ProjectForm(forms.ModelForm):
-    class Meta:
-        model = Project
-        fields = [
-            'title', 'category', 'status', 'location', 'excerpt',
-            'description', 'description_2',
-            'image', 'image_credit', 'is_featured', 'is_published',
-            *Project.FACT_FIELDS,
-            'meta_title', 'meta_description', 'og_image',
-        ]
-        widgets = {
-            'title': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Ulven hyttegrend'}),
-            'category': forms.Select(attrs={'class': 'input'}),
-            'status': forms.Select(attrs={'class': 'input'}),
-            'location': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Brakastølen, Vaset'}),
-            'excerpt': forms.Textarea(attrs={'class': 'input', 'rows': 2, 'maxlength': 300,
-                                             'placeholder': 'Én eller to setninger som vises i oversikten'}),
-            'description': RichTextarea(attrs={'placeholder': 'Fortell om feltet eller hytta...'}),
-            'description_2': RichTextarea(attrs={'placeholder': 'Mer tekst (valgfritt)...'}),
-            'image_credit': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Pål Harald Uthus'}),
-            'supplier': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Tinde Hytter'}),
-            'price': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 900000', 'min': 0}),
-            'area_m2': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 109', 'min': 0}),
-            'plot_m2': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 1400', 'min': 0}),
-            'bedrooms': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 4', 'min': 0}),
-            'bathrooms': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 2', 'min': 0}),
-            'year_built': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 2025', 'min': 1900}),
-            'altitude': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. 950–1050 moh.'}),
-            'plot_count': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 10', 'min': 0}),
-            'access': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Via Nye Øyevegen og Ulsetbekkvegen'}),
-            'finn_url': forms.URLInput(attrs={'class': 'input', 'placeholder': 'https://www.finn.no/...'}),
-            'meta_title': counted(70),
-            'meta_description': counted(160, rows=3),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # New projects start as drafts so they can be finished before going live.
-        if not self.instance.pk:
-            self.initial.setdefault('is_published', False)
-        self.fields['meta_title'].widget.attrs['placeholder'] = 'Standard: prosjekttittelen'
-        self.fields['meta_description'].widget.attrs['placeholder'] = 'Standard: den korte beskrivelsen'
-
-    @property
-    def extra_fields(self):
-        return [self[name] for name, _, _ in Project.EXTRAS]
-
-    @property
-    def fact_fields(self):
-        extras = {name for name, _, _ in Project.EXTRAS}
-        return [self[name] for name in Project.FACT_FIELDS if name not in extras]
-
-    def clean(self):
-        cleaned = super().clean()
-        for name in RICH_FIELDS:
-            if name in cleaned:
-                cleaned[name] = sanitize_html(cleaned[name])
-        return cleaned
 
 
 class NokField(forms.IntegerField):
@@ -113,12 +50,11 @@ class PlotForm(forms.ModelForm):
 
     class Meta:
         model = Plot
-        fields = ['number', 'category', 'project', 'status', 'area_m2', 'price', 'altitude', 'note',
+        fields = ['number', 'category', 'status', 'area_m2', 'price', 'altitude', 'note',
                   'map_x', 'map_y', 'map_rotation', 'map_shape']
         widgets = {
             'number': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. 67'}),
             'category': forms.Select(attrs={'class': 'input'}),
-            'project': forms.Select(attrs={'class': 'input'}),
             'status': forms.RadioSelect,
             'area_m2': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 1400', 'min': 0}),
             'altitude': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 980', 'min': 0}),
@@ -129,15 +65,13 @@ class PlotForm(forms.ModelForm):
             'map_shape': forms.HiddenInput,
             'map_rotation': forms.NumberInput(attrs={'class': 'input', 'step': 1, 'min': -180, 'max': 180}),
         }
-        labels = {'area_m2': 'Størrelse (m²)', 'project': 'Hyttegrend'}
+        labels = {'area_m2': 'Størrelse (m²)'}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['price'].widget.attrs.update({'class': 'input', 'placeholder': 'F.eks. 1 500 000'})
         self.fields['price'].help_text = 'Tomt uten pris vises som «Ta kontakt for pris».'
         self.fields['category'].empty_label = 'Uten kategori'
-        self.fields['project'].empty_label = 'Ikke i en hyttegrend'
-        self.fields['project'].help_text = 'Bare hvis tomten hører til en egen hyttegrend, som Ulven.'
         self.fields['map_rotation'].required = False
 
     def clean_map_rotation(self):

@@ -12,7 +12,7 @@ from django.urls import resolve, reverse
 
 from apps.blog.models import Blog
 
-from .models import Plot, Project
+from .models import Plot
 from .seo import BUSINESS, FAQ, PARTNERS, site_url
 from .sitemaps import PUBLIC_PAGES
 
@@ -24,7 +24,6 @@ HEADINGS = {'h1': '#', 'h2': '##', 'h3': '###', 'h4': '####'}
 PAGE_SUMMARIES = [
     ('tomter', 'Hyttetomter på Brakastølen: priser, hyttegrender, høyde over havet og tomtekart.'),
     ('hytter', 'Nøkkelferdige hytter fra Tinde Hytter, Leve Hytter og andre samarbeidspartnere.'),
-    ('prosjekter', 'Hyttegrender og hytter på Brakastølen.'),
     ('om_vaset', 'Om Vaset og Brakastølen: beliggenhet, natur og avstander.'),
     ('aktiviteter', 'Alpint, langrenn og sykkel på Vaset.'),
     ('om_oss', 'Om utbygger Tranberg Utvikling AS og samarbeidspartnere.'),
@@ -156,14 +155,6 @@ def build_llms_summary():
     lines += [f"- [{name.replace('_', ' ').capitalize()}]({url}{reverse(name)}): {text}" for name, text in PAGE_SUMMARIES]
     lines.append('')
 
-    projects = Project.objects.public()[:20]
-    if projects:
-        lines.append('## Prosjekter')
-        for p in projects:
-            lines.append(f"- [{p.title}]({url}{reverse('prosjekt_detail', args=[p.slug])}): "
-                         f"{p.get_category_display()}, {p.get_status_display().lower()}")
-        lines.append('')
-
     available = Plot.objects.public().available().count()
     if available:
         lines += ['## Ledige tomter', f'- {available} ledige tomter akkurat nå: {url}{reverse("tomter")}', '']
@@ -194,7 +185,6 @@ def build_llms_full():
     ]
 
     pages = [reverse(name) for name in PUBLIC_PAGES]
-    pages += [reverse('prosjekt_detail', args=[p.slug]) for p in Project.objects.public()]
     pages += [post.get_absolute_url() for post in Blog.objects.public()]
 
     for path in pages:

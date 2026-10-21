@@ -1,6 +1,6 @@
 // Dashboard helpers: the mobile menu, confirm before deleting, auto-submitting filters,
 // the plots list (autosave, bulk changes, sales map), SEO character counters, a small
-// rich-text editor, drag-and-drop ordering, plot placement and one-by-one gallery upload.
+// rich-text editor and plot placement.
 
 document.addEventListener('DOMContentLoaded', function(){
     const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -454,42 +454,6 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 
     // ------------------------------------------------------------
-    // Drag-and-drop ordering of projects (sends the new id order as JSON)
-    // ------------------------------------------------------------
-    const sortable = document.querySelector('.sortable[data-reorder-url]');
-    if (sortable){
-        let dragged = null;
-        sortable.addEventListener('dragstart', function(e){
-            dragged = e.target.closest('li[data-id]');
-            if (dragged) dragged.classList.add('is-dragging');
-        });
-        sortable.addEventListener('dragover', function(e){
-            e.preventDefault();
-            const over = e.target.closest('li[data-id]');
-            if (!dragged || !over || over === dragged) return;
-            const after = e.clientY > over.getBoundingClientRect().top + over.offsetHeight / 2;
-            over.insertAdjacentElement(after ? 'afterend' : 'beforebegin', dragged);
-        });
-        sortable.addEventListener('dragend', function(){
-            if (!dragged) return;
-            dragged.classList.remove('is-dragging');
-            dragged = null;
-            const ids = Array.from(sortable.querySelectorAll('li[data-id]')).map(function(li){ return li.dataset.id; });
-            fetch(sortable.dataset.reorderUrl, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken(sortable)},
-                body: JSON.stringify({ids: ids}),
-            }).then(function(response){
-                return response.json();
-            }).then(function(data){
-                if (data.error) window.alert(data.error);
-            }).catch(function(){
-                window.alert('Rekkefølgen ble ikke lagret. Sjekk nettforbindelsen og prøv igjen.');
-            });
-        });
-    }
-
-    // ------------------------------------------------------------
     // Plot placement – click in the map to set where the plot sits in the
     // plot picker (map_x / map_y in the 960 × 760 drawing). A plot with its real
     // outline from the site plan keeps it until it is moved by hand.
@@ -564,49 +528,5 @@ document.addEventListener('DOMContentLoaded', function(){
             });
         }
         draw();
-    }
-
-    // ------------------------------------------------------------
-    // Gallery upload – one file per request, so a big gallery never makes
-    // one request too large or too slow for the server
-    // ------------------------------------------------------------
-    const upload = document.getElementById('gallery-upload');
-    if (upload){
-        const input = upload.querySelector('input[type="file"]');
-        const status = upload.querySelector('.upload-status');
-        upload.addEventListener('submit', function(e){
-            e.preventDefault();
-            const files = Array.from(input.files);
-            if (!files.length){
-                status.textContent = 'Velg ett eller flere bilder først.';
-                return;
-            }
-            let done = 0;
-            const failed = [];
-            const token = csrfToken(upload);
-
-            function next(index){
-                if (index >= files.length){
-                    const body = new FormData();
-                    body.append('images', done);
-                    failed.forEach(function(name){ body.append('failed', name); });
-                    fetch(upload.dataset.doneUrl, {method: 'POST', headers: {'X-CSRFToken': token}, body: body})
-                        .then(function(response){ return response.json(); })
-                        .then(function(data){ window.location = data.redirect; });
-                    return;
-                }
-                status.textContent = 'Laster opp ' + (index + 1) + ' av ' + files.length + '...';
-                const body = new FormData();
-                body.append('file', files[index]);
-                fetch(upload.dataset.uploadUrl, {method: 'POST', headers: {'X-CSRFToken': token}, body: body})
-                    .then(function(response){ return response.json(); })
-                    .then(function(data){
-                        if (data.ok) done += 1; else failed.push(files[index].name);
-                    })
-                    .catch(function(){ failed.push(files[index].name); })
-                    .then(function(){ next(index + 1); });
-            }
-            next(0);
-        });
     }
 });

@@ -622,57 +622,297 @@ $mapGround: #E6E3D3;
 }
 
 // ------------------------------------------------------------
-// Viewing request dialog
+// Viewing request dialog: the chosen plot on the brand green (a zoomed cut of the site plan,
+// its facts and what happens next), the form beside it, and a thank-you in its place once sent
 // ------------------------------------------------------------
+html.dialog-open {
+  overflow: hidden;
+}
+
 .picker-dialog {
-  width: min(520px, calc(100vw - 32px));
-  max-height: calc(100vh - 32px);
-  padding: 30px 30px 28px;
+  width: min(960px, calc(100vw - 48px));
+  max-width: none;
+  max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 48px);
+  padding: 0;
   border: 0;
   background: $background;
   color: $black;
-  box-shadow: 0 30px 90px rgba(0, 20, 20, 0.35);
+  box-shadow: 0 40px 120px rgba(0, 20, 20, 0.45);
+  overflow: hidden;
+
+  // Open, the dialog is a flex box, so the panels inside get its (capped) height and
+  // scroll themselves on a short screen instead of being cut off
+  &[open] {
+    display: flex;
+    animation: dialog-in 0.28s ease-out;
+  }
 
   &::backdrop {
-    background: rgba(0, 34, 35, 0.62);
+    background: rgba(0, 24, 25, 0.66);
   }
 
-  .form {
-    gap: 16px;
+  .dialog-shell {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
   }
 
-  .dialog-head {
+  // ---------------------------------------------------- the plot
+  .dialog-plot {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 22px;
+    padding: 32px 30px 30px;
+    background: $primaryColor;
+    color: $white;
+    overflow-y: auto;
+  }
 
-    h3 {
-      font-size: 32px;
+  .dialog-map {
+    border: 1px solid $borderOnDark;
+    background: #E7E2D2;
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 240 / 170;
+    }
+
+    .mini-other {
+      fill: $sage;
+      stroke: #FBF8F1;
+      stroke-width: 1.2;
+      opacity: 0.55;
+    }
+
+    .mini-other.status-sold { fill: #8C4045; opacity: 0.35; }
+    .mini-other.status-reserved { fill: #C9A45C; }
+
+    .mini-chosen {
+      fill: $primaryColor;
+      stroke: #fff;
+      stroke-width: 2.5;
+      stroke-linejoin: round;
+    }
+
+    text {
+      font-family: $fontBody;
+      font-size: 14px;
+      font-weight: 600;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      fill: #fff;
     }
   }
 
-  .dialog-close {
-    width: 36px;
-    height: 36px;
-    background: none;
-    border: 1px solid $border;
-    font-size: 22px;
+  .dialog-plot-name {
+    margin: 0;
+    font-family: $fontDisplay;
+    font-size: 44px;
     line-height: 1;
+  }
+
+  .dialog-facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 18px;
+    margin: 0;
+    padding-bottom: 22px;
+    border-bottom: 1px solid $borderOnDark;
+
+    dt {
+      font-size: 14px;
+      color: $sage;
+    }
+
+    dd {
+      margin: 2px 0 0;
+      font-size: 18px;
+    }
+
+    // The price is the longest value – give it the whole row
+    div:last-child {
+      grid-column: 1 / -1;
+    }
+  }
+
+  // Sending, being contacted, the viewing – a real sequence, so it is numbered
+  .dialog-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+    counter-reset: step;
+    font-size: 16px;
+    color: rgba(246, 243, 233, 0.86);
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      &::before {
+        counter-increment: step;
+        content: counter(step);
+        flex: 0 0 26px;
+        height: 26px;
+        display: grid;
+        place-items: center;
+        border: 1px solid $sage;
+        border-radius: 50%;
+        font-size: 13px;
+        color: $sage;
+      }
+    }
+  }
+
+  .dialog-call {
+    margin: auto 0 0;
+    font-size: 15px;
+    color: rgba(246, 243, 233, 0.75);
+
+    a {
+      color: $white;
+      font-size: 18px;
+      text-decoration-color: $sage;
+      text-underline-offset: 4px;
+      white-space: nowrap;
+    }
+  }
+
+  // ---------------------------------------------------- the form
+  .dialog-main {
+    position: relative;
+    padding: 40px 44px 36px;
+    overflow-y: auto;
+  }
+
+  .dialog-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 50%;
     color: $mutedText;
     cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+    }
+
+    &:hover {
+      background: $card;
+      color: $primaryColor;
+    }
+  }
+
+  .form {
+    gap: 18px;
+  }
+
+  .dialog-head {
+    padding-right: 44px;
+
+    h3 {
+      margin: 0;
+      font-size: 40px;
+      line-height: 1.05;
+    }
   }
 
   .dialog-intro {
+    margin: 10px 0 4px;
     color: $mutedText;
-    margin-top: -4px;
+  }
+
+  .field-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+
+  .input {
+    padding: 12px 14px;
+    font-size: 17px;
+    background: #fff;
   }
 
   textarea.input {
-    min-height: 96px;
+    min-height: 92px;
     resize: vertical;
   }
 
+  // «Når passer det best?» as three buttons
+  .when-field {
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    legend {
+      margin-bottom: 8px;
+      padding: 0;
+      font-size: 16px;
+      font-weight: 500;
+    }
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    input {
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+    }
+
+    label {
+      padding: 9px 16px;
+      background: #fff;
+      border: 1px solid $border;
+      border-radius: 2px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+      &:hover {
+        border-color: $primaryColor;
+      }
+    }
+
+    input:checked + label {
+      background: $primaryColor;
+      border-color: $primaryColor;
+      color: $white;
+    }
+
+    input:focus-visible + label {
+      outline: 2px solid $sageDeep;
+      outline-offset: 2px;
+    }
+  }
+
   .form-status {
+    margin: 0;
     padding: 12px 16px;
     background: #E3ECDF;
     border-left: 2px solid $sageDeep;
@@ -685,14 +925,205 @@ $mapGround: #E6E3D3;
     }
   }
 
-  .button {
+  .form .button {
     justify-self: stretch;
     justify-content: center;
+    margin-top: 4px;
 
     &:disabled {
       opacity: 0.6;
       cursor: wait;
     }
+  }
+
+  // ---------------------------------------------------- sent
+  .dialog-done {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding-top: 40px;
+    outline: none;
+
+    &[hidden] {
+      display: none;
+    }
+
+    h3 {
+      margin: 8px 0 0;
+      font-size: 44px;
+      line-height: 1.05;
+    }
+
+    p {
+      margin: 0;
+      max-width: 30em;
+      color: $mutedText;
+      font-size: 18px;
+    }
+  }
+
+  .done-mark {
+    width: 64px;
+    height: 64px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: $sage;
+    animation: done-pop 0.35s ease-out;
+
+    svg {
+      width: 32px;
+      height: 32px;
+      fill: none;
+      stroke: $primaryColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+  }
+
+  .done-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 24px;
+    margin-top: 12px;
+  }
+}
+
+// Short windows (laptops with display scaling, landscape tablets): the map gives way to the form
+@media (min-width: 760px) and (max-height: 760px) {
+  .picker-dialog {
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+
+    .dialog-map {
+      display: none;
+    }
+
+    .dialog-plot {
+      padding-top: 30px;
+    }
+
+    .dialog-main {
+      padding-top: 28px;
+    }
+  }
+}
+
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes done-pop {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+// Tablets: a narrower plot panel
+@media (min-width: 760px) and (max-width: 1139px) {
+  .picker-dialog {
+    .dialog-shell { grid-template-columns: minmax(0, 290px) minmax(0, 1fr); }
+    .dialog-plot { padding: 26px 24px; }
+    .dialog-plot-name { font-size: 38px; }
+    .dialog-main { padding: 34px 30px 30px; }
+  }
+}
+
+// Phones: a full-screen sheet. The plot shrinks to a green strip with its name and facts.
+@media (max-width: 759px) {
+  .picker-dialog {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+
+    &[open] {
+      animation: dialog-up 0.3s ease-out;
+    }
+
+    .dialog-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .dialog-plot {
+      flex: none;
+      gap: 12px;
+      padding: 18px 64px 18px 20px;
+      overflow: visible;
+    }
+
+    .dialog-map,
+    .dialog-steps,
+    .dialog-call {
+      display: none;
+    }
+
+    .dialog-plot-name {
+      font-size: 30px;
+    }
+
+    .dialog-facts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 18px;
+      padding: 0;
+      border: 0;
+
+      dt { font-size: 13px; }
+      dd { font-size: 16px; }
+    }
+
+    .dialog-main {
+      position: static;
+      flex: 1;
+      padding: 24px 20px 32px;
+    }
+
+    // The close button sits on the green strip
+    .dialog-close {
+      top: 12px;
+      right: 10px;
+      color: $white;
+
+      &:hover {
+        background: rgba(246, 243, 233, 0.12);
+        color: $white;
+      }
+    }
+
+    .dialog-head {
+      padding-right: 0;
+
+      h3 { font-size: 32px; }
+    }
+
+    .field-pair {
+      grid-template-columns: 1fr;
+    }
+
+    .dialog-done {
+      padding-top: 12px;
+
+      h3 { font-size: 36px; }
+    }
+  }
+}
+
+@keyframes dialog-up {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .picker-dialog[open],
+  .picker-dialog .done-mark {
+    animation: none;
   }
 }
 
@@ -780,9 +1211,6 @@ $mapGround: #E6E3D3;
     }
   }
 
-  .picker-dialog {
-    padding: 22px 20px;
-  }
 }
 
 // ------------------------------------------------------------

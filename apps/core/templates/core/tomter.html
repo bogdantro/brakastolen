@@ -67,22 +67,6 @@
   </div>
 </section>
 
-{% if groups %}
-<section class="groups-section section" aria-labelledby="groups-title">
-  <div class="content">
-    <div class="section-head">
-      <h2 id="groups-title">Hyttegrendene</h2>
-      <a href="{% url 'prosjekter' %}?kategori=hyttegrend" class="text-link">Alle hyttegrender</a>
-    </div>
-    <ul class="project-list">
-      {% for project in groups %}
-      <li>{% include 'core/project-card.html' %}</li>
-      {% endfor %}
-    </ul>
-  </div>
-</section>
-{% endif %}
-
 <section class="section faq-section" aria-labelledby="tomter-faq-title">
   <div class="content split">
     <div class="split-head">

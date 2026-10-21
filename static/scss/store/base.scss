@@ -1,5 +1,5 @@
 // Shared building blocks for every public page: sections and the content grid, page headers,
-// headings, text, links and buttons, fact lists, project lists, FAQ, the green call to action,
+// headings, text, links and buttons, fact lists, FAQ, the green call to action,
 // tables, forms and flash messages. Page files only add what is unique to that page.
 @use '../global/variables' as *;
 
@@ -279,7 +279,7 @@ h3 {
   }
 }
 
-// Rows: a term on the left, its text on the right (activities, partners, project facts)
+// Rows: a term on the left, its text on the right (activities, partners)
 .rows {
   margin: 0;
 
@@ -308,74 +308,6 @@ h3 {
       text-decoration-color: $sage;
       text-underline-offset: 3px;
     }
-  }
-}
-
-// ------------------------------------------------------------
-// Projects
-// ------------------------------------------------------------
-.project-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-
-  .empty {
-    color: $mutedText;
-  }
-}
-
-.project-card {
-  display: block;
-  color: inherit;
-  text-decoration: none;
-
-  .project-photo {
-    display: block;
-    overflow: hidden;
-    aspect-ratio: 4 / 3;
-    background: $sand;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 1.2s ease;
-    }
-  }
-
-  &:hover .project-photo img {
-    transform: scale(1.03);
-  }
-
-  .project-meta {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 18px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid $border;
-    font-size: 15px;
-    color: $mutedText;
-  }
-
-  .status {
-    color: $sageDeep;
-    font-weight: 500;
-  }
-
-  .status-sold {
-    color: $mutedText;
-  }
-
-  h3 {
-    margin-top: 16px;
-  }
-
-  p {
-    margin-top: 8px;
-    color: $mutedText;
-    font-size: 17px;
   }
 }
 
@@ -818,9 +750,6 @@ h3 {
     padding: 20px 0;
   }
 
-  .project-list {
-    gap: 44px;
-  }
 
   .news-list a {
     gap: 6px;
@@ -986,10 +915,6 @@ h3 {
     padding: u(30) 0;
   }
 
-  .project-list {
-    grid-template-columns: repeat(3, 1fr);
-    gap: u(48);
-  }
 
   .news-list a {
     grid-template-columns: u(240) 1fr;
@@ -1009,7 +934,6 @@ h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .project-card .project-photo img,
   .faq-list .plus::before,
   .faq-list .plus::after {
     transition: none;
@@ -1262,10 +1186,6 @@ h3 {
     font-size: 46px;
   }
 
-  .project-list {
-    grid-template-columns: 1fr 1fr;
-    gap: 40px 24px;
-  }
 
   .steps {
     grid-template-columns: repeat(3, 1fr);

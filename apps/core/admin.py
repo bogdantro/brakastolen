@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Inquiry, InquiryNote, Plot, PlotCategory, Project, ProjectImage
+from .models import Inquiry, InquiryNote, Plot, PlotCategory
 
 
 class InquiryNoteInline(admin.TabularInline):
@@ -17,28 +17,10 @@ class InquiryAdmin(admin.ModelAdmin):
     inlines = [InquiryNoteInline]
 
 
-class ProjectImageInline(admin.TabularInline):
-    model = ProjectImage
-    extra = 0
-
-
-class PlotInline(admin.TabularInline):
-    model = Plot
-    extra = 0
-
-
-@admin.register(Project)
-class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'status', 'is_published', 'is_featured', 'order', 'deleted_at')
-    list_filter = ('category', 'status', 'is_published', 'is_featured')
-    search_fields = ('title', 'location', 'description')
-    inlines = [ProjectImageInline, PlotInline]
-
-
 @admin.register(Plot)
 class PlotAdmin(admin.ModelAdmin):
-    list_display = ('number', 'category', 'project', 'status', 'area_m2', 'price', 'altitude')
-    list_filter = ('status', 'category', 'project')
+    list_display = ('number', 'category', 'status', 'area_m2', 'price', 'altitude')
+    list_filter = ('status', 'category')
     search_fields = ('number', 'note')
 
 

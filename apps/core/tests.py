@@ -16,7 +16,7 @@ from PIL import Image
 from apps.blog.models import Blog
 
 from . import notify
-from .models import Inquiry, Plot, Project, ProjectImage
+from .models import Inquiry, Plot, PlotCategory
 from .richtext import sanitize_html
 from .seo import BUSINESS
 from .sitemaps import PUBLIC_PAGES
@@ -33,19 +33,6 @@ def image_file(name='photo.jpg', size=(40, 30), fmt='JPEG', color=(120, 140, 90)
     Image.new(mode, size, color).save(buffer, fmt)
     content_type = 'image/png' if fmt == 'PNG' else 'image/jpeg'
     return SimpleUploadedFile(name, buffer.getvalue(), content_type=content_type)
-
-
-def make_project(**kwargs):
-    defaults = {
-        'title': 'Ulven hyttegrend',
-        'category': 'hyttegrend',
-        'excerpt': 'Felt med kun 10 tomter.',
-        'description': '<p>Langrennssporet går rett forbi feltet.</p>',
-        'image': image_file(),
-        'is_published': True,
-    }
-    defaults.update(kwargs)
-    return Project.objects.create(**defaults)
 
 
 def make_form_token_in_past():
@@ -92,10 +79,6 @@ class MediaTestCase(TestCase):
 # ------------------------------------------------------------------
 
 class PageTests(MediaTestCase):
-    def setUp(self):
-        super().setUp()
-        self.project = make_project(is_featured=True)
-
     def test_every_public_page_loads(self):
         for name in PUBLIC_PAGES:
             with self.subTest(page=name):
@@ -128,62 +111,30 @@ class PageTests(MediaTestCase):
         from .views import natural_key
         self.assertEqual(sorted(['hero-10.jpg', 'hero-2.jpg'], key=natural_key), ['hero-2.jpg', 'hero-10.jpg'])
 
-    def test_project_detail_loads(self):
-        response = self.client.get(reverse('prosjekt_detail', args=[self.project.slug]))
-        self.assertContains(response, 'Ulven hyttegrend')
+    def test_homepage_presents_the_cabin_suppliers_like_the_old_site(self):
+        response = self.client.get('/')
+        self.assertContains(response, 'Våre hytteleverandører')
+        self.assertContains(response, 'https://www.tindehytter.no')
+        self.assertContains(response, 'https://www.levehytter.no')
 
-    def test_draft_project_is_404_for_visitors(self):
-        draft = make_project(title='Hemmelig felt', is_published=False)
-        response = self.client.get(reverse('prosjekt_detail', args=[draft.slug]))
-        self.assertEqual(response.status_code, 404)
+    def test_old_project_pages_redirect_to_the_suppliers(self):
+        for old in ('/prosjekter/', '/prosjekter/ulven-hyttegrend/', '/prosjekter/ulven-hyttegrend/deling.jpg'):
+            with self.subTest(url=old):
+                response = self.client.get(old)
+                self.assertEqual(response.status_code, 301)
+                self.assertEqual(response['Location'], '/hytter/')
 
-    def test_trashed_project_is_404_for_visitors(self):
-        from django.utils import timezone
-        trashed = make_project(title='Slettet felt', deleted_at=timezone.now())
-        self.assertEqual(self.client.get(reverse('prosjekt_detail', args=[trashed.slug])).status_code, 404)
+    def test_favicon_ico_points_to_the_real_icon(self):
+        response = self.client.get('/favicon.ico')
+        self.assertEqual(response.status_code, 301)
+        self.assertTrue(response['Location'].endswith('images/favicon/favicon-32.png'))
 
-    def test_staff_can_preview_a_draft_and_it_is_noindex(self):
-        from django.contrib.auth.models import User
-        draft = make_project(title='Hemmelig felt', is_published=False)
-        self.client.force_login(User.objects.create_user('staff', password='x' * 16, is_staff=True))
-        response = self.client.get(reverse('prosjekt_detail', args=[draft.slug]))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'noindex, nofollow')
-
-    def test_project_view_counts_people_but_not_bots(self):
-        url = reverse('prosjekt_detail', args=[self.project.slug])
-        self.client.get(url, HTTP_USER_AGENT='Mozilla/5.0 (iPhone)')
-        self.client.get(url, HTTP_USER_AGENT='Googlebot/2.1')
-        self.client.get(url, HTTP_USER_AGENT='facebookexternalhit/1.1')
-        self.project.refresh_from_db()
-        self.assertEqual(self.project.view_count, 1)
-
-    def test_project_category_filter_ignores_unknown_values(self):
-        response = self.client.get(reverse('prosjekter') + '?kategori=<script>')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['category'], '')
-
-    def test_tomter_has_the_plot_picker_with_published_plots(self):
-        Plot.objects.create(project=self.project, number='T10', price=900000, area_m2=1400)
+    def test_tomter_has_the_plot_picker_with_the_plots(self):
+        Plot.objects.create(number='T10', price=900000, area_m2=1400)
         response = self.client.get(reverse('tomter'))
         self.assertContains(response, 'id="tomtevelger"')
         self.assertEqual([p['number'] for p in response.context['picker_plots']], ['T10'])
         self.assertIn('no-cache', response['Cache-Control'])
-
-    def test_plots_in_draft_groups_are_hidden(self):
-        draft = make_project(title='Utkastfelt', is_published=False)
-        Plot.objects.create(project=draft, number='X1')
-        self.assertNotContains(self.client.get(reverse('tomter')), 'X1')
-
-    def test_share_image_is_a_1200x630_jpeg(self):
-        response = self.client.get(reverse('prosjekt_share_image', args=[self.project.slug]))
-        self.assertEqual(response['Content-Type'], 'image/jpeg')
-        image = Image.open(io.BytesIO(b''.join(response.streaming_content)))
-        self.assertEqual(image.size, (1200, 630))
-
-    def test_share_preview_hidden_for_drafts(self):
-        draft = make_project(title='Utkast', is_published=False)
-        self.assertEqual(self.client.get(reverse('prosjekt_share_image', args=[draft.slug])).status_code, 404)
 
 
 # ------------------------------------------------------------------
@@ -193,7 +144,7 @@ class PageTests(MediaTestCase):
 class RedirectTests(TestCase):
     OLD_URLS = {
         '/oversiktskart/': '/tomter/',
-        '/vare-finn-annonser/': '/prosjekter/',
+        '/vare-finn-annonser/': '/hytter/',
         '/personvernerklaering/': '/personvern/',
         '/reguleringsplan-vedtatt/': '/nyheter/',
         '/skogsavvirkning-pabegynt/': '/nyheter/',
@@ -203,8 +154,8 @@ class RedirectTests(TestCase):
         '/feed/': '/nyheter/',
         '/wp-sitemap.xml': '/sitemap.xml',
         '/wp-sitemap-posts-page-1.xml': '/sitemap.xml',
-        '/portfolio/centered-gallery/': '/prosjekter/',
-        '/portfolio_cat/web/': '/prosjekter/',
+        '/portfolio/centered-gallery/': '/hytter/',
+        '/portfolio_cat/web/': '/hytter/',
         '/page_category/classic/': '/',
         '/classic-help-center/': '/',
         '/page-404-custom/': '/',
@@ -252,13 +203,12 @@ class SeoTests(MediaTestCase):
         response = self.client.get('/tomter/', HTTP_HOST='localhost')
         self.assertContains(response, '<link rel="canonical" href="https://www.xn--brakastlen-6cb.no/tomter/">')
 
-    def test_sitemap_uses_site_url_and_lists_projects_and_published_news(self):
-        project = make_project()
+    def test_sitemap_uses_site_url_and_lists_published_news(self):
         Blog.objects.create(title='Publisert nyhet', text='<p>Tekst</p>')
         draft = Blog.objects.create(title='Utkast nyhet', text='<p>Tekst</p>', is_published=False)
         xml = self.client.get('/sitemap.xml').content.decode()
         self.assertIn('https://www.xn--brakastlen-6cb.no/tomter/', xml)
-        self.assertIn(f'/prosjekter/{project.slug}/', xml)
+        self.assertNotIn('/prosjekter/', xml)
         self.assertIn('publisert-nyhet', xml)
         self.assertNotIn(draft.slug, xml)
         self.assertNotIn('example.com', xml)
@@ -272,8 +222,8 @@ class SeoTests(MediaTestCase):
         self.assertIn('Place', types)
 
     def test_json_ld_escapes_closing_tags(self):
-        make_project(title='Felt </script><script>alert(1)</script>')
-        html = self.client.get(reverse('prosjekter')).content.decode()
+        Plot.objects.create(number='</script><script>alert(1)</script>', price=900000)
+        html = self.client.get(reverse('tomter')).content.decode()
         self.assertNotIn('</script><script>alert(1)', html)
         self.assertIn('<\\/script>', html)
 
@@ -284,12 +234,13 @@ class SeoTests(MediaTestCase):
         self.assertIn('Er det byggeklausul på tomtene?', text)
 
     def test_llms_full_txt_has_the_text_of_the_pages(self):
-        project = make_project()
+        post = Blog.objects.create(title='Ulven hyttegrend', text='<p>Ti tomter.</p>')
         cache.clear()
         text = self.client.get('/llms-full.txt').content.decode()
         self.assertIn('Kilde: https://www.xn--brakastlen-6cb.no/tomter/', text)
         self.assertIn('Panoramavegen', text)
-        self.assertIn(project.title, text)
+        self.assertIn('Tinde Hytter', text)
+        self.assertIn(post.title, text)
 
     def test_security_headers_are_set(self):
         response = self.client.get('/')
@@ -471,23 +422,19 @@ class NotifyTests(MediaTestCase):
 # ------------------------------------------------------------------
 
 class ImageTests(MediaTestCase):
-    def test_new_project_photo_is_stored_as_webp(self):
-        project = make_project(image=image_file('stort.jpg', size=(2600, 1800)))
-        self.assertTrue(project.image.name.endswith('.webp'))
-        with Image.open(project.image.path) as image:
+    def test_new_news_photo_is_shrunk(self):
+        post = Blog.objects.create(title='Stort bilde', text='<p>x</p>', image=image_file('stort.jpg', size=(2600, 1800)))
+        with Image.open(post.image.path) as image:
             self.assertLessEqual(max(image.size), 2000)
+            self.assertEqual(image.format, 'JPEG')  # also the share image: some apps don't show WebP
 
     def test_existing_photo_is_not_recompressed_on_edit(self):
-        project = make_project()
-        name = project.image.name
-        project.title = 'Nytt navn'
-        project.save()
-        project.refresh_from_db()
-        self.assertEqual(project.image.name, name)
-
-    def test_gallery_photo_is_stored_as_webp(self):
-        image = ProjectImage.objects.create(project=make_project(), image=image_file('galleri.png', fmt='PNG'))
-        self.assertTrue(image.image.name.endswith('.webp'))
+        post = Blog.objects.create(title='Bilde', text='<p>x</p>', image=image_file())
+        name = post.image.name
+        post.title = 'Nytt navn'
+        post.save()
+        post.refresh_from_db()
+        self.assertEqual(post.image.name, name)
 
 
 class RichTextTests(TestCase):
@@ -515,19 +462,9 @@ class HelperTests(MediaTestCase):
         self.assertEqual(format_nok(900000), '900 000 kr')
         self.assertEqual(format_nok(None), '')
 
-    def test_duplicate_titles_get_numbered_slugs(self):
-        first, second = make_project(), make_project()
-        self.assertEqual(first.slug, 'ulven-hyttegrend')
-        self.assertEqual(second.slug, 'ulven-hyttegrend-2')
-
-    def test_hand_set_slug_is_kept(self):
-        self.assertEqual(make_project(slug='eget-navn').slug, 'eget-navn')
-
-    def test_plots_left_counts_only_available(self):
-        project = make_project()
-        Plot.objects.create(project=project, number='1')
-        Plot.objects.create(project=project, number='2', status='sold')
-        self.assertEqual(project.plots_left, 1)
+    def test_plot_group_name_is_its_category(self):
+        self.assertEqual(Plot(number='1', category=PlotCategory(name='Byggetrinn 1')).group_name, 'Byggetrinn 1')
+        self.assertEqual(Plot(number='2').group_name, '')
 
 
 # ------------------------------------------------------------------
@@ -562,24 +499,6 @@ class ErrorPageTests(TestCase):
 
 
 # ------------------------------------------------------------------
-# Seed command
-# ------------------------------------------------------------------
-
-class SeedProjectsTests(MediaTestCase):
-    def test_seed_creates_projects_with_gallery_and_is_idempotent(self):
-        call_command('seed_projects', stdout=io.StringIO())
-        call_command('seed_projects', stdout=io.StringIO())
-        self.assertEqual(Project.objects.count(), 3)
-        tinde = Project.objects.get(title='Tinde Hytter på Brakastølen')
-        self.assertEqual(tinde.gallery_images.count(), 11)
-        self.assertEqual(tinde.status, 'to_order')
-
-    def test_dry_run_changes_nothing(self):
-        call_command('seed_projects', '--dry-run', stdout=io.StringIO())
-        self.assertFalse(Project.objects.exists())
-
-
-# ------------------------------------------------------------------
 # Plot picker on the homepage
 # ------------------------------------------------------------------
 
@@ -589,18 +508,16 @@ class PlotPickerTests(MediaTestCase):
         match = re.search(r'<script id="plot-picker-data" type="application/json">(.*?)</script>', html, re.S)
         return json.loads(match.group(1))
 
-    def test_picker_lists_public_plots_with_map_positions(self):
-        group = make_project()
-        Plot.objects.create(project=group, number='T10', price=900000, area_m2=1400, map_x=200, map_y=300)
+    def test_picker_lists_the_plots_with_map_positions_and_outlines(self):
+        group = PlotCategory.objects.create(name='Byggetrinn 1')
+        Plot.objects.create(category=group, number='T10', price=900000, area_m2=1400, map_x=200, map_y=300,
+                            map_shape='M190 290 L210 290 L210 310 Z')
         data = self.picker_data()
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['number'], 'T10')
         self.assertEqual((data[0]['x'], data[0]['y']), (200, 300))
-        self.assertEqual(data[0]['group'], 'Ulven hyttegrend')
-
-    def test_picker_hides_plots_in_draft_groups(self):
-        Plot.objects.create(project=make_project(title='Utkast', is_published=False), number='X1')
-        self.assertEqual(self.picker_data(), [])
+        self.assertEqual(data[0]['group'], 'Byggetrinn 1')
+        self.assertEqual(data[0]['shape'], 'M190 290 L210 290 L210 310 Z')
 
     def test_plot_without_position_is_still_listed(self):
         Plot.objects.create(number='5')
@@ -634,9 +551,8 @@ class PlotPickerTests(MediaTestCase):
         self.assertIn('email', response.json()['fields'])
         self.assertFalse(Inquiry.objects.exists())
 
-    def test_plot_in_draft_group_cannot_be_attached(self):
-        plot = Plot.objects.create(project=make_project(title='Utkast', is_published=False), number='X1')
-        response = self.client.post(reverse('kontakt'), form_data(plot=plot.pk), HTTP_ACCEPT='application/json')
+    def test_unknown_plot_cannot_be_attached(self):
+        response = self.client.post(reverse('kontakt'), form_data(plot=9999), HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 400)
         self.assertIn('plot', response.json()['fields'])
 
@@ -650,7 +566,7 @@ class PlotPickerTests(MediaTestCase):
         inquiry = Inquiry.objects.create(name='Kari', email='kari@example.no', plot=Plot.objects.create(number='21'))
         with mock.patch('apps.core.notify.close_old_connections'):
             notify.send_now(inquiry.pk)
-        self.assertIn('Tomt: tomt 21', mail.outbox[0].body)
+        self.assertIn('Tomt: Tomt 21', mail.outbox[0].body)
 
 
 class SeedPlotsTests(TestCase):

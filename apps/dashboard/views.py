@@ -1,17 +1,13 @@
-"""The client's dashboard at /dashboard/: inquiries (a small sales CRM), projects with
-photo galleries, plots for sale, news posts and an activity log."""
+"""The client's dashboard at /dashboard/: inquiries (a small sales CRM), the plots for
+sale with their sales map, news posts and an activity log."""
 import csv
-import json
-import os
 import re
 from datetime import timedelta
 from functools import wraps
 from urllib.parse import quote
 
-from django import forms as django_forms
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.core.files.base import ContentFile
 from django.db.models import Count, Max, Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -21,13 +17,12 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from apps.blog.models import Blog
-from apps.core.models import Inquiry, InquiryNote, Plot, PlotCategory, Project, ProjectImage
+from apps.core.models import Inquiry, InquiryNote, Plot, PlotCategory
 from apps.core.seo import BUSINESS
 from apps.core.views import wants_json
 
 from .forms import (
     BlogForm, DashboardLoginForm, InquiryNoteForm, PlotBulkForm, PlotCategoryForm, PlotForm, PlotQuickForm,
-    ProjectForm,
 )
 from .models import ActivityLog, LoginAttempt
 from .templatetags.dashboard_tags import millions
@@ -53,6 +48,11 @@ def staff_required(view_func):
 def log_activity(request, action, target='', url=''):
     user = request.user if request.user.is_authenticated else None
     ActivityLog.objects.create(user=user, action=action, target=str(target)[:200], url=url)
+
+
+def unlink_activity(url):
+    """After something is deleted, its old log entries keep their text but stop linking to a page that is gone."""
+    ActivityLog.objects.filter(url=url).update(url='')
 
 
 def client_ip(request):
@@ -154,23 +154,24 @@ def status_breakdown():
 @staff_required
 def dashboard_home(request):
     inbox = Inquiry.objects.filter(is_spam=False, is_archived=False)
-    projects = Project.objects.active()
     hour = timezone.localtime().hour
-    greeting = 'God morgen' if 5 <= hour < 10 else 'God dag' if hour < 18 else 'God kveld'
+    if 5 <= hour < 10:
+        greeting = 'God morgen'
+    elif 10 <= hour < 18:
+        greeting = 'God dag'
+    else:
+        greeting = 'God kveld'  # also late at night, never "God dag" at 02:00
     return render(request, 'dashboard/home.html', {
         'greeting': greeting,
         'today': timezone.localdate(),
         'inquiry_count': inbox.count(),
         'unread_count': inbox.filter(is_read=False).count(),
         'open_count': inbox.filter(status__in=['new', 'contacted', 'viewing', 'prospectus_sent']).count(),
-        'project_count': projects.filter(is_published=True).count(),
-        'draft_count': projects.filter(is_published=False).count(),
         'plot_summary': plot_summary(),
         'map_plots': plot_map_data(Plot.objects.select_related('category')),
         'latest_inquiries': inbox[:5],
         'weekly': weekly_inquiry_chart(),
         'statuses': status_breakdown(),
-        'top_projects': projects.filter(view_count__gt=0).order_by('-view_count')[:5],
         'recent_activity': ActivityLog.objects.select_related('user')[:6],
     })
 
@@ -276,6 +277,7 @@ def dashboard_inquiry_detail(request, pk):
 
         if action == 'delete':
             log_activity(request, 'Slettet henvendelse', inquiry.name)
+            unlink_activity(detail_url)
             inquiry.delete()
             messages.success(request, 'Henvendelsen ble slettet.')
             return redirect(reverse('dashboard_inquiries'))
@@ -329,233 +331,6 @@ def dashboard_inquiry_detail(request, pk):
         'note_form': note_form,
         'statuses': Inquiry.STATUS_CHOICES,
     })
-
-
-# ------------------------------------------------------------------
-# Projects
-# ------------------------------------------------------------------
-
-@staff_required
-def dashboard_projects(request):
-    projects = Project.objects.active()
-    q = request.GET.get('q', '').strip()
-    category = request.GET.get('category', '')
-    status = request.GET.get('status', '')
-
-    if q:
-        projects = projects.filter(Q(title__icontains=q) | Q(location__icontains=q))
-    if category in dict(Project.CATEGORY_CHOICES):
-        projects = projects.filter(category=category)
-    if status == 'published':
-        projects = projects.filter(is_published=True)
-    elif status == 'draft':
-        projects = projects.filter(is_published=False)
-
-    return render(request, 'dashboard/projects.html', {
-        'projects': projects,
-        'filtered': any([q, category, status]),
-        'total': Project.objects.active().count(),
-        'trash_count': Project.objects.filter(deleted_at__isnull=False).count(),
-        'categories': Project.CATEGORY_CHOICES,
-        'f': {'q': q, 'category': category, 'status': status},
-    })
-
-
-@staff_required
-@require_POST
-def dashboard_projects_reorder(request):
-    try:
-        ids = [int(i) for i in json.loads(request.body).get('ids', [])]
-    except (ValueError, TypeError, AttributeError):
-        return JsonResponse({'error': 'Kunne ikke lese den nye rekkefølgen. Last siden på nytt og prøv igjen.'}, status=400)
-
-    projects = {p.pk: p for p in Project.objects.active().filter(pk__in=ids)}
-    changed = []
-    for position, pk in enumerate(ids, start=1):
-        project = projects.get(pk)
-        if project and project.order != position:
-            project.order = position
-            changed.append(project)
-    Project.objects.bulk_update(changed, ['order'])
-    if changed:
-        log_activity(request, 'Endret rekkefølgen på prosjekter')
-    return JsonResponse({'ok': True})
-
-
-@staff_required
-def dashboard_project_create(request):
-    form = ProjectForm(request.POST or None, request.FILES or None)
-    if request.method == 'POST' and form.is_valid():
-        project = form.save(commit=False)
-        project.order = next_order(Project)
-        project.save()
-        state = 'publisert' if project.is_published else 'lagret som utkast'
-        log_activity(request, f'Opprettet prosjekt ({state})', project.title,
-                     reverse('dashboard_project_edit', args=[project.pk]))
-        messages.success(request, f'Prosjektet ble {state}. Nå kan du legge til bilder i galleriet.')
-        return redirect(reverse('dashboard_project_edit', args=[project.pk]))
-    return render(request, 'dashboard/project_form.html', {'form': form, 'project': None})
-
-
-@staff_required
-def dashboard_project_edit(request, pk):
-    project = get_object_or_404(Project.objects.active(), pk=pk)
-    edit_url = reverse('dashboard_project_edit', args=[project.pk])
-    was_published = project.is_published
-
-    form = ProjectForm(request.POST or None, request.FILES or None, instance=project)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        if project.is_published and not was_published:
-            log_activity(request, 'Publiserte prosjekt', project.title, edit_url)
-        elif was_published and not project.is_published:
-            log_activity(request, 'Gjorde prosjekt om til utkast', project.title, edit_url)
-        else:
-            log_activity(request, 'Oppdaterte prosjekt', project.title, edit_url)
-        messages.success(request, 'Prosjektet ble oppdatert.')
-        return redirect(edit_url)
-
-    return render(request, 'dashboard/project_form.html', {
-        'form': form,
-        'project': project,
-        'gallery': project.gallery_images.all(),
-    })
-
-
-@staff_required
-@require_POST
-def dashboard_project_image_upload(request, pk):
-    """One gallery photo per request. The browser sends a large gallery one file at a
-    time, so no single request gets too big or too slow for nginx and gunicorn."""
-    project = get_object_or_404(Project.objects.active(), pk=pk)
-    upload = request.FILES.get('file')
-    if upload is None:
-        return JsonResponse({'error': 'Ingen fil mottatt.'}, status=400)
-    try:
-        # Checks that it really is an image Pillow can open, whatever the browser claimed
-        django_forms.ImageField().clean(upload)
-    except django_forms.ValidationError:
-        return JsonResponse({'error': f'«{upload.name}» er ikke et bilde som kan leses.'}, status=400)
-    ProjectImage.objects.create(project=project, image=upload, order=next_order(ProjectImage))
-    return JsonResponse({'ok': True})
-
-
-@staff_required
-@require_POST
-def dashboard_project_images_done(request, pk):
-    """Called once after a batch upload: one message and one activity entry for the lot."""
-    project = get_object_or_404(Project.objects.active(), pk=pk)
-    try:
-        count = int(request.POST.get('images') or 0)
-    except ValueError:
-        count = 0
-    failed = [name for name in request.POST.getlist('failed') if name][:20]
-    edit_url = reverse('dashboard_project_edit', args=[project.pk])
-    if count:
-        messages.success(request, f'Lastet opp {count} bilde(r).')
-        log_activity(request, f'Lastet opp {count} bilde(r)', project.title, edit_url)
-    if failed:
-        messages.warning(request, 'Disse filene ble ikke lastet opp: ' + ', '.join(failed))
-    return JsonResponse({'ok': True, 'redirect': edit_url})
-
-
-def copy_file(field_file, target_field):
-    """Save a physical copy so the two projects never share (and later delete) one file."""
-    field_file.open('rb')
-    try:
-        target_field.save(os.path.basename(field_file.name), ContentFile(field_file.read()), save=False)
-    finally:
-        field_file.close()
-
-
-@staff_required
-@require_POST
-def dashboard_project_duplicate(request, pk):
-    original = get_object_or_404(Project.objects.active(), pk=pk)
-    copy = Project(
-        title=f'{original.title} (kopi)',
-        category=original.category,
-        status=original.status,
-        location=original.location,
-        excerpt=original.excerpt,
-        description=original.description,
-        description_2=original.description_2,
-        image_credit=original.image_credit,
-        is_published=False,
-        is_featured=False,
-        order=next_order(Project),
-    )
-    for name in Project.FACT_FIELDS:
-        setattr(copy, name, getattr(original, name))
-    if original.image:
-        copy_file(original.image, copy.image)
-    copy.save()
-    for image in original.gallery_images.all():
-        gallery_copy = ProjectImage(project=copy, caption=image.caption, order=image.order)
-        copy_file(image.image, gallery_copy.image)
-        gallery_copy.save()
-    log_activity(request, 'Dupliserte prosjekt', original.title, reverse('dashboard_project_edit', args=[copy.pk]))
-    messages.success(request, f'Kopi av «{original.title}» ble opprettet som utkast.')
-    return redirect(reverse('dashboard_project_edit', args=[copy.pk]))
-
-
-@staff_required
-@require_POST
-def dashboard_project_delete(request, pk):
-    project = get_object_or_404(Project.objects.active(), pk=pk)
-    project.deleted_at = timezone.now()
-    project.save(update_fields=['deleted_at'])
-    log_activity(request, 'Flyttet prosjekt til papirkurven', project.title, reverse('dashboard_project_trash'))
-    messages.success(request, f'«{project.title}» ble flyttet til papirkurven. Du kan gjenopprette det derfra.')
-    return redirect(reverse('dashboard_projects'))
-
-
-@staff_required
-def dashboard_project_trash(request):
-    projects = Project.objects.filter(deleted_at__isnull=False).order_by('-deleted_at')
-    return render(request, 'dashboard/project_trash.html', {'projects': projects})
-
-
-@staff_required
-@require_POST
-def dashboard_project_restore(request, pk):
-    project = get_object_or_404(Project, pk=pk, deleted_at__isnull=False)
-    project.deleted_at = None
-    project.save(update_fields=['deleted_at'])
-    log_activity(request, 'Gjenopprettet prosjekt', project.title, reverse('dashboard_project_edit', args=[project.pk]))
-    messages.success(request, f'«{project.title}» ble gjenopprettet.')
-    return redirect(reverse('dashboard_project_trash'))
-
-
-def delete_project_files(project):
-    files = [project.image, project.og_image] + [img.image for img in project.gallery_images.all()]
-    for field_file in files:
-        if field_file:
-            field_file.delete(save=False)
-
-
-@staff_required
-@require_POST
-def dashboard_project_purge(request, pk):
-    project = get_object_or_404(Project, pk=pk, deleted_at__isnull=False)
-    title = project.title
-    delete_project_files(project)
-    project.delete()
-    log_activity(request, 'Slettet prosjekt permanent', title)
-    messages.success(request, f'«{title}» ble slettet permanent.')
-    return redirect(reverse('dashboard_project_trash'))
-
-
-@staff_required
-@require_POST
-def dashboard_project_image_delete(request, pk):
-    image = get_object_or_404(ProjectImage, pk=pk)
-    project = image.project
-    image.image.delete(save=False)
-    image.delete()
-    log_activity(request, 'Slettet bilde fra galleriet', project.title, reverse('dashboard_project_edit', args=[project.pk]))
-    messages.success(request, 'Bildet ble slettet.')
-    return redirect(reverse('dashboard_project_edit', args=[project.pk]))
 
 
 # ------------------------------------------------------------------
@@ -642,7 +417,7 @@ def back_to_plots(request):
 
 @staff_required
 def dashboard_plots(request):
-    all_plots = Plot.objects.select_related('project', 'category')
+    all_plots = Plot.objects.select_related('category')
     plots = all_plots
     status = request.GET.get('status', '')
     category = request.GET.get('category', '')
@@ -809,7 +584,9 @@ def dashboard_plot_categories(request):
             messages.error(request, form_error_text(form))
         return redirect(target)
 
-    category = get_object_or_404(PlotCategory, pk=request.POST.get('category_id') or 0)
+    category_id = request.POST.get('category_id', '')
+    # A tampered or stale form must give a 404, not a crash on a non-number
+    category = get_object_or_404(PlotCategory, pk=int(category_id) if category_id.isdigit() else 0)
     if action == 'rename':
         old_name = category.name
         form = PlotCategoryForm(request.POST, instance=category)
@@ -876,6 +653,7 @@ def dashboard_plot_edit(request, pk):
 def dashboard_plot_delete(request, pk):
     plot = get_object_or_404(Plot, pk=pk)
     name = str(plot)
+    unlink_activity(reverse('dashboard_plot_edit', args=[plot.pk]))
     plot.delete()
     log_activity(request, 'Slettet tomt', name)
     messages.success(request, f'«{name}» ble slettet.')
@@ -922,6 +700,7 @@ def dashboard_blog_delete(request, pk):
     title = post.title
     if post.image:
         post.image.delete(save=False)
+    unlink_activity(reverse('dashboard_blog_edit', args=[post.pk]))
     post.delete()
     log_activity(request, 'Slettet nyhet', title)
     messages.success(request, f'«{title}» ble slettet.')
