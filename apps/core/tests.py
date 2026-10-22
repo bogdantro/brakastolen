@@ -15,7 +15,6 @@ from PIL import Image
 
 from apps.blog.models import Blog
 
-from . import notify
 from .models import Inquiry, Plot, PlotCategory
 from .richtext import sanitize_html
 from .seo import BUSINESS
@@ -354,10 +353,10 @@ class ContactFormTests(MediaTestCase):
         self.assertContains(response, 'trykk «Send» én gang til', status_code=403)
         self.assertContains(response, 'csrfmiddlewaretoken', status_code=403)
 
-    def test_spam_never_sends_email(self):
-        with mock.patch('apps.core.views.notify.send_inquiry') as send:
-            self.client.post(self.url, form_data(hp_check='x'))
-        send.assert_not_called()
+    def test_site_sends_no_email(self):
+        self.client.post(self.url, form_data())
+        self.assertEqual(Inquiry.objects.count(), 1)
+        self.assertEqual(len(mail.outbox), 0)
 
 
 class SpamRuleTests(TestCase):
@@ -380,41 +379,6 @@ class SpamRuleTests(TestCase):
     def test_foreign_script_alone_is_fine(self):
         data = {'name': 'Олена', 'message': 'Добрий день, цікавить ділянка'}
         self.assertEqual(spam_reason(data, make_form_token_in_past()), '')
-
-
-# ------------------------------------------------------------------
-# E-mail notice
-# ------------------------------------------------------------------
-
-class NotifyTests(MediaTestCase):
-    def make_inquiry(self):
-        return Inquiry.objects.create(name='Kari Nordmann', email='kari@example.no', interest='viewing')
-
-    @override_settings(EMAIL_HOST='', INQUIRY_NOTIFY_EMAILS=['post@brakastolen.no'])
-    def test_no_email_without_mail_server(self):
-        with self.captureOnCommitCallbacks(execute=True) as callbacks:
-            notify.send_inquiry(self.make_inquiry())
-        self.assertEqual(callbacks, [])
-
-    @override_settings(EMAIL_HOST='smtp.example.no', INQUIRY_NOTIFY_EMAILS=['post@brakastolen.no'],
-                       EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
-    def test_email_has_every_field_and_a_dashboard_link(self):
-        inquiry = self.make_inquiry()
-        with mock.patch('apps.core.notify.close_old_connections'):
-            notify.send_now(inquiry.pk)
-        self.assertEqual(len(mail.outbox), 1)
-        body = mail.outbox[0].body
-        self.assertIn('Kari Nordmann', body)
-        self.assertIn('Visning', body)
-        self.assertIn(reverse('dashboard_inquiry_detail', args=[inquiry.pk]), body)
-
-    @override_settings(EMAIL_HOST='smtp.example.no', INQUIRY_NOTIFY_EMAILS=['post@brakastolen.no'])
-    def test_broken_mail_server_is_logged_not_raised(self):
-        inquiry = self.make_inquiry()
-        with mock.patch('apps.core.notify.send_mail', side_effect=OSError('down')), \
-                mock.patch('apps.core.notify.close_old_connections'), \
-                self.assertLogs('apps.core.notify', level='ERROR'):
-            notify.send_now(inquiry.pk)
 
 
 # ------------------------------------------------------------------
@@ -567,14 +531,6 @@ class PlotPickerTests(MediaTestCase):
         self.client.post(reverse('kontakt'), form_data())
         self.assertIsNone(Inquiry.objects.get().plot)
 
-    @override_settings(EMAIL_HOST='smtp.example.no', INQUIRY_NOTIFY_EMAILS=['post@brakastolen.no'],
-                       EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
-    def test_email_names_the_plot(self):
-        inquiry = Inquiry.objects.create(name='Kari', email='kari@example.no', plot=Plot.objects.create(number='21'))
-        with mock.patch('apps.core.notify.close_old_connections'):
-            notify.send_now(inquiry.pk)
-        self.assertIn('Tomt: Tomt 21', mail.outbox[0].body)
-
 
 class HomepageContentTests(MediaTestCase):
     def test_every_supplier_has_a_card_with_photo_and_link(self):
@@ -619,7 +575,9 @@ class FieldInfoTests(MediaTestCase):
 
     def test_zoning_map_maps_and_finn_ad_are_linked(self):
         html = self.client.get('/').content.decode()
-        self.assertIn('Reguleringskart – detaljregulering for Brakastølen', html)
+        self.assertIn('Reguleringsplan for Brakastølen – plankart', html)
+        self.assertIn('Reguleringsbestemmelser for Brakastølen', html)
+        self.assertIn('PDF, 7,2 MB', html)
         self.assertIn('norgeskart.no', html)
         self.assertIn('https://www.google.com/maps/search/', html)
         self.assertIn('finnkode=371502243', html)
@@ -634,7 +592,15 @@ class FieldInfoTests(MediaTestCase):
     def test_seeding_twice_adds_nothing(self):
         from .models import CostItem, FieldDocument, FinnAd
         call_command('seed_field_info', stdout=io.StringIO())
-        self.assertEqual((CostItem.objects.count(), FinnAd.objects.count(), FieldDocument.objects.count()), (6, 1, 1))
+        self.assertEqual((CostItem.objects.count(), FinnAd.objects.count(), FieldDocument.objects.count()), (6, 1, 2))
+
+    def test_the_old_png_of_the_plan_is_replaced_by_the_pdf(self):
+        from django.core.files.base import ContentFile
+        from .models import FieldDocument
+        old = FieldDocument(title='Reguleringskart – detaljregulering for Brakastølen')
+        old.file.save('gammel.png', ContentFile(b'x'), save=True)
+        call_command('seed_field_info', stdout=io.StringIO())
+        self.assertFalse(FieldDocument.objects.filter(title='Reguleringskart – detaljregulering for Brakastølen').exists())
 
     def test_contact_page_names_the_land_seller(self):
         response = self.client.get(reverse('kontakt'))
@@ -649,7 +615,7 @@ class SeedSiteTests(MediaTestCase):
         call_command('seed_site', stdout=io.StringIO())
         self.assertEqual(Plot.objects.count(), 54)
         self.assertEqual(Plot.objects.get(number='11').altitude, 985)
-        self.assertEqual((CostItem.objects.count(), FinnAd.objects.count(), FieldDocument.objects.count()), (6, 1, 1))
+        self.assertEqual((CostItem.objects.count(), FinnAd.objects.count(), FieldDocument.objects.count()), (6, 1, 2))
         self.assertEqual(Blog.objects.count(), 6)
 
 

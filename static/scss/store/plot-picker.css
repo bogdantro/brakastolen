@@ -605,14 +605,46 @@
   text-decoration-color: #90AE8C;
   text-underline-offset: 3px;
 }
-.plot-picker .selected-card .card-links {
+.plot-picker .selected-card .card-sun {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
   gap: 10px;
-  margin-top: 18px;
+  min-height: 50px;
+  margin-top: 10px;
+  padding: 0 16px;
+  background: #F4E3B5;
+  border: 1px solid #D9B45E;
+  border-radius: 2px;
+  color: #4A3608;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+.plot-picker .selected-card .card-sun svg {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  fill: none;
+  stroke: #B07A1A;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+.plot-picker .selected-card .card-sun circle {
+  fill: #E3A72F;
+  stroke: #B07A1A;
+}
+.plot-picker .selected-card .card-sun::after {
+  content: "↗";
+  font-weight: 400;
+  color: #8A6420;
+}
+.plot-picker .selected-card .card-sun:hover {
+  background: #EFD58F;
 }
 .plot-picker .selected-card .card-link {
+  display: inline-block;
+  margin-top: 16px;
   font-size: 15px;
   color: #002223;
   text-decoration: underline;

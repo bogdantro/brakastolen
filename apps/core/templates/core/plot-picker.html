@@ -141,11 +141,11 @@
 
       <section class="info-block info-docs" id="reguleringsplan" aria-labelledby="docs-title">
         <h3 id="docs-title">Reguleringsplan</h3>
-        <p class="info-lead">Feltets reguleringsplan og reguleringskart.</p>
+        <p class="info-lead">Plankartet og reguleringsbestemmelsene for feltet.</p>
         {% if field.documents %}
         <ul class="doc-list">
           {% for doc in field.documents %}
-          <li><a href="{{ doc.file.url }}" target="_blank" rel="noopener">{{ doc.title }} <span class="doc-kind">{{ doc.kind_display }}</span></a></li>
+          <li><a href="{{ doc.file.url }}" target="_blank" rel="noopener">{{ doc.title }} <span class="doc-kind">{{ doc.kind_display }}{% if doc.size_display %}, {{ doc.size_display }}{% endif %}</span></a></li>
           {% endfor %}
         </ul>
         {% else %}

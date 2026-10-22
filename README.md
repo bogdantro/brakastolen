@@ -70,11 +70,6 @@ SITE_URL=https://www.xn--brakastlen-6cb.no
 ALLOW_INDEXING=True    # False on a test domain
 SQLITE_PATH=/srv/brakastolen/data/db.sqlite3
 SECURE_HSTS_SECONDS=3600   # the first days live; raise to 31536000 when all is well
-# So new inquiries are e-mailed (they are always saved in the dashboard either way):
-EMAIL_HOST=            # e.g. smtp.domeneshop.no
-EMAIL_HOST_USER=
-EMAIL_HOST_PASSWORD=
-INQUIRY_NOTIFY_EMAILS=post@brakastolen.no
 ```
 
 `chmod 600 .env` so only the site's user can read it.

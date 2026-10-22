@@ -12,7 +12,7 @@ from django.urls import resolve, reverse
 
 from apps.blog.models import Blog
 
-from .models import CostItem, FinnAd, Plot
+from .models import CostItem, FieldDocument, FinnAd, Plot
 from .seo import BUSINESS, FAQ, PARTNERS, site_url
 from .sitemaps import PUBLIC_PAGES
 
@@ -164,6 +164,12 @@ def build_llms_summary():
     if costs:
         lines.append('## Omkostninger i tillegg til tomteprisen')
         lines += [f'- {c.label}: {c.amount_display}' for c in costs]
+        lines.append('')
+
+    documents = FieldDocument.objects.filter(is_published=True)
+    if documents:
+        lines.append('## Reguleringsplan')
+        lines += [f'- [{doc.title}]({url}{doc.file.url})' for doc in documents]
         lines.append('')
 
     ads = FinnAd.objects.filter(is_active=True)

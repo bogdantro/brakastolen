@@ -1,5 +1,5 @@
-"""Load the facts shown under the plot map: the costs on top of the plot price, the zoning map,
-and the FINN ad the client has sent so far.
+"""Load the facts shown under the plot map: the costs on top of the plot price, the zoning plan
+(map and regulations, PDFs from the client) and the FINN ad the client has sent so far.
 
     python manage.py seed_field_info            # add what is missing
     python manage.py seed_field_info --dry-run  # only show what would be added
@@ -10,7 +10,6 @@ its link and the document on its title, so running the command twice does no har
 """
 from pathlib import Path
 
-from django.conf import settings
 from django.core.files import File
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -39,7 +38,15 @@ FINN_ADS = [
     },
 ]
 
-ZONING_MAP = ('Reguleringskart – detaljregulering for Brakastølen', 'images/blog/reguleringsplan.png')
+DOCUMENTS_DIR = Path(__file__).resolve().parents[2] / 'data' / 'documents'
+# (title, file in apps/core/data/documents/) – the client's PDFs, 22.10.2026
+DOCUMENTS = [
+    ('Reguleringsplan for Brakastølen – plankart', 'reguleringsplan-brakastolen-2020.pdf'),
+    ('Reguleringsbestemmelser for Brakastølen', 'reguleringsbestemmelser-brakastolen-2020.pdf'),
+]
+# A small PNG of the plan map from the old website, loaded before the client sent the PDF.
+# The PDF is the same map in full quality, so the PNG is taken down.
+RETIRED_DOCUMENTS = ['Reguleringskart – detaljregulering for Brakastølen']
 
 
 class Command(BaseCommand):
@@ -63,14 +70,21 @@ class Command(BaseCommand):
                 if created:
                     added.append(f"FINN ad «{ad['title']}»")
 
-            title, static_path = ZONING_MAP
-            source = Path(settings.BASE_DIR) / 'static' / static_path
-            if not FieldDocument.objects.filter(title=title).exists() and source.exists():
+            for order, (title, filename) in enumerate(DOCUMENTS, start=1):
+                source = DOCUMENTS_DIR / filename
+                if FieldDocument.objects.filter(title=title).exists() or not source.exists():
+                    continue
                 if not dry_run:  # the file is copied into media/ – nothing to roll back in a dry run
                     with source.open('rb') as handle:
-                        document = FieldDocument(title=title, order=1)
-                        document.file.save('reguleringskart-brakastolen.png', File(handle), save=True)
+                        document = FieldDocument(title=title, order=order)
+                        document.file.save(filename, File(handle), save=True)
                 added.append(f'document «{title}»')
+
+            for old in FieldDocument.objects.filter(title__in=RETIRED_DOCUMENTS):
+                if not dry_run:
+                    old.file.delete(save=False)
+                    old.delete()
+                added.append(f'removed the old «{old.title}»')
 
             if dry_run:
                 transaction.set_rollback(True)

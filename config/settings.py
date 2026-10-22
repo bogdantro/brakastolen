@@ -11,7 +11,7 @@ Safety rules built in:
 - HTTPS, secure cookies, HSTS and security headers are switched on
   automatically in production.
 - The database is SQLite until DB_NAME is filled in; then it's PostgreSQL.
-- No e-mail is ever sent until EMAIL_HOST is filled in.
+- The site sends no e-mail; every inquiry is saved in the dashboard.
 
 Check the live configuration with:  python manage.py check --deploy
 """
@@ -338,24 +338,12 @@ FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o755
 
 
 # ------------------------------------------------------------------
-# E-mail – off until EMAIL_HOST is filled in. Inquiries are always saved in the
-# dashboard; the e-mail is only a heads-up that a new one has arrived.
+# E-mail – the site sends none. Every inquiry is saved in the dashboard
+# (/dashboard/henvendelser/); notices will come through a Zapier webhook later.
 # ------------------------------------------------------------------
 
-EMAIL_HOST = env('EMAIL_HOST', '')
-if EMAIL_HOST:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_PORT = env_int('EMAIL_PORT', 587)
-    EMAIL_HOST_USER = env('EMAIL_HOST_USER', '')
-    EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', '')
-    EMAIL_USE_TLS = env_bool('EMAIL_USE_TLS', True)
-    EMAIL_TIMEOUT = 15  # seconds – a slow mail server must never hang the contact form
-else:
-    # Nothing is sent by accident from a laptop or staging server.
-    EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
-DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', 'post@brakastolen.no')
-# Who gets the "new inquiry" e-mail (comma separated). Empty = no e-mail.
-INQUIRY_NOTIFY_EMAILS = env_list('INQUIRY_NOTIFY_EMAILS')
+# Even a stray send_mail() (e.g. Django's password reset) goes nowhere
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 
 
 # ------------------------------------------------------------------

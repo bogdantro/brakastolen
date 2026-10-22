@@ -272,3 +272,14 @@ class FieldDocument(models.Model):
     def kind_display(self):
         """'reguleringsplan.pdf' -> 'PDF', 'kart.png' -> 'Bilde'."""
         return 'PDF' if self.file.name.lower().endswith('.pdf') else 'Bilde'
+
+    @property
+    def size_display(self):
+        """7578931 bytes -> '7,6 MB', 765802 -> '748 kB' – so a phone user knows before opening."""
+        try:
+            size = self.file.size
+        except (OSError, ValueError):  # the file is missing on this server
+            return ''
+        if size >= 1024 * 1024:
+            return f'{size / (1024 * 1024):.1f} MB'.replace('.', ',')
+        return f'{max(1, round(size / 1024))} kB'

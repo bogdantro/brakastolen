@@ -17,7 +17,6 @@ from django.views.decorators.cache import never_cache
 
 from apps.blog.models import Blog
 
-from . import notify
 from .forms import InquiryForm
 from .models import CostItem, FieldDocument, FinnAd, Inquiry, Plot
 from .seo import BUSINESS, FAQ, FEATURED_SUPPLIERS, PARTNERS, SUPPLIERS, site_url
@@ -191,8 +190,6 @@ def kontakt(request):
             inquiry.save()
             if reason:
                 log.warning('Inquiry %s marked as spam: %s', inquiry.pk, reason)
-            else:
-                notify.send_inquiry(inquiry)
             thanks = 'Takk for henvendelsen! Vi tar kontakt med deg så snart som mulig.'
             if wants_json(request):
                 return JsonResponse({'ok': True, 'message': thanks})

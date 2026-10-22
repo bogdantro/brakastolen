@@ -300,7 +300,8 @@ the plot table – the client should confirm current status per plot, then enter
 7. **Hero slider photos** – the old slider loads its images by script; ask for the originals.
 8. **Social media / Google Business profile** – none found. Worth creating a Google Business profile.
 9. **Altitude**: site says 900–1050 moh., one Finn ad says 950–1050.
-10. **Who should receive inquiry e-mails**, and the SMTP account to send them (set in `.env`).
+10. ~~**Inquiry e-mails**~~ – decided (22.10.2026): the site sends no e-mail; notices will go through a
+    Zapier webhook (not built yet). Every inquiry is saved in the dashboard.
 11. **Hosting provider name** for the privacy page (data processor), and whether Svarthaug Media is still involved.
 12. **Domain**: keep www.brakastølen.no as main (and redirect brakastolen.no), or switch? Email domain is brakastolen.no.
 13. **Coordinates in the design reference** say "61.1°N 9.1°E" – Brakastølen is ≈ 61.0°N 9.0°E;
@@ -320,7 +321,7 @@ the plot table – the client should confirm current status per plot, then enter
     direction and Finn links are empty until the client adds them.
 19. **General information text** for the plot section – the client sends it (said 22.10.2026).
 20. **Selected photos** – the client sends them later.
-21. **Zoning plan text (reguleringsbestemmelser)** – the zoning map from the old site is uploaded;
-    the client's attachments with the plan were not received. Upload them in Dashboard → Feltinfo.
+21. ~~**Zoning plan**~~ – received (22.10.2026): the plan map and the regulations (PDFs, in
+    `apps/core/data/documents/`), loaded by `seed_field_info` under «Reguleringsplan».
 22. **Sun conditions**: «Se solforhold på tomten» opens suncalc.org at the plot's position (from the
     plan laid over Kartverket's map, ±30–50 m) – the sun's path through the day, for any date.

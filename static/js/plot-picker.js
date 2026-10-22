@@ -340,18 +340,37 @@ document.addEventListener('DOMContentLoaded', function(){
         }
         selectedCard.appendChild(action);
 
-        // Links out: the plot's FINN ad, and the sun's path over the plot through the day
-        const links = el('div', 'card-links');
-        [[plot.finnUrl, 'Se annonsen på FINN'], [plot.sunUrl, 'Se solforhold på tomten']].forEach(function(link){
-            if (!link[0]) return;
-            const a = el('a', 'card-link', link[1]);
-            a.href = link[0];
-            a.target = '_blank';
-            a.rel = 'noopener';
-            a.appendChild(el('span', 'visually-hidden', ' (åpnes i ny fane)'));
-            links.appendChild(a);
-        });
-        if (links.children.length) selectedCard.appendChild(links);
+        // The sun's path over the plot through the day – a button of its own, it sells the plot
+        if (plot.sunUrl) {
+            const sun = el('a', 'card-sun');
+            sun.href = plot.sunUrl;
+            sun.target = '_blank';
+            sun.rel = 'noopener';
+            const icon = document.createElementNS(SVG_NS, 'svg');
+            icon.setAttribute('viewBox', '0 0 24 24');
+            icon.setAttribute('aria-hidden', 'true');
+            const rays = document.createElementNS(SVG_NS, 'path');
+            rays.setAttribute('d', 'M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8');
+            const disc = document.createElementNS(SVG_NS, 'circle');
+            disc.setAttribute('cx', '12');
+            disc.setAttribute('cy', '12');
+            disc.setAttribute('r', '4.5');
+            icon.appendChild(rays);
+            icon.appendChild(disc);
+            sun.appendChild(icon);
+            sun.appendChild(el('span', '', 'Se solforhold på tomten'));
+            sun.appendChild(el('span', 'visually-hidden', ' (åpnes i ny fane)'));
+            selectedCard.appendChild(sun);
+        }
+
+        if (plot.finnUrl) {
+            const finn = el('a', 'card-link', 'Se annonsen på FINN');
+            finn.href = plot.finnUrl;
+            finn.target = '_blank';
+            finn.rel = 'noopener';
+            finn.appendChild(el('span', 'visually-hidden', ' (åpnes i ny fane)'));
+            selectedCard.appendChild(finn);
+        }
     }
 
     function choose(id, fromMap){
