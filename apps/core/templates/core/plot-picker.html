@@ -14,9 +14,9 @@
         <h2 id="picker-title">Finn din plass på fjellet</h2>
         <span class="copper-rule" aria-hidden="true"></span>
         <p>Utforsk tomtene på Brakastølen. Filtrer etter pris og størrelse, velg en tomt i kartet, og avtal visning.</p>
-        {% if price_footnote %}<p class="price-footnote"><span aria-hidden="true">*</span> {{ price_footnote }}</p>{% endif %}
+        <p class="price-footnote"><a href="#omkostninger">* Omkostninger kommer i tillegg til tomteprisen – se oversikten under kartet.</a></p>
       </div>
-      <p class="picker-from"><span>Hyttetomter fra</span> {{ business.price_from_display }} <small>+ omk.*</small></p>
+      <p class="picker-from"><span>Hyttetomter fra</span> {{ business.price_from_display }} <small>+ <a href="#omkostninger">omk.*</a></small></p>
     </div>
 
     <form class="picker-filters" role="search" aria-label="Filtrer tomter" data-picker-filters>
@@ -97,6 +97,71 @@
         <div class="selected-card" data-selected-card hidden></div>
       </aside>
     </div>
+
+    {% comment %} The field: costs on top of the price (the «*»), zoning documents, maps, FINN ads {% endcomment %}
+    <div class="field-info">
+      <section class="info-block info-costs" id="omkostninger" aria-labelledby="costs-title">
+        <h3 id="costs-title">Omkostninger<span aria-hidden="true">*</span></h3>
+        <p class="info-lead">Kommer i tillegg til tomteprisen.</p>
+        {% if field.fixed_costs or field.percent_costs %}
+        <table class="cost-table">
+          {% if field.fixed_costs %}
+          <tr class="cost-total"><th scope="row">Anleggsbidrag, engangsavgift</th><td>{{ field.fixed_costs_total }}</td></tr>
+          {% for cost in field.fixed_costs %}
+          <tr><th scope="row">{{ cost.label }}</th><td>{{ cost.amount_display }}</td></tr>
+          {% endfor %}
+          {% endif %}
+          {% for cost in field.percent_costs %}
+          <tr class="cost-extra"><th scope="row">I tillegg: {{ cost.label|lower }}</th><td>{{ cost.amount_display }}</td></tr>
+          {% endfor %}
+        </table>
+        {% else %}
+        <p>Ta kontakt for en oversikt over omkostningene.</p>
+        {% endif %}
+      </section>
+
+      <section class="info-block info-finn" id="finn-annonser" aria-labelledby="finn-title">
+        <h3 id="finn-title">Annonser på FINN</h3>
+        {% if field.finn_ads %}
+        <ul class="finn-list">
+          {% for ad in field.finn_ads %}
+          <li>
+            <a href="{{ ad.url }}" target="_blank" rel="noopener">
+              <span class="finn-title">{{ ad.title }}</span>
+              <span class="finn-meta">{% if ad.kind %}{{ ad.kind }}{% endif %}{% if ad.kind and ad.price %} · {% endif %}{% if ad.price %}{{ ad.price }}{% endif %}</span>
+              <span class="finn-go">Se annonsen<span class="visually-hidden"> på FINN (åpnes i ny fane)</span></span>
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="info-lead">Ingen aktive annonser akkurat nå. Ta kontakt for prospekt.</p>
+        {% endif %}
+      </section>
+
+      <section class="info-block info-docs" id="reguleringsplan" aria-labelledby="docs-title">
+        <h3 id="docs-title">Reguleringsplan</h3>
+        <p class="info-lead">Feltets reguleringsplan og reguleringskart.</p>
+        {% if field.documents %}
+        <ul class="doc-list">
+          {% for doc in field.documents %}
+          <li><a href="{{ doc.file.url }}" target="_blank" rel="noopener">{{ doc.title }} <span class="doc-kind">{{ doc.kind_display }}</span></a></li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>Ta kontakt, så sender vi reguleringsplanen.</p>
+        {% endif %}
+      </section>
+
+      <section class="info-block info-map" id="kart" aria-labelledby="map-title">
+        <h3 id="map-title">Kart</h3>
+        <p class="info-lead">Se hvor Brakastølen ligger på Vaset, og zoom deg inn på feltet.</p>
+        <ul class="map-links">
+          <li><a href="{{ business.norgeskart_url }}" target="_blank" rel="noopener">Norgeskart<span class="visually-hidden"> (åpnes i ny fane)</span></a></li>
+          <li><a href="{{ business.maps_url }}" target="_blank" rel="noopener">Google Maps<span class="visually-hidden"> (åpnes i ny fane)</span></a></li>
+        </ul>
+      </section>
+    </div>
   </div>
 
   <dialog class="picker-dialog" data-picker-dialog aria-labelledby="picker-dialog-title">
@@ -110,7 +175,7 @@
           <li>Vi tar kontakt og avtaler et tidspunkt</li>
           <li>Vi viser deg tomten på Vaset</li>
         </ol>
-        <p class="dialog-call">Heller ringe? <a href="tel:{{ business.phone }}">{{ business.phone_display }}</a></p>
+        <p class="dialog-call">Heller ringe {{ business.contact_title|lower }} {{ business.contact_name }}? <a href="tel:{{ business.phone }}">{{ business.phone_display }}</a></p>
       </aside>
 
       <div class="dialog-main">

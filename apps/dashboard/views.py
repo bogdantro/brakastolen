@@ -1,5 +1,6 @@
 """The client's dashboard at /dashboard/: inquiries (a small sales CRM), the plots for
-sale with their sales map, news posts and an activity log."""
+sale with their sales map, the field info under the plot map (costs, FINN ads, documents),
+news posts and an activity log."""
 import csv
 import re
 from datetime import timedelta
@@ -17,12 +18,13 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from apps.blog.models import Blog
-from apps.core.models import Inquiry, InquiryNote, Plot, PlotCategory
+from apps.core.models import CostItem, FieldDocument, FinnAd, Inquiry, InquiryNote, Plot, PlotCategory
 from apps.core.seo import BUSINESS
 from apps.core.views import wants_json
 
 from .forms import (
-    BlogForm, DashboardLoginForm, InquiryNoteForm, PlotBulkForm, PlotCategoryForm, PlotForm, PlotQuickForm,
+    BlogForm, CostItemForm, DashboardLoginForm, FieldDocumentForm, FinnAdForm, InquiryNoteForm, PlotBulkForm,
+    PlotCategoryForm, PlotForm, PlotQuickForm,
 )
 from .models import ActivityLog, LoginAttempt
 from .templatetags.dashboard_tags import millions
@@ -658,6 +660,88 @@ def dashboard_plot_delete(request, pk):
     log_activity(request, 'Slettet tomt', name)
     messages.success(request, f'«{name}» ble slettet.')
     return redirect(reverse('dashboard_plots'))
+
+
+# ------------------------------------------------------------------
+# The field: costs, FINN ads and documents shown under the plot map
+# ------------------------------------------------------------------
+
+def field_page(request, cost_forms=None, ad_forms=None, doc_forms=None, new_cost=None, new_ad=None, new_doc=None):
+    """The page, with any form that just failed shown again with its errors."""
+    cost_forms = cost_forms or {}
+    ad_forms = ad_forms or {}
+    doc_forms = doc_forms or {}
+    costs = list(CostItem.objects.all())
+    ads = list(FinnAd.objects.all())
+    documents = list(FieldDocument.objects.all())
+    fixed_total = sum(c.amount or 0 for c in costs if c.percent is None)
+    return render(request, 'dashboard/field.html', {
+        'costs': [(c, cost_forms.get(c.pk) or CostItemForm(instance=c, prefix=f'cost-{c.pk}')) for c in costs],
+        'fixed_total': fixed_total,
+        'new_cost': new_cost or CostItemForm(prefix='cost-new'),
+        'ads': [(a, ad_forms.get(a.pk) or FinnAdForm(instance=a, prefix=f'ad-{a.pk}')) for a in ads],
+        'new_ad': new_ad or FinnAdForm(prefix='ad-new', initial={'is_active': True}),
+        'plot_ads': Plot.objects.exclude(finn_url='').select_related('category'),
+        'documents': [(d, doc_forms.get(d.pk) or FieldDocumentForm(instance=d, prefix=f'doc-{d.pk}')) for d in documents],
+        'new_doc': new_doc or FieldDocumentForm(prefix='doc-new', initial={'is_published': True}),
+    })
+
+
+# «cost_add», «ad_save», «doc_delete» … -> (model, form, form prefix, noun for the log, section on the page)
+FIELD_ITEMS = {
+    'cost': (CostItem, CostItemForm, 'cost', 'omkostning', 'omkostninger'),
+    'ad': (FinnAd, FinnAdForm, 'ad', 'Finn-annonse', 'finn'),
+    'doc': (FieldDocument, FieldDocumentForm, 'doc', 'dokument', 'dokumenter'),
+}
+
+
+@staff_required
+def dashboard_field(request):
+    if request.method != 'POST':
+        return field_page(request)
+
+    action = request.POST.get('action', '')
+    kind, _, verb = action.partition('_')
+    if kind not in FIELD_ITEMS or verb not in ('add', 'save', 'delete'):
+        return redirect(reverse('dashboard_field'))
+    model, form_class, prefix, noun, section = FIELD_ITEMS[kind]
+    target = reverse('dashboard_field') + f'#{section}'
+
+    if verb == 'add':
+        form = form_class(request.POST, request.FILES, prefix=f'{prefix}-new')
+        if not form.is_valid():
+            messages.error(request, 'Noe må rettes – se feltet som er merket.')
+            return field_page(request, **{f'new_{kind}': form})
+        item = form.save(commit=False)
+        item.order = next_order(model)
+        item.save()
+        log_activity(request, f'La til {noun}', str(item), target)
+        messages.success(request, f'«{item}» ble lagt til.')
+        return redirect(target)
+
+    pk = request.POST.get('pk', '')
+    item = get_object_or_404(model, pk=int(pk) if pk.isdigit() else 0)
+    if verb == 'delete':
+        name = str(item)
+        if kind == 'doc':
+            item.file.delete(save=False)
+        item.delete()
+        log_activity(request, f'Slettet {noun}', name, target)
+        messages.success(request, f'«{name}» ble slettet.')
+        return redirect(target)
+
+    form = form_class(request.POST, request.FILES, instance=item, prefix=f'{prefix}-{item.pk}')
+    if not form.is_valid():
+        messages.error(request, 'Noe må rettes – se feltet som er merket.')
+        return field_page(request, **{f'{kind}_forms': {item.pk: form}})
+    if form.has_changed():
+        old_file = item.file.name if kind == 'doc' else None
+        form.save()
+        if kind == 'doc' and old_file and old_file != item.file.name:
+            item.file.storage.delete(old_file)  # a replaced document doesn't linger in media/
+        log_activity(request, f'Oppdaterte {noun}', str(item), target)
+        messages.success(request, f'«{item}» ble lagret.')
+    return redirect(target)
 
 
 # ------------------------------------------------------------------

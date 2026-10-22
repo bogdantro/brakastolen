@@ -1262,6 +1262,88 @@ a.card-title:hover { text-decoration: underline; text-decoration-thickness: 1px;
 }
 
 // ------------------------------------------------------------
+// Feltinfo: costs, FINN ads and documents, one editable row each
+// ------------------------------------------------------------
+.edit-rows {
+  border-top: 1px solid $line;
+}
+
+.edit-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid $line;
+
+  &.is-inactive .row-field .input { color: $mutedText; }
+  &.has-errors { background: rgba(246, 227, 223, 0.5); }
+}
+
+.add-row {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px dashed $lineStrong;
+  background: $background;
+}
+
+.row-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 0 1 170px;
+  min-width: 0;
+  font-size: 13px;
+  color: $mutedText;
+
+  &.grow { flex: 1 1 240px; }
+  &.narrow { flex: 0 1 110px; }
+
+  .input { min-height: 40px; padding: 6px 10px; }
+  small { color: $mutedText; }
+}
+
+.file-field input[type="file"] {
+  min-height: 40px;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.row-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  margin-left: auto;
+}
+
+.row-errors {
+  flex-basis: 100%;
+
+  .errorlist { font-size: 14px; }
+}
+
+.plot-ad-list {
+  margin-top: 24px;
+
+  h3 {
+    margin: 0 0 6px;
+    font-family: $fontBody;
+    font-size: 15px;
+    font-weight: 600;
+  }
+}
+
+// ------------------------------------------------------------
 // Narrower desktops
 // ------------------------------------------------------------
 // The list needs about 950 px; below that the map and categories move under it

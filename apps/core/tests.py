@@ -594,12 +594,78 @@ class HomepageContentTests(MediaTestCase):
         self.assertIn('Vaset · Valdres', html)
 
     def test_prices_carry_the_omk_star(self):
-        self.assertContains(self.client.get('/'), '+ omk.*')
+        self.assertContains(self.client.get('/'), 'omk.*</a>')
 
-    def test_price_footnote_shows_only_when_written(self):
-        self.assertNotContains(self.client.get('/'), 'class="price-footnote"')
-        with mock.patch('apps.core.context_processors.PRICE_FOOTNOTE', 'Omkostninger er dokumentavgift og tinglysing.'):
-            self.assertContains(self.client.get('/'), 'Omkostninger er dokumentavgift og tinglysing.')
+    def test_the_star_leads_to_the_costs(self):
+        response = self.client.get('/')
+        self.assertContains(response, 'href="#omkostninger"')
+        self.assertContains(response, 'id="omkostninger"')
+
+
+class FieldInfoTests(MediaTestCase):
+    """Costs, documents, maps and FINN ads under the plot map."""
+
+    def setUp(self):
+        super().setUp()
+        call_command('seed_field_info', stdout=io.StringIO())
+
+    def test_costs_are_listed_with_the_one_off_total_and_the_document_fee(self):
+        html = self.client.get('/').content.decode()
+        self.assertIn('Anleggsbidrag, engangsavgift', html)
+        self.assertIn('90 000 kr', html)
+        self.assertIn('Anleggsbidrag strøm', html)
+        self.assertIn('I tillegg: dokumentavgift', html)
+        self.assertIn('2,5 % av tomteprisen', html)
+
+    def test_zoning_map_maps_and_finn_ad_are_linked(self):
+        html = self.client.get('/').content.decode()
+        self.assertIn('Reguleringskart – detaljregulering for Brakastølen', html)
+        self.assertIn('norgeskart.no', html)
+        self.assertIn('https://www.google.com/maps/search/', html)
+        self.assertIn('finnkode=371502243', html)
+
+    def test_only_available_plots_with_a_finn_link_join_the_ad_list(self):
+        Plot.objects.create(number='77', finn_url='https://www.finn.no/ad.html?finnkode=77')
+        Plot.objects.create(number='78', status='sold', finn_url='https://www.finn.no/ad.html?finnkode=78')
+        html = self.client.get('/').content.decode()
+        self.assertIn('finnkode=77', html)
+        self.assertNotIn('finnkode=78', html)
+
+    def test_seeding_twice_adds_nothing(self):
+        from .models import CostItem, FieldDocument, FinnAd
+        call_command('seed_field_info', stdout=io.StringIO())
+        self.assertEqual((CostItem.objects.count(), FinnAd.objects.count(), FieldDocument.objects.count()), (6, 1, 1))
+
+    def test_contact_page_names_the_land_seller(self):
+        response = self.client.get(reverse('kontakt'))
+        self.assertContains(response, 'Haakon B. Edland')
+        self.assertContains(response, 'Tomteselger')
+
+
+class SeedSiteTests(MediaTestCase):
+    def test_one_command_fills_a_new_server_and_is_safe_to_repeat(self):
+        from .models import CostItem, FieldDocument, FinnAd
+        call_command('seed_site', stdout=io.StringIO())
+        call_command('seed_site', stdout=io.StringIO())
+        self.assertEqual(Plot.objects.count(), 54)
+        self.assertEqual(Plot.objects.get(number='11').altitude, 985)
+        self.assertEqual((CostItem.objects.count(), FinnAd.objects.count(), FieldDocument.objects.count()), (6, 1, 1))
+        self.assertEqual(Blog.objects.count(), 6)
+
+
+class GeoTests(TestCase):
+    def test_plan_point_becomes_coordinates_at_brakastolen(self):
+        from .geo import plan_to_latlon
+        self.assertEqual(plan_to_latlon(51.4, 410.7), (61.02016, 8.94607))
+
+    def test_plot_on_the_map_gets_a_sun_link(self):
+        plot = Plot(number='11', map_x=51.4, map_y=410.7)
+        self.assertEqual(plot.sun_url, 'https://www.suncalc.org/#/61.02016,8.94607,17')
+        self.assertEqual(Plot(number='99').sun_url, '')
+
+    def test_business_coordinates_are_at_the_field_not_vaset_centre(self):
+        self.assertAlmostEqual(BUSINESS['latitude'], 61.017, delta=0.005)
+        self.assertAlmostEqual(BUSINESS['longitude'], 8.947, delta=0.005)
 
 
 class PortraitMapTests(TestCase):

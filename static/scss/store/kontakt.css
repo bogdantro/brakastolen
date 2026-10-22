@@ -33,6 +33,22 @@
   margin-top: 28px;
   font-size: 16px;
 }
+.contact-section .contact-info .contact-person {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(246, 243, 233, 0.24);
+}
+.contact-section .contact-info .person-role {
+  margin: 0 0 4px;
+  font-size: 15px;
+  color: #90AE8C;
+}
+.contact-section .contact-info .person-name {
+  margin: 0;
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+  font-size: clamp(24px, 1.9vw, 30px);
+  color: #F6F3E9;
+}
 
 .faq-section {
   border-top: 1px solid rgba(20, 22, 22, 0.16);

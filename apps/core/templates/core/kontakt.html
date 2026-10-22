@@ -75,6 +75,10 @@
 
     <aside class="contact-info">
       <h2>Eller ta kontakt direkte</h2>
+      <div class="contact-person">
+        <p class="person-role">{{ business.contact_title }}</p>
+        <p class="person-name">{{ business.contact_name }}</p>
+      </div>
       <p><a href="tel:{{ business.phone }}" class="big-link">{{ business.phone_display }}</a></p>
       <p><a href="mailto:{{ business.email }}" class="big-link">{{ business.email }}</a></p>
       <p class="small">For visning, kontakt grunneier og utbygger {{ business.company }}.</p>

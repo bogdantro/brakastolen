@@ -6,12 +6,13 @@
                                              # of existing plots to the website's values
 
 The data (apps/core/data/brakastolen-plots.json) was read from brakastølen.no's plot map:
-number, size, price, sold or not, and each plot's outline on the site plan. The category
+number, size, price, sold or not, and each plot's outline on the site plan. The height above
+sea level is Kartverket's terrain height at the middle of each plot, rounded to 5 m. The category
 follows the 2022 plot map: Byggetrinn 1 is plots 1–34, Byggetrinn 2 is plots 35–66.
 
 Safe to run again: plots are matched on their number. Without --overwrite an existing plot
-keeps everything the client has changed in the dashboard; only a missing map outline or
-category is filled in. Example plots from the old design sketch are removed.
+keeps everything the client has changed in the dashboard; only a missing map outline,
+category or height is filled in. Example plots from the old design sketch are removed.
 """
 import json
 from pathlib import Path
@@ -23,7 +24,7 @@ from apps.core.models import Plot, PlotCategory
 
 DATA_FILE = Path(__file__).resolve().parents[2] / 'data' / 'brakastolen-plots.json'
 EXAMPLE_NOTE = 'Eksempeldata fra designskissen'
-OVERWRITE_FIELDS = ['status', 'area_m2', 'price', 'note', 'category']
+OVERWRITE_FIELDS = ['status', 'area_m2', 'price', 'note', 'category', 'altitude']
 MAP_FIELDS = ['map_x', 'map_y', 'map_shape']
 
 
@@ -63,6 +64,7 @@ class Command(BaseCommand):
                 'price': row['price'],
                 'note': row['note'],
                 'category': categories[row['category']],
+                'altitude': row.get('altitude'),
                 'map_x': row['map_x'],
                 'map_y': row['map_y'],
                 'map_shape': row['map_shape'],
@@ -78,6 +80,8 @@ class Command(BaseCommand):
                 fields += MAP_FIELDS
             if plot.category_id is None and 'category' not in fields:
                 fields.append('category')
+            if plot.altitude is None and 'altitude' not in fields:
+                fields.append('altitude')
             changed = [name for name in fields if getattr(plot, name) != values[name]]
             if not changed:
                 report['unchanged'] += 1

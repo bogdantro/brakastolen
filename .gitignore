@@ -1,4 +1,5 @@
-db.sqlite3
+# The database and its WAL side files (db.sqlite3-wal, db.sqlite3-shm)
+db.sqlite3*
 
 # Secrets – settings.py reads everything from these, never commit them.
 .env

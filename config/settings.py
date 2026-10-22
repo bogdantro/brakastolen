@@ -187,6 +187,12 @@ else:
             'OPTIONS': {
                 # Wait for a lock instead of failing with "database is locked".
                 'timeout': 20,
+                # Writes take the lock up front, so two gunicorn workers saving at once queue
+                # instead of one of them failing halfway through.
+                'transaction_mode': 'IMMEDIATE',
+                # WAL: visitors keep reading while the dashboard writes. NORMAL is safe with WAL
+                # and much faster than the default FULL.
+                'init_command': 'PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;',
             },
         }
     }

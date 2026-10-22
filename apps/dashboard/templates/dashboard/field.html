@@ -1,0 +1,159 @@
+{% extends 'dashboard/base.html' %}
+{% load dashboard_tags %}
+{% block title %}Feltinfo{% endblock %}
+
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>Feltinfo</h1>
+    <p class="page-lead">Det som står under tomtekartet på nettsiden: omkostningene som kommer i tillegg til tomteprisen, annonsene på FINN og reguleringsplanen.</p>
+  </div>
+  <div class="page-actions">
+    <a href="/#omkostninger" class="button secondary" target="_blank" rel="noopener">Se på nettsiden</a>
+  </div>
+</header>
+
+{% comment %} ---------------------------------------------------------------- Costs {% endcomment %}
+<section class="panel" id="omkostninger">
+  <div class="panel-head">
+    <h2>Omkostninger</h2>
+    <p class="panel-note">Faste beløp summeres som «Anleggsbidrag, engangsavgift» – nå {{ fixed_total|thousands }} kr. Prosenter vises som «I tillegg», f.eks. dokumentavgiften.</p>
+  </div>
+
+  <div class="edit-rows">
+    {% for cost, form in costs %}
+    <form method="post" class="edit-row cost-row{% if form.errors %} has-errors{% endif %}">
+      {% csrf_token %}
+      <input type="hidden" name="pk" value="{{ cost.pk }}">
+      <label class="row-field grow"><span>Hva</span>{{ form.label }}</label>
+      <label class="row-field"><span>Beløp (kr)</span>{{ form.amount }}</label>
+      <label class="row-field narrow"><span>eller prosent</span>{{ form.percent }}</label>
+      <div class="row-actions">
+        <button type="submit" name="action" value="cost_save" class="button small secondary">Lagre</button>
+        <button type="submit" name="action" value="cost_delete" class="icon-button" formnovalidate
+                data-confirm-click="Slette «{{ cost.label }}»?" aria-label="Slett {{ cost.label }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></svg>
+        </button>
+      </div>
+      {% if form.errors %}<div class="row-errors">{{ form.non_field_errors }}{% for field in form %}{{ field.errors }}{% endfor %}</div>{% endif %}
+    </form>
+    {% empty %}
+    <p class="muted">Ingen omkostninger lagt inn ennå.</p>
+    {% endfor %}
+  </div>
+
+  <form method="post" class="edit-row add-row{% if new_cost.errors %} has-errors{% endif %}">
+    {% csrf_token %}
+    <label class="row-field grow"><span>Ny linje</span>{{ new_cost.label }}</label>
+    <label class="row-field"><span>Beløp (kr)</span>{{ new_cost.amount }}</label>
+    <label class="row-field narrow"><span>eller prosent</span>{{ new_cost.percent }}</label>
+    <div class="row-actions">
+      <button type="submit" name="action" value="cost_add" class="button small">Legg til</button>
+    </div>
+    {% if new_cost.errors %}<div class="row-errors">{{ new_cost.non_field_errors }}{% for field in new_cost %}{{ field.errors }}{% endfor %}</div>{% endif %}
+  </form>
+</section>
+
+{% comment %} ---------------------------------------------------------------- FINN ads {% endcomment %}
+<section class="panel" id="finn">
+  <div class="panel-head">
+    <h2>Annonser på FINN</h2>
+    <p class="panel-note">Aktive annonser vises under tomtekartet. Ledige tomter med egen Finn-lenke kommer med av seg selv.</p>
+  </div>
+
+  <div class="edit-rows">
+    {% for ad, form in ads %}
+    <form method="post" class="edit-row ad-row{% if form.errors %} has-errors{% endif %}{% if not ad.is_active %} is-inactive{% endif %}">
+      {% csrf_token %}
+      <input type="hidden" name="pk" value="{{ ad.pk }}">
+      <label class="row-field grow"><span>Tittel</span>{{ form.title }}</label>
+      <label class="row-field grow"><span>Lenke</span>{{ form.url }}</label>
+      <label class="row-field"><span>Hva den gjelder</span>{{ form.kind }}</label>
+      <label class="row-field"><span>Pris (kr)</span>{{ form.price }}</label>
+      <label class="row-check">{{ form.is_active }} Aktiv</label>
+      <div class="row-actions">
+        <a href="{{ ad.url }}" target="_blank" rel="noopener" class="text-link">Åpne</a>
+        <button type="submit" name="action" value="ad_save" class="button small secondary">Lagre</button>
+        <button type="submit" name="action" value="ad_delete" class="icon-button" formnovalidate
+                data-confirm-click="Slette «{{ ad.title }}» fra listen? Annonsen på FINN blir ikke berørt." aria-label="Slett {{ ad.title }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></svg>
+        </button>
+      </div>
+      {% if form.errors %}<div class="row-errors">{% for field in form %}{{ field.errors }}{% endfor %}</div>{% endif %}
+    </form>
+    {% empty %}
+    <p class="muted">Ingen annonser lagt inn ennå.</p>
+    {% endfor %}
+  </div>
+
+  <form method="post" class="edit-row ad-row add-row{% if new_ad.errors %} has-errors{% endif %}">
+    {% csrf_token %}
+    <label class="row-field grow"><span>Ny annonse – tittel</span>{{ new_ad.title }}</label>
+    <label class="row-field grow"><span>Lenke</span>{{ new_ad.url }}</label>
+    <label class="row-field"><span>Hva den gjelder</span>{{ new_ad.kind }}</label>
+    <label class="row-field"><span>Pris (kr)</span>{{ new_ad.price }}</label>
+    <label class="row-check">{{ new_ad.is_active }} Aktiv</label>
+    <div class="row-actions">
+      <button type="submit" name="action" value="ad_add" class="button small">Legg til</button>
+    </div>
+    {% if new_ad.errors %}<div class="row-errors">{% for field in new_ad %}{{ field.errors }}{% endfor %}</div>{% endif %}
+  </form>
+
+  {% if plot_ads %}
+  <div class="plot-ad-list">
+    <h3>Fra tomtene</h3>
+    <ul class="mini-list">
+      {% for plot in plot_ads %}
+      <li>
+        <a href="{% url 'dashboard_plot_edit' plot.pk %}">Tomt {{ plot.number }}</a>
+        <span class="status-label status-{{ plot.status }}">{{ plot.get_status_display }}</span>
+        <small>{% if plot.status == 'available' %}Vises på nettsiden{% else %}Vises ikke – tomten er ikke ledig{% endif %}</small>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</section>
+
+{% comment %} ---------------------------------------------------------------- Documents {% endcomment %}
+<section class="panel" id="dokumenter">
+  <div class="panel-head">
+    <h2>Reguleringsplan og dokumenter</h2>
+    <p class="panel-note">PDF eller bilde, opptil 15 MB. Vises under «Reguleringsplan» på nettsiden.</p>
+  </div>
+
+  <div class="edit-rows">
+    {% for doc, form in documents %}
+    <form method="post" enctype="multipart/form-data" class="edit-row doc-row{% if form.errors %} has-errors{% endif %}{% if not doc.is_published %} is-inactive{% endif %}">
+      {% csrf_token %}
+      <input type="hidden" name="pk" value="{{ doc.pk }}">
+      <label class="row-field grow"><span>Tittel</span>{{ form.title }}</label>
+      <label class="row-field grow file-field"><span>Bytt fil <small>nå: {{ doc.kind_display }}</small></span><input type="file" name="{{ form.file.html_name }}" accept=".pdf,.png,.jpg,.jpeg,.webp"></label>
+      <label class="row-check">{{ form.is_published }} Vises</label>
+      <div class="row-actions">
+        <a href="{{ doc.file.url }}" target="_blank" rel="noopener" class="text-link">Åpne</a>
+        <button type="submit" name="action" value="doc_save" class="button small secondary">Lagre</button>
+        <button type="submit" name="action" value="doc_delete" class="icon-button" formnovalidate
+                data-confirm-click="Slette «{{ doc.title }}» og filen?" aria-label="Slett {{ doc.title }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></svg>
+        </button>
+      </div>
+      {% if form.errors %}<div class="row-errors">{% for field in form %}{{ field.errors }}{% endfor %}</div>{% endif %}
+    </form>
+    {% empty %}
+    <p class="muted">Ingen dokumenter lastet opp ennå.</p>
+    {% endfor %}
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="edit-row doc-row add-row{% if new_doc.errors %} has-errors{% endif %}">
+    {% csrf_token %}
+    <label class="row-field grow"><span>Nytt dokument – tittel</span>{{ new_doc.title }}</label>
+    <label class="row-field grow file-field"><span>Fil</span><input type="file" name="{{ new_doc.file.html_name }}" accept=".pdf,.png,.jpg,.jpeg,.webp" required></label>
+    <label class="row-check">{{ new_doc.is_published }} Vises</label>
+    <div class="row-actions">
+      <button type="submit" name="action" value="doc_add" class="button small">Last opp</button>
+    </div>
+    {% if new_doc.errors %}<div class="row-errors">{% for field in new_doc %}{{ field.errors }}{% endfor %}</div>{% endif %}
+  </form>
+</section>
+{% endblock %}

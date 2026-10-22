@@ -1,4 +1,5 @@
 import io
+import os
 import shutil
 import tempfile
 from datetime import timedelta
@@ -11,7 +12,7 @@ from django.utils import timezone
 from PIL import Image
 
 from apps.blog.models import Blog
-from apps.core.models import Inquiry, InquiryNote, Plot, PlotCategory
+from apps.core.models import CostItem, FieldDocument, FinnAd, Inquiry, InquiryNote, Plot, PlotCategory
 
 from .models import ActivityLog, LoginAttempt
 
@@ -400,6 +401,68 @@ class PlotListTests(DashboardTestCase):
         self.assertEqual([p['number'] for p in response.context['map_plots']], ['9'])
         self.assertEqual(response.context['plot_summary']['sold'], 1)
         self.assertContains(response, 'sales-map-data')
+
+
+class FieldInfoDashboardTests(DashboardTestCase):
+    url = reverse('dashboard_field')
+
+    def test_page_loads_and_is_in_the_menu(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(self.client.get(reverse('dashboard_home')), 'Feltinfo')
+
+    def test_add_edit_and_delete_a_cost(self):
+        self.client.post(self.url, {'action': 'cost_add', 'cost-new-label': 'Anleggsbidrag strøm', 'cost-new-amount': '45 000'})
+        cost = CostItem.objects.get()
+        self.assertEqual(cost.amount, 45000)
+        self.client.post(self.url, {'action': 'cost_save', 'pk': cost.pk, f'cost-{cost.pk}-label': 'Strøm',
+                                    f'cost-{cost.pk}-amount': '50 000'})
+        cost.refresh_from_db()
+        self.assertEqual((cost.label, cost.amount), ('Strøm', 50000))
+        self.client.post(self.url, {'action': 'cost_delete', 'pk': cost.pk})
+        self.assertFalse(CostItem.objects.exists())
+        self.assertTrue(ActivityLog.objects.filter(action='Slettet omkostning').exists())
+
+    def test_percent_can_be_typed_with_a_comma(self):
+        self.client.post(self.url, {'action': 'cost_add', 'cost-new-label': 'Dokumentavgift', 'cost-new-percent': '2,5'})
+        self.assertEqual(str(CostItem.objects.get().percent), '2.50')
+
+    def test_a_cost_needs_exactly_one_of_amount_and_percent(self):
+        response = self.client.post(self.url, {'action': 'cost_add', 'cost-new-label': 'Begge', 'cost-new-amount': '100',
+                                               'cost-new-percent': '1'})
+        self.assertContains(response, 'Fyll inn bare ett av dem')
+        response = self.client.post(self.url, {'action': 'cost_add', 'cost-new-label': 'Ingen'})
+        self.assertContains(response, 'Fyll inn enten et beløp')
+        self.assertFalse(CostItem.objects.exists())
+
+    def test_finn_ads_must_link_to_finn(self):
+        response = self.client.post(self.url, {'action': 'ad_add', 'ad-new-title': 'Hytte', 'ad-new-url': 'https://example.com/finn.no',
+                                               'ad-new-is_active': 'on'})
+        self.assertContains(response, 'Lim inn lenken til annonsen på finn.no')
+        self.client.post(self.url, {'action': 'ad_add', 'ad-new-title': 'Hytte', 'ad-new-url': 'https://www.finn.no/ad?finnkode=1',
+                                    'ad-new-price': '5 350 000', 'ad-new-is_active': 'on'})
+        self.assertEqual(FinnAd.objects.get().price, 5350000)
+
+    def test_upload_a_pdf_and_delete_it_with_its_file(self):
+        pdf = SimpleUploadedFile('regulering.pdf', b'%PDF-1.7 test', content_type='application/pdf')
+        self.client.post(self.url, {'action': 'doc_add', 'doc-new-title': 'Reguleringsbestemmelser', 'doc-new-file': pdf,
+                                    'doc-new-is_published': 'on'})
+        document = FieldDocument.objects.get()
+        path = document.file.path
+        self.assertTrue(os.path.exists(path))
+        self.client.post(self.url, {'action': 'doc_delete', 'pk': document.pk})
+        self.assertFalse(FieldDocument.objects.exists())
+        self.assertFalse(os.path.exists(path))
+
+    def test_a_file_that_only_pretends_to_be_a_pdf_is_refused(self):
+        fake = SimpleUploadedFile('virus.pdf', b'MZ not a pdf', content_type='application/pdf')
+        response = self.client.post(self.url, {'action': 'doc_add', 'doc-new-title': 'X', 'doc-new-file': fake})
+        self.assertContains(response, 'ser ikke ut som en PDF')
+        self.assertFalse(FieldDocument.objects.exists())
+
+    def test_unknown_action_or_id_does_not_crash(self):
+        self.assertEqual(self.client.post(self.url, {'action': 'cost_explode'}).status_code, 302)
+        self.assertEqual(self.client.post(self.url, {'action': 'cost_delete', 'pk': 'abc'}).status_code, 404)
 
 
 # ------------------------------------------------------------------

@@ -1,7 +1,9 @@
-"""Content the client manages in the dashboard: inquiries and the plots for sale."""
+"""Content the client manages in the dashboard: inquiries, the plots for sale, and the facts
+about the field shown under the plot map (costs, documents, FINN ads)."""
 from django.conf import settings
 from django.db import models
 
+from .geo import plan_to_latlon, sun_url
 from .text import format_nok, format_number
 
 
@@ -163,6 +165,13 @@ class Plot(models.Model):
     def is_on_map(self):
         return self.map_x is not None and self.map_y is not None
 
+    @property
+    def sun_url(self):
+        """suncalc.org at the plot (from its place on the plan), or '' for a plot not on the map."""
+        if not self.is_on_map:
+            return ''
+        return sun_url(*plan_to_latlon(self.map_x, self.map_y))
+
     def as_picker_data(self):
         """What the plot picker on the homepage needs, as plain JSON-friendly values."""
         return {
@@ -175,10 +184,91 @@ class Plot(models.Model):
             'price': self.price,
             'altitude': self.altitude,
             'view': self.view_direction,
-            'finnUrl': self.finn_url,
+            # A sold plot's ad is gone or misleading – only plots still for sale link to FINN
+            'finnUrl': self.finn_url if self.status != 'sold' else '',
+            'sunUrl': self.sun_url,
             'note': self.note,
             'x': self.map_x,
             'y': self.map_y,
             'rotation': self.map_rotation,
             'shape': self.map_shape,
         }
+
+
+# ------------------------------------------------------------------
+# The field: costs on top of the plot price, documents, FINN ads
+# ------------------------------------------------------------------
+
+class CostItem(models.Model):
+    """One line in «Omkostninger»: a fixed amount (summed as the one-off connection charge),
+    or a percentage of the plot price (e.g. the 2.5 % document fee)."""
+    label = models.CharField('Hva', max_length=120)
+    amount = models.PositiveIntegerField('Beløp (kr)', null=True, blank=True)
+    percent = models.DecimalField('Prosent av tomteprisen', max_digits=4, decimal_places=2, null=True, blank=True)
+    order = models.PositiveIntegerField('Rekkefølge', default=0)
+
+    class Meta:
+        verbose_name = 'Omkostning'
+        verbose_name_plural = 'Omkostninger'
+        ordering = ['order', 'pk']
+
+    def __str__(self):
+        return f'{self.label} ({self.amount_display})'
+
+    @property
+    def amount_display(self):
+        """6000 -> '6 000 kr'; 2.50 % -> '2,5 % av tomteprisen'."""
+        if self.percent is not None:
+            return f"{format_number_decimal(self.percent)} % av tomteprisen"
+        return format_nok(self.amount) or '0 kr'
+
+
+def format_number_decimal(value):
+    """Decimal('2.50') -> '2,5'; Decimal('3.00') -> '3'."""
+    return f'{value:f}'.rstrip('0').rstrip('.').replace('.', ',')
+
+
+class FinnAd(models.Model):
+    """An ad on finn.no for something at Brakastølen (a cabin, a plot, the field) – listed under
+    the plot map. Plots with their own Finn link are listed there automatically as well."""
+    title = models.CharField('Tittel', max_length=160)
+    url = models.URLField('Lenke til annonsen')
+    kind = models.CharField('Hva annonsen gjelder', max_length=60, blank=True)
+    price = models.PositiveIntegerField('Pris (kr)', null=True, blank=True)
+    is_active = models.BooleanField('Aktiv – vises på nettsiden', default=True)
+    order = models.PositiveIntegerField('Rekkefølge', default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Finn-annonse'
+        verbose_name_plural = 'Finn-annonser'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def price_display(self):
+        return format_nok(self.price)
+
+
+class FieldDocument(models.Model):
+    """A document about the field for buyers – the zoning plan, the zoning map, a prospectus."""
+    title = models.CharField('Tittel', max_length=160)
+    file = models.FileField('Fil (PDF eller bilde)', upload_to='dokumenter/')
+    is_published = models.BooleanField('Vises på nettsiden', default=True)
+    order = models.PositiveIntegerField('Rekkefølge', default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Dokument'
+        verbose_name_plural = 'Dokumenter'
+        ordering = ['order', 'title']
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def kind_display(self):
+        """'reguleringsplan.pdf' -> 'PDF', 'kart.png' -> 'Bilde'."""
+        return 'PDF' if self.file.name.lower().endswith('.pdf') else 'Bilde'

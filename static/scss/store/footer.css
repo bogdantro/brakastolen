@@ -38,6 +38,10 @@
 .site-footer .footer-brand p {
   max-width: 24em;
 }
+.site-footer .footer-person {
+  margin: 0 0 8px;
+  color: rgba(246, 243, 233, 0.75);
+}
 .site-footer .big-link {
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
   font-size: clamp(24px, 1.9vw, 32px);

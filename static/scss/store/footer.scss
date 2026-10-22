@@ -49,6 +49,11 @@
     max-width: 24em;
   }
 
+  .footer-person {
+    margin: 0 0 8px;
+    color: rgba(246, 243, 233, 0.75);
+  }
+
   .big-link {
     font-family: $fontDisplay;
     font-size: clamp(24px, 1.9vw, 32px);

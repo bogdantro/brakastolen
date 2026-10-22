@@ -57,6 +57,27 @@ $mapRatio: #{720 / 1000};
       font-size: 16px;
       color: $mutedText;
     }
+
+    small a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: $sage;
+      text-underline-offset: 3px;
+    }
+  }
+
+  .price-footnote {
+    margin-top: 12px;
+    font-size: 15px;
+
+    a {
+      color: $mutedText;
+      text-decoration: underline;
+      text-decoration-color: $sage;
+      text-underline-offset: 4px;
+
+      &:hover { color: $primaryColor; }
+    }
   }
 
   // ------------------------------------------------------------
@@ -536,6 +557,12 @@ $mapRatio: #{720 / 1000};
       font-size: 17px;
       color: $heroText;
     }
+
+    .tooltip-place {
+      display: block;
+      margin-top: 3px;
+      color: $sageDeep;
+    }
   }
 
   // ------------------------------------------------------------
@@ -663,14 +690,182 @@ $mapRatio: #{720 / 1000};
       }
     }
 
-    .card-finn {
-      display: inline-block;
-      margin-top: 16px;
+    .card-price small a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: $sage;
+      text-underline-offset: 3px;
+    }
+
+    .card-links {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .card-link {
       font-size: 15px;
       color: $primaryColor;
       text-decoration: underline;
       text-decoration-color: $sage;
       text-underline-offset: 4px;
+
+      &::after {
+        content: ' ↗';
+        color: $sageDeep;
+      }
+    }
+  }
+
+  // ------------------------------------------------------------
+  // The field under the map: costs, FINN ads, zoning plan, maps
+  // ------------------------------------------------------------
+  .field-info {
+    display: grid;
+    gap: 18px;
+    margin-top: 18px;
+  }
+
+  .info-block {
+    padding: 26px 26px 28px;
+    background: $panel;
+    border: 1px solid $border;
+    scroll-margin-top: 90px;
+
+    h3 {
+      margin: 0;
+      font-family: $fontDisplay;
+      font-weight: 400;
+      font-size: 28px;
+      color: $heroText;
+
+      span { color: $sageDeep; }
+    }
+
+    a {
+      color: $primaryColor;
+    }
+  }
+
+  .info-lead {
+    margin: 6px 0 18px;
+    color: $mutedText;
+    font-size: 16px;
+  }
+
+  // The costs, as the client sent them: the one-off charge with its parts, then the document fee
+  .cost-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+
+    th, td {
+      padding: 9px 0;
+      border-bottom: 1px solid $border;
+      font-weight: 400;
+      text-align: left;
+      vertical-align: baseline;
+    }
+
+    td {
+      text-align: right;
+      white-space: nowrap;
+      padding-left: 16px;
+    }
+
+    tr:not(.cost-total):not(.cost-extra) th {
+      padding-left: 16px;
+      color: $mutedText;
+    }
+
+    .cost-total th, .cost-total td {
+      font-weight: 600;
+      color: $heroText;
+      border-bottom-color: $heroText;
+    }
+
+    .cost-extra th, .cost-extra td {
+      padding-top: 14px;
+      border-bottom: 0;
+      color: $heroText;
+    }
+  }
+
+  .finn-list, .doc-list, .map-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .finn-list {
+    margin-top: 18px;
+    border-top: 1px solid $border;
+
+    a {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 2px 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid $border;
+      text-decoration: none;
+
+      &:hover .finn-title { text-decoration: underline; text-underline-offset: 4px; }
+    }
+
+    .finn-title { font-size: 17px; color: $heroText; }
+    .finn-meta { grid-column: 1; font-size: 14px; color: $mutedText; }
+    .finn-go {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      align-self: center;
+      font-size: 14px;
+      color: $primaryColor;
+      &::after { content: ' ↗'; color: $sageDeep; }
+    }
+  }
+
+  .doc-list {
+    display: grid;
+    gap: 10px;
+
+    a {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 10px;
+      font-size: 17px;
+      text-decoration: underline;
+      text-decoration-color: $sage;
+      text-underline-offset: 4px;
+    }
+  }
+
+  .doc-kind {
+    padding: 1px 7px;
+    border: 1px solid $border;
+    font-size: 12px;
+    color: $mutedText;
+    text-decoration: none;
+  }
+
+  .map-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border: 1px solid $primaryColor;
+      font-size: 16px;
+      text-decoration: none;
+      transition: background 0.2s ease, color 0.2s ease;
+
+      &::after { content: ' ↗'; margin-left: 6px; }
+      &:hover { background: $primaryColor; color: $white; }
     }
   }
 }
@@ -1317,6 +1512,12 @@ html.dialog-open {
     .picker-detail {
       overflow-y: auto;
     }
+  }
+}
+
+@media (min-width: 700px) {
+  .plot-picker .field-info {
+    grid-template-columns: 1fr 1fr;
   }
 }
 

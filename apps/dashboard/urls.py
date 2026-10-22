@@ -18,6 +18,8 @@ urlpatterns = [
     path('tomter/<int:pk>/hurtig/', views.dashboard_plot_quick, name='dashboard_plot_quick'),
     path('tomter/<int:pk>/slett/', views.dashboard_plot_delete, name='dashboard_plot_delete'),
 
+    path('feltinfo/', views.dashboard_field, name='dashboard_field'),
+
     path('nyheter/', views.dashboard_blog, name='dashboard_blog'),
     path('nyheter/ny/', views.dashboard_blog_create, name='dashboard_blog_create'),
     path('nyheter/<int:pk>/rediger/', views.dashboard_blog_edit, name='dashboard_blog_edit'),

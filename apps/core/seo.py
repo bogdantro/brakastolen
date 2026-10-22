@@ -26,6 +26,9 @@ BUSINESS = {
     # Daily manager and chair of the board (brreg.no). Founder is not listed publicly.
     'manager': 'Haakon Bernhard Edland',
     'manager_title': 'Daglig leder',
+    # The person buyers talk to (the client's own wording, 22.10.2026)
+    'contact_name': 'Haakon B. Edland',
+    'contact_title': 'Tomteselger',
     'founding_date': '2020-06-09',
     'founding_year': '2020',
     'employees': None,  # not registered in brreg.no
@@ -41,10 +44,14 @@ BUSINESS = {
     'place_postal_code': '2960',
     'place_city': 'Røn',
     'municipality': 'Vestre Slidre',
-    # Vaset centre (OpenStreetMap); Brakastølen lies just by it
-    'latitude': 60.9955,
-    'longitude': 8.9879,
-    'maps_url': 'https://www.google.com/maps/search/?api=1&query=Brakast%C3%B8len%2C+Vaset',
+    # The middle of the plots, from the site plan laid over Kartverket's map (22.10.2026).
+    # The old value (60.9955, 8.9879) was Vaset centre, about 3 km away.
+    'latitude': 61.0171,
+    'longitude': 8.9465,
+    'maps_url': 'https://www.google.com/maps/search/?api=1&query=61.0171%2C8.9465',
+    # Norgeskart (Kartverket) uses UTM zone 33 – the same point, converted with Kartverket's own service
+    'norgeskart_url': 'https://norgeskart.no/#!?project=norgeskart&layers=1002&zoom=14&lat=6779824&lon=173092'
+                      '&markerLat=6779824&markerLon=173092&p=searchOptionsPanel',
     'area_served': ['Vaset', 'Vestre Slidre', 'Valdres', 'Innlandet'],
     'services': [
         'Hyttetomter', 'Nøkkelferdige hytter', 'Hytteprosjekter', 'Tomteutvikling',
@@ -105,10 +112,6 @@ SUPPLIERS = [
      'Sentralt godkjent byggmester med over 20 års erfaring – spesialister på laft og stavlaft, fra grunnarbeid til nøkkelferdig.',
      'https://www.rhkvalitetsbygg.no', 'images/suppliers/rhkvalitetsbygg.jpg'),
 ]
-
-# What «+ omk.*» on the prices means. Shown under the plot picker's intro and wherever a
-# price has the asterisk. Fill in when the client has confirmed the wording – empty hides it.
-PRICE_FOOTNOTE = ''
 
 FAQ = [
     {
@@ -209,6 +212,7 @@ def business_schema():
         'employee': {'@type': 'Person', 'name': b['manager'], 'jobTitle': b['manager_title']},
         'contactPoint': {
             '@type': 'ContactPoint',
+            'name': f"{b['contact_name']}, {b['contact_title'].lower()}",
             'telephone': b['phone'],
             'email': b['email'],
             'contactType': 'sales',

@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 from django import forms
 
 from apps.blog.models import Blog
-from apps.core.models import Plot, PlotCategory
+from apps.core.models import CostItem, FieldDocument, FinnAd, Plot, PlotCategory
 from apps.core.richtext import sanitize_html
 from apps.core.text import format_number
 
@@ -80,12 +80,7 @@ class PlotForm(forms.ModelForm):
         self.fields['map_rotation'].required = False
 
     def clean_finn_url(self):
-        """Only finn.no links – a typo'd or foreign link would send buyers somewhere else."""
-        url = self.cleaned_data.get('finn_url', '')
-        host = urlparse(url).hostname or ''
-        if url and host != 'finn.no' and not host.endswith('.finn.no'):
-            raise forms.ValidationError('Lim inn lenken til annonsen på finn.no, f.eks. https://www.finn.no/…')
-        return url
+        return validate_finn_link(self.cleaned_data.get('finn_url', ''))
 
     def clean_map_rotation(self):
         """Empty -> the default angle, so a plot can always be saved without touching the map."""
@@ -137,6 +132,95 @@ class PlotCategoryForm(forms.ModelForm):
         fields = ['name']
         widgets = {'name': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Byggetrinn 3'})}
         error_messages = {'name': {'unique': 'Det finnes allerede en kategori med dette navnet.'}}
+
+
+def validate_finn_link(url):
+    """Only finn.no links – a typo'd or foreign link would send buyers somewhere else."""
+    host = urlparse(url).hostname or ''
+    if url and host != 'finn.no' and not host.endswith('.finn.no'):
+        raise forms.ValidationError('Lim inn lenken til annonsen på finn.no, f.eks. https://www.finn.no/…')
+    return url
+
+
+class CostItemForm(forms.ModelForm):
+    """One line in «Omkostninger»: either an amount in kr or a percentage of the plot price."""
+    amount = NokField(label='Beløp (kr)', required=False, min_value=0)
+
+    class Meta:
+        model = CostItem
+        fields = ['label', 'amount', 'percent']
+        widgets = {
+            'label': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Anleggsbidrag strøm'}),
+            'percent': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 2,5', 'step': '0.1', 'min': 0, 'max': 100}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['amount'].widget.attrs.update({'class': 'input', 'placeholder': 'F.eks. 45 000'})
+        # «2,5» is how the client writes it
+        self.fields['percent'].localize = True
+        self.fields['percent'].widget.is_localized = True
+        self.fields['percent'].widget.input_type = 'text'
+        self.fields['percent'].widget.attrs['inputmode'] = 'decimal'
+
+    def clean(self):
+        cleaned = super().clean()
+        amount, percent = cleaned.get('amount'), cleaned.get('percent')
+        if amount is None and percent is None:
+            raise forms.ValidationError('Fyll inn enten et beløp i kroner eller en prosent av tomteprisen.')
+        if amount is not None and percent is not None:
+            raise forms.ValidationError('Fyll inn bare ett av dem: et beløp i kroner, eller en prosent av tomteprisen.')
+        return cleaned
+
+
+class FinnAdForm(forms.ModelForm):
+    price = NokField(label='Pris (kr)', required=False, min_value=0)
+
+    class Meta:
+        model = FinnAd
+        fields = ['title', 'url', 'kind', 'price', 'is_active']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Ny Leve-hytte klar for innflytting'}),
+            'url': forms.URLInput(attrs={'class': 'input', 'placeholder': 'https://www.finn.no/…'}),
+            'kind': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Hytte til salgs, Brakastølvegen 116'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['price'].widget.attrs.update({'class': 'input', 'placeholder': 'F.eks. 5 350 000'})
+
+    def clean_url(self):
+        return validate_finn_link(self.cleaned_data.get('url', ''))
+
+
+MAX_DOCUMENT_MB = 15
+DOCUMENT_TYPES = ('.pdf', '.png', '.jpg', '.jpeg', '.webp')
+
+
+class FieldDocumentForm(forms.ModelForm):
+    class Meta:
+        model = FieldDocument
+        fields = ['title', 'file', 'is_published']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Reguleringsbestemmelser for Brakastølen'}),
+            'file': forms.ClearableFileInput(attrs={'accept': ','.join(DOCUMENT_TYPES)}),
+        }
+
+    def clean_file(self):
+        upload = self.cleaned_data.get('file')
+        if upload and hasattr(upload, 'size'):
+            if not upload.name.lower().endswith(DOCUMENT_TYPES):
+                raise forms.ValidationError('Last opp en PDF eller et bilde (PNG, JPG eller WebP).')
+            if upload.size > MAX_DOCUMENT_MB * 1024 * 1024:
+                raise forms.ValidationError(f'«{upload.name}» er større enn {MAX_DOCUMENT_MB} MB.')
+            if upload.name.lower().endswith('.pdf'):
+                upload.seek(0)
+                if upload.read(5) != b'%PDF-':  # the browser's file type is not proof
+                    raise forms.ValidationError(f'«{upload.name}» ser ikke ut som en PDF.')
+                upload.seek(0)
+            else:
+                forms.ImageField().clean(upload)
+        return upload
 
 
 class BlogForm(forms.ModelForm):

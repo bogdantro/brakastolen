@@ -19,8 +19,9 @@ from apps.blog.models import Blog
 
 from . import notify
 from .forms import InquiryForm
-from .models import Inquiry, Plot
+from .models import CostItem, FieldDocument, FinnAd, Inquiry, Plot
 from .seo import BUSINESS, FAQ, FEATURED_SUPPLIERS, PARTNERS, SUPPLIERS, site_url
+from .text import format_nok
 
 log = logging.getLogger(__name__)
 
@@ -69,6 +70,25 @@ def hero_images():
     ]
 
 
+def field_info():
+    """The facts under the plot map: what comes on top of the plot price, the zoning documents,
+    and every FINN ad – the client's own list plus the plots that have a Finn link."""
+    costs = list(CostItem.objects.all())
+    fixed = [c for c in costs if c.percent is None]
+    ads = [{'title': ad.title, 'kind': ad.kind, 'price': ad.price_display, 'url': ad.url}
+           for ad in FinnAd.objects.filter(is_active=True)]
+    for plot in Plot.objects.public().available().exclude(finn_url='').select_related('category'):
+        ads.append({'title': f'Hyttetomt {plot.number}', 'kind': ' – '.join(filter(None, ['Tomt', plot.group_name])),
+                    'price': plot.price_display, 'url': plot.finn_url})
+    return {
+        'fixed_costs': fixed,
+        'fixed_costs_total': format_nok(sum(c.amount or 0 for c in fixed)),
+        'percent_costs': [c for c in costs if c.percent is not None],
+        'documents': FieldDocument.objects.filter(is_published=True),
+        'finn_ads': ads,
+    }
+
+
 def plot_picker_context():
     """What core/plot-picker.html needs. Pages that include it must be @never_cache,
     because its viewing form carries a CSRF token."""
@@ -76,6 +96,7 @@ def plot_picker_context():
     return {
         'picker_plots': [plot.as_picker_data() for plot in plots],
         'picker_form': InquiryForm(initial={'interest': 'viewing'}, auto_id='picker_%s'),
+        'field': field_info(),
     }
 
 

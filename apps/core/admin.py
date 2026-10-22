@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Inquiry, InquiryNote, Plot, PlotCategory
+from .models import CostItem, FieldDocument, FinnAd, Inquiry, InquiryNote, Plot, PlotCategory
 
 
 class InquiryNoteInline(admin.TabularInline):
@@ -27,3 +27,19 @@ class PlotAdmin(admin.ModelAdmin):
 @admin.register(PlotCategory)
 class PlotCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'order')
+
+
+@admin.register(CostItem)
+class CostItemAdmin(admin.ModelAdmin):
+    list_display = ('label', 'amount', 'percent', 'order')
+
+
+@admin.register(FinnAd)
+class FinnAdAdmin(admin.ModelAdmin):
+    list_display = ('title', 'kind', 'price', 'is_active', 'order')
+    list_filter = ('is_active',)
+
+
+@admin.register(FieldDocument)
+class FieldDocumentAdmin(admin.ModelAdmin):
+    list_display = ('title', 'file', 'is_published', 'order')

@@ -312,7 +312,15 @@ the plot table – the client should confirm current status per plot, then enter
     their own websites, photos taken from those sites (22.10.2026, originals in `originals/suppliers/`).
     Confirm the partners are happy for their photos to be used, and that Nordlyshytter and Familiehytta
     are still in FAUN Gruppen and part of Brakastølen.
-17. **What «+ omk.*» covers**: the asterisk is in place on every price; write the explanation in
-    `PRICE_FOOTNOTE` in `apps/core/seo.py` and it shows under «Finn din plass på fjellet».
-18. **Height, view and Finn link per plot**: the fields are in Dashboard → Tomter → a plot
-    («Beliggenhet og annonse»); the old site has no per-plot values, so they start empty.
+17. ~~**What «+ omk.*» covers**~~ – answered (22.10.2026): the client's cost table is under the plot map
+    («Omkostninger», editable in Dashboard → Feltinfo); every «omk.*» links to it.
+18. **Height, view and Finn link per plot** (Dashboard → Tomter → a plot, «Beliggenhet og annonse»).
+    Heights are pre-filled from Kartverket's terrain model at each plot's middle (rounded to 5 m,
+    shown as «ca.»); the plan is a simplified drawing, so ask the client to check them. View
+    direction and Finn links are empty until the client adds them.
+19. **General information text** for the plot section – the client sends it (said 22.10.2026).
+20. **Selected photos** – the client sends them later.
+21. **Zoning plan text (reguleringsbestemmelser)** – the zoning map from the old site is uploaded;
+    the client's attachments with the plan were not received. Upload them in Dashboard → Feltinfo.
+22. **Sun conditions**: «Se solforhold på tomten» opens suncalc.org at the plot's position (from the
+    plan laid over Kartverket's map, ±30–50 m) – the sun's path through the day, for any date.

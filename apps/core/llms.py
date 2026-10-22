@@ -12,7 +12,7 @@ from django.urls import resolve, reverse
 
 from apps.blog.models import Blog
 
-from .models import Plot
+from .models import CostItem, FinnAd, Plot
 from .seo import BUSINESS, FAQ, PARTNERS, site_url
 from .sitemaps import PUBLIC_PAGES
 
@@ -123,6 +123,7 @@ def fact_lines():
     return [
         f"- Utbygger og grunneier: {b['company']} (org.nr. {b['org_number_display']})",
         f"- {b['manager_title']}: {b['manager']}",
+        f"- {b['contact_title']}: {b['contact_name']}, telefon {b['phone_display']}",
         f"- Telefon: {b['phone_display']}",
         f"- E-post: {b['email']}",
         f"- Beliggenhet: {b['place_name']}, {b['municipality']} kommune, {b['region']}",
@@ -158,6 +159,20 @@ def build_llms_summary():
     available = Plot.objects.public().available().count()
     if available:
         lines += ['## Ledige tomter', f'- {available} ledige tomter akkurat nå: {url}{reverse("tomter")}', '']
+
+    costs = list(CostItem.objects.all())
+    if costs:
+        lines.append('## Omkostninger i tillegg til tomteprisen')
+        lines += [f'- {c.label}: {c.amount_display}' for c in costs]
+        lines.append('')
+
+    ads = FinnAd.objects.filter(is_active=True)
+    finn_plots = Plot.objects.public().available().exclude(finn_url='')
+    if ads or finn_plots:
+        lines.append('## Annonser på FINN')
+        lines += [f'- [{ad.title}]({ad.url})' for ad in ads]
+        lines += [f'- [Hyttetomt {plot.number}]({plot.finn_url})' for plot in finn_plots]
+        lines.append('')
 
     lines.append('## Samarbeidspartnere')
     lines += [f'- {role}: {name}' for role, name, _ in PARTNERS]

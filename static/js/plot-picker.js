@@ -242,6 +242,11 @@ document.addEventListener('DOMContentLoaded', function(){
         if (plot.area) parts.push(formatArea(plot.area));
         parts.push(plot.status === 'available' && plot.price ? formatPrice(plot.price) : plot.statusLabel);
         tooltip.appendChild(el('span', '', parts.join(' · ')));
+        // Height and view, when the client has filled them in (Dashboard → Tomter)
+        const place = [];
+        if (plot.altitude) place.push('ca. ' + numberFormat.format(plot.altitude) + ' moh.');
+        if (plot.view) place.push('Utsikt ' + plot.view.toLowerCase());
+        if (place.length) tooltip.appendChild(el('span', 'tooltip-place', place.join(' · ')));
         tooltip.hidden = false;
     }
 
@@ -295,7 +300,13 @@ document.addEventListener('DOMContentLoaded', function(){
             price.textContent = 'Solgt';
         } else if (plot.price) {
             price.textContent = formatPrice(plot.price);
-            price.appendChild(el('small', '', ' + omk.*'));
+            // The asterisk leads to the one place the costs are listed
+            const costs = el('small', '', ' + ');
+            const costsLink = el('a', '', 'omk.*');
+            costsLink.href = '#omkostninger';
+            costsLink.setAttribute('aria-label', 'pluss omkostninger – se oversikten');
+            costs.appendChild(costsLink);
+            price.appendChild(costs);
         } else {
             price.textContent = 'Ta kontakt for pris';
         }
@@ -305,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function(){
         const facts = el('dl', 'card-facts');
         [
             ['Størrelse', plot.area ? formatArea(plot.area) : ''],
-            ['Høyde over havet', plot.altitude ? numberFormat.format(plot.altitude) + ' moh.' : ''],
+            ['Høyde over havet', plot.altitude ? 'ca. ' + numberFormat.format(plot.altitude) + ' moh.' : ''],
             ['Utsikt', plot.view],
             ['Område', plot.group],
         ].forEach(function(row){
@@ -329,14 +340,18 @@ document.addEventListener('DOMContentLoaded', function(){
         }
         selectedCard.appendChild(action);
 
-        if (plot.finnUrl) {
-            const finn = el('a', 'card-finn', 'Se annonsen på Finn');
-            finn.href = plot.finnUrl;
-            finn.target = '_blank';
-            finn.rel = 'noopener';
-            finn.appendChild(el('span', 'visually-hidden', ' (åpnes i ny fane)'));
-            selectedCard.appendChild(finn);
-        }
+        // Links out: the plot's FINN ad, and the sun's path over the plot through the day
+        const links = el('div', 'card-links');
+        [[plot.finnUrl, 'Se annonsen på FINN'], [plot.sunUrl, 'Se solforhold på tomten']].forEach(function(link){
+            if (!link[0]) return;
+            const a = el('a', 'card-link', link[1]);
+            a.href = link[0];
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.appendChild(el('span', 'visually-hidden', ' (åpnes i ny fane)'));
+            links.appendChild(a);
+        });
+        if (links.children.length) selectedCard.appendChild(links);
     }
 
     function choose(id, fromMap){
@@ -521,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function(){
         const rows = [];
         if (plot.group) rows.push(['Område', plot.group]);
         if (plot.area) rows.push(['Størrelse', formatArea(plot.area)]);
-        if (plot.altitude) rows.push(['Høyde', numberFormat.format(plot.altitude) + ' moh.']);
+        if (plot.altitude) rows.push(['Høyde', 'ca. ' + numberFormat.format(plot.altitude) + ' moh.']);
         if (plot.view) rows.push(['Utsikt', plot.view]);
         rows.push(['Pris', plot.price ? formatPrice(plot.price) + ' + omk.*' : 'Ta kontakt']);
         rows.forEach(function(row){

@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .plot-picker {
   background: #E7DFCE;
   scroll-margin-top: 64px;
@@ -34,6 +35,25 @@
   font-family: "Newsreader", Georgia, serif;
   font-size: 16px;
   color: #5C5956;
+}
+.plot-picker .picker-intro .picker-from small a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: #90AE8C;
+  text-underline-offset: 3px;
+}
+.plot-picker .price-footnote {
+  margin-top: 12px;
+  font-size: 15px;
+}
+.plot-picker .price-footnote a {
+  color: #5C5956;
+  text-decoration: underline;
+  text-decoration-color: #90AE8C;
+  text-underline-offset: 4px;
+}
+.plot-picker .price-footnote a:hover {
+  color: #002223;
 }
 .plot-picker .picker-filters {
   display: grid;
@@ -470,6 +490,11 @@
   font-size: 17px;
   color: #0D1716;
 }
+.plot-picker .map-tooltip .tooltip-place {
+  display: block;
+  margin-top: 3px;
+  color: #5E7D5A;
+}
 .plot-picker .picker-detail {
   display: flex;
   flex-direction: column;
@@ -574,14 +599,173 @@
   color: #5C5956;
   cursor: not-allowed;
 }
-.plot-picker .selected-card .card-finn {
-  display: inline-block;
-  margin-top: 16px;
+.plot-picker .selected-card .card-price small a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: #90AE8C;
+  text-underline-offset: 3px;
+}
+.plot-picker .selected-card .card-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 18px;
+}
+.plot-picker .selected-card .card-link {
   font-size: 15px;
   color: #002223;
   text-decoration: underline;
   text-decoration-color: #90AE8C;
   text-underline-offset: 4px;
+}
+.plot-picker .selected-card .card-link::after {
+  content: " ↗";
+  color: #5E7D5A;
+}
+.plot-picker .field-info {
+  display: grid;
+  gap: 18px;
+  margin-top: 18px;
+}
+.plot-picker .info-block {
+  padding: 26px 26px 28px;
+  background: #FBF8F1;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  scroll-margin-top: 90px;
+}
+.plot-picker .info-block h3 {
+  margin: 0;
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 28px;
+  color: #0D1716;
+}
+.plot-picker .info-block h3 span {
+  color: #5E7D5A;
+}
+.plot-picker .info-block a {
+  color: #002223;
+}
+.plot-picker .info-lead {
+  margin: 6px 0 18px;
+  color: #5C5956;
+  font-size: 16px;
+}
+.plot-picker .cost-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.plot-picker .cost-table th, .plot-picker .cost-table td {
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(20, 22, 22, 0.16);
+  font-weight: 400;
+  text-align: left;
+  vertical-align: baseline;
+}
+.plot-picker .cost-table td {
+  text-align: right;
+  white-space: nowrap;
+  padding-left: 16px;
+}
+.plot-picker .cost-table tr:not(.cost-total):not(.cost-extra) th {
+  padding-left: 16px;
+  color: #5C5956;
+}
+.plot-picker .cost-table .cost-total th, .plot-picker .cost-table .cost-total td {
+  font-weight: 600;
+  color: #0D1716;
+  border-bottom-color: #0D1716;
+}
+.plot-picker .cost-table .cost-extra th, .plot-picker .cost-table .cost-extra td {
+  padding-top: 14px;
+  border-bottom: 0;
+  color: #0D1716;
+}
+.plot-picker .finn-list, .plot-picker .doc-list, .plot-picker .map-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.plot-picker .finn-list {
+  margin-top: 18px;
+  border-top: 1px solid rgba(20, 22, 22, 0.16);
+}
+.plot-picker .finn-list a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(20, 22, 22, 0.16);
+  text-decoration: none;
+}
+.plot-picker .finn-list a:hover .finn-title {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.plot-picker .finn-list .finn-title {
+  font-size: 17px;
+  color: #0D1716;
+}
+.plot-picker .finn-list .finn-meta {
+  grid-column: 1;
+  font-size: 14px;
+  color: #5C5956;
+}
+.plot-picker .finn-list .finn-go {
+  grid-column: 2;
+  grid-row: 1/span 2;
+  align-self: center;
+  font-size: 14px;
+  color: #002223;
+}
+.plot-picker .finn-list .finn-go::after {
+  content: " ↗";
+  color: #5E7D5A;
+}
+.plot-picker .doc-list {
+  display: grid;
+  gap: 10px;
+}
+.plot-picker .doc-list a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 17px;
+  text-decoration: underline;
+  text-decoration-color: #90AE8C;
+  text-underline-offset: 4px;
+}
+.plot-picker .doc-kind {
+  padding: 1px 7px;
+  border: 1px solid rgba(20, 22, 22, 0.16);
+  font-size: 12px;
+  color: #5C5956;
+  text-decoration: none;
+}
+.plot-picker .map-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.plot-picker .map-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #002223;
+  font-size: 16px;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.plot-picker .map-links a::after {
+  content: " ↗";
+  margin-left: 6px;
+}
+.plot-picker .map-links a:hover {
+  background: #002223;
+  color: #F6F3E9;
 }
 
 @keyframes card-in {
@@ -1150,6 +1334,11 @@ html.dialog-open {
   }
   .plot-picker .picker-detail {
     overflow-y: auto;
+  }
+}
+@media (min-width: 700px) {
+  .plot-picker .field-info {
+    grid-template-columns: 1fr 1fr;
   }
 }
 @media (prefers-reduced-motion: reduce) {

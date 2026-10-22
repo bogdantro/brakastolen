@@ -13,6 +13,7 @@
 
     <div class="footer-contact">
       <h2>Kontakt utbygger</h2>
+      <p class="footer-person">{{ business.contact_title }} {{ business.contact_name }}</p>
       <p><a href="tel:{{ business.phone }}" class="big-link">{{ business.phone_display }}</a></p>
       <p><a href="mailto:{{ business.email }}" class="big-link">{{ business.email }}</a></p>
       <p class="company">{{ business.company }}<br>{{ business.street }}, {{ business.postal_code }} {{ business.city }}<br>Org.nr. {{ business.org_number_display }}</p>
