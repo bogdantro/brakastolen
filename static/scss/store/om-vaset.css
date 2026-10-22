@@ -13,7 +13,8 @@
 }
 .quote-photo img {
   width: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 .quote-photo figcaption {
   background: #F1EBDF;
@@ -47,7 +48,8 @@
 .area-grid img {
   width: 100%;
   aspect-ratio: 4/3;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   background: #DDD2BD;
 }
 .area-grid h3 {
@@ -130,6 +132,4 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
   }
-}
-
-/*# sourceMappingURL=om-vaset.css.map */
+}/*# sourceMappingURL=om-vaset.css.map */
