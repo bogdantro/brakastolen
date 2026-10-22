@@ -85,6 +85,10 @@ sudo -u brakastolen .venv/bin/python manage.py createsuperuser     # tick "staff
 sudo -u brakastolen .venv/bin/python manage.py check --deploy      # only "SECURE_HSTS_PRELOAD" may remain
 ```
 
+`collectstatic` copies `static/` into `staticfiles/` with a content hash in every file name, so
+browsers can cache CSS, JS and images for a year. The site also works without it (files are then
+served straight from `static/`, and the log says which ones once), but run it after every update.
+
 `seed_site` runs `seed_plots`, `seed_field_info` and `seed_blog`. Each only adds what is missing,
 so running it again never overwrites what the client has changed in the dashboard.
 

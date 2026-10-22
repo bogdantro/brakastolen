@@ -619,6 +619,15 @@ class SeedSiteTests(MediaTestCase):
         self.assertEqual(Blog.objects.count(), 6)
 
 
+class StaticFilesTests(TestCase):
+    def test_missing_collectstatic_never_crashes_a_page(self):
+        """The live server once answered every page with a 500: «Missing staticfiles manifest entry
+        for 'images/og/og-default.jpg'» – collectstatic had not been run."""
+        from .storage import ForgivingManifestStorage
+        storage = ForgivingManifestStorage(location=tempfile.mkdtemp())
+        self.assertEqual(storage.url('images/og/og-default.jpg'), '/static/images/og/og-default.jpg')
+
+
 class GeoTests(TestCase):
     def test_plan_point_becomes_coordinates_at_brakastolen(self):
         from .geo import plan_to_latlon
