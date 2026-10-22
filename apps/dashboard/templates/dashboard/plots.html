@@ -105,6 +105,13 @@
               <th scope="row" class="col-plot">
                 <a href="{% url 'dashboard_plot_edit' plot.pk %}" class="plot-number" title="Åpne tomt {{ plot.number }}">{{ plot.number }}</a>
                 {% if plot.note %}<small class="plot-note">{{ plot.note }}</small>{% endif %}
+                {% if plot.altitude or plot.view_direction or plot.finn_url %}
+                <small class="plot-note plot-facts">
+                  {% if plot.altitude %}<span>{{ plot.altitude }} moh.</span>{% endif %}
+                  {% if plot.view_direction %}<span>Utsikt {{ plot.view_direction|lower }}</span>{% endif %}
+                  {% if plot.finn_url %}<a href="{{ plot.finn_url }}" target="_blank" rel="noopener">Finn<span class="visually-hidden">-annonsen for tomt {{ plot.number }} (åpnes i ny fane)</span></a>{% endif %}
+                </small>
+                {% endif %}
               </th>
               <td>
                 <select name="category" form="row-{{ plot.pk }}" class="input cell-input" aria-label="Kategori for tomt {{ plot.number }}" data-quick>

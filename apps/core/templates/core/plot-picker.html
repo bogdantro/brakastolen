@@ -14,8 +14,9 @@
         <h2 id="picker-title">Finn din plass på fjellet</h2>
         <span class="copper-rule" aria-hidden="true"></span>
         <p>Utforsk tomtene på Brakastølen. Filtrer etter pris og størrelse, velg en tomt i kartet, og avtal visning.</p>
+        {% if price_footnote %}<p class="price-footnote"><span aria-hidden="true">*</span> {{ price_footnote }}</p>{% endif %}
       </div>
-      <p class="picker-from"><span>Hyttetomter fra</span> {{ business.price_from_display }} <small>+ omk.</small></p>
+      <p class="picker-from"><span>Hyttetomter fra</span> {{ business.price_from_display }} <small>+ omk.*</small></p>
     </div>
 
     <form class="picker-filters" role="search" aria-label="Filtrer tomter" data-picker-filters>
@@ -72,7 +73,6 @@
 
       <div class="picker-map" aria-label="Kart over tomtene">
         <div class="map-toolbar">
-          <p class="map-name"><strong>Brakastølen</strong> Trykk på en tomt for detaljer</p>
           <div class="map-tools">
             <button type="button" class="icon-btn" data-zoom="in" aria-label="Zoom inn"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h14M12 5v14" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></button>
             <button type="button" class="icon-btn" data-zoom="out" aria-label="Zoom ut"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h14" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></button>
@@ -90,8 +90,12 @@
         </ul>
         <p class="map-note">Forenklet tomtekart. <a href="{% static 'images/misc/tomtekart-2022-02-01.png' %}" target="_blank" rel="noopener">Se tomtekartet</a></p>
         <div class="map-tooltip" data-tooltip hidden></div>
-        <div class="selected-card" data-selected-card hidden></div>
       </div>
+
+      <aside class="picker-detail" aria-label="Valgt tomt" aria-live="polite">
+        <p class="detail-empty">Velg en tomt i kartet eller i listen for å se detaljene og avtale visning.</p>
+        <div class="selected-card" data-selected-card hidden></div>
+      </aside>
     </div>
   </div>
 

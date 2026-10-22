@@ -117,9 +117,12 @@ class Plot(models.Model):
     status = models.CharField('Status', max_length=20, choices=STATUS_CHOICES, default='available')
     area_m2 = models.PositiveIntegerField('Tomteareal (m²)', null=True, blank=True)
     price = models.PositiveIntegerField('Pris (kr)', null=True, blank=True)
-    altitude = models.PositiveSmallIntegerField('Høyde (moh.)', null=True, blank=True)
+    altitude = models.PositiveSmallIntegerField('Høyde over havet (moh.)', null=True, blank=True)
+    view_direction = models.CharField('Utsikt', max_length=80, blank=True,
+                                      help_text='Hvilken vei tomten har utsikt, f.eks. «Sørvest mot Jotunheimen».')
+    finn_url = models.URLField('Finn-annonse', blank=True, help_text='Lenke til annonsen for tomten på finn.no.')
     note = models.CharField('Merknad', max_length=200, blank=True)
-    # Where the plot sits in the plot picker's map (units of its 960 × 760 drawing).
+    # Where the plot sits in the plot picker's map (units of its 720 × 1000 drawing).
     # Set by clicking on the map in the dashboard; plots without a position are only listed.
     map_x = models.FloatField('Plassering i kartet (x)', null=True, blank=True)
     map_y = models.FloatField('Plassering i kartet (y)', null=True, blank=True)
@@ -171,6 +174,8 @@ class Plot(models.Model):
             'area': self.area_m2,
             'price': self.price,
             'altitude': self.altitude,
+            'view': self.view_direction,
+            'finnUrl': self.finn_url,
             'note': self.note,
             'x': self.map_x,
             'y': self.map_y,

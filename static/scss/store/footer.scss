@@ -20,6 +20,7 @@
     margin-bottom: 18px;
   }
 
+  // The Tranberg deer shield with the name and place under it
   .footer-logo {
     display: inline-flex;
     flex-direction: column;
@@ -27,7 +28,8 @@
     margin-bottom: 24px;
 
     img {
-      width: 72px;
+      width: 62px;
+      height: auto;
       margin-bottom: 12px;
     }
 
@@ -81,61 +83,6 @@
     }
   }
 
-  // The Tranberg group: logo, name and what each company does
-  .footer-group {
-    border-top: 1px solid $borderOnDark;
-
-    h2 a {
-      color: $sage;
-      text-decoration: underline;
-      text-decoration-color: rgba(144, 174, 140, 0.5);
-      text-underline-offset: 4px;
-    }
-
-    ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-    }
-
-    li a {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      color: $white;
-      transition: opacity 0.25s ease;
-
-      &:hover {
-        opacity: 0.8;
-      }
-    }
-
-    img {
-      height: 84px;
-      width: auto;
-      flex-shrink: 0;
-    }
-
-    .group-text {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-
-      strong {
-        font-family: $fontDisplay;
-        font-weight: 400;
-        font-size: 21px;
-        line-height: 1.15;
-      }
-
-      span {
-        font-size: 14px;
-        line-height: 1.45;
-        color: rgba(246, 243, 233, 0.7);
-      }
-    }
-  }
 
   .footer-bottom {
     display: flex;
@@ -175,13 +122,6 @@
       padding-bottom: 28px;
     }
 
-    .footer-group {
-      padding-top: 36px;
-      padding-bottom: 40px;
-
-      ul { gap: 24px; }
-      img { height: 70px; }
-    }
   }
 }
 
@@ -200,15 +140,6 @@
       padding-bottom: 30px;
     }
 
-    .footer-group {
-      padding-top: u(56);
-      padding-bottom: u(60);
-
-      ul {
-        grid-template-columns: repeat(3, 1fr);
-        gap: u(48);
-      }
-    }
   }
 }
 
@@ -224,15 +155,5 @@
 
     .footer-links { grid-column: 1 / -1; }
     .footer-links ul { columns: 4; }
-
-    .footer-group ul {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    .footer-group li a {
-      flex-direction: column;
-      align-items: flex-start;
-    }
   }
 }

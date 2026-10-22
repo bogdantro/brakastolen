@@ -49,7 +49,7 @@
     <span class="copper-rule" aria-hidden="true"></span>
     <p class="label">Tomter fra</p>
     <p class="price">{{ business.price_from_display }}</p>
-    <p class="costs">+ omk.</p>
+    <p class="costs">+ omk.*</p>
   </aside>
 
   <div class="side-text">
@@ -112,29 +112,38 @@
       <h2 id="suppliers-title">Våre hytteleverandører</h2>
       <a href="{% url 'hytter' %}" class="text-link">Les om hyttene</a>
     </div>
+    <p class="suppliers-lead">På tomtene i Brakastølen kan du velge blant flere norske kvalitetsleverandører av hytter – eller bygge med egne tegninger sammen med en lokal byggmester.</p>
+
     <ul class="supplier-cards">
+      {% for name, tagline, text, url, photo, anchor in featured_suppliers %}
       <li class="supplier-card">
-        <a href="{% url 'hytter' %}#tinde" class="supplier-photo" tabindex="-1" aria-hidden="true">
-          <img src="{% static 'images/projects/tinde-vaset-3939.jpg' %}" alt="" loading="lazy">
+        <a href="{% url 'hytter' %}#{{ anchor }}" class="supplier-photo" tabindex="-1" aria-hidden="true">
+          <img src="{% static photo %}" alt="" loading="lazy">
         </a>
         <p class="supplier-kicker">Hytteleverandør</p>
-        <h3><a href="{% url 'hytter' %}#tinde">Tinde Hytter</a></h3>
-        <p class="tagline">Stedet for dine beste stunder</p>
-        <p>Serier av kvalitetshytter, alle med hver sine særtrekk – bygget spesielt for deg og dine.</p>
-        <a href="https://www.tindehytter.no" class="text-link" target="_blank" rel="noopener">tindehytter.no<span class="visually-hidden"> (åpnes i ny fane)</span></a>
+        <h3><a href="{% url 'hytter' %}#{{ anchor }}">{{ name }}</a></h3>
+        <p class="tagline">{{ tagline }}</p>
+        <p>{{ text }}</p>
+        <a href="{{ url }}" class="text-link" target="_blank" rel="noopener">{{ url|cut:'https://'|cut:'www.' }}<span class="visually-hidden"> (åpnes i ny fane)</span></a>
       </li>
-      <li class="supplier-card">
-        <a href="{% url 'hytter' %}#leve" class="supplier-photo" tabindex="-1" aria-hidden="true">
-          <img src="{% static 'images/projects/leve-hytter-vy-overblikk.jpg' %}" alt="" loading="lazy">
-        </a>
-        <p class="supplier-kicker">Hytteleverandør</p>
-        <h3><a href="{% url 'hytter' %}#leve">Leve Hytter</a></h3>
-        <p class="tagline">Tidløst design og solid håndverk</p>
-        <p>Hytteserien Vy er tegnet sammen med en av Norges fremste arkitekter, i flere grunnmodeller og størrelser.</p>
-        <a href="https://www.levehytter.no" class="text-link" target="_blank" rel="noopener">levehytter.no<span class="visually-hidden"> (åpnes i ny fane)</span></a>
-      </li>
+      {% endfor %}
     </ul>
-    <p class="supplier-more">Også med på Brakastølen: Telemarkhytter, Øverbygg, Nordlyshytter og Familiehytta i FAUN Gruppen, og Slidre Bygg &amp; Prosjektering. <a href="{% url 'hytter' %}#partnere" class="text-link">Alle samarbeidspartnere</a></p>
+
+    <h3 class="suppliers-more-title">Også med på Brakastølen</h3>
+    <ul class="supplier-grid">
+      {% for name, kind, text, url, photo in suppliers %}
+      <li>
+        <a href="{{ url }}" class="supplier-tile" target="_blank" rel="noopener">
+          <span class="tile-photo"><img src="{% static photo %}" alt="" loading="lazy" width="600" height="400"></span>
+          <span class="tile-kicker">{{ kind }}</span>
+          <span class="tile-name">{{ name }}</span>
+          <span class="tile-text">{{ text }}</span>
+          <span class="tile-link">{{ url|cut:'https://'|cut:'www.' }}<span class="visually-hidden"> (åpnes i ny fane)</span></span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+    <p class="supplier-more"><a href="{% url 'hytter' %}#partnere" class="text-link">Alle samarbeidspartnere – fra tomt og grunnmur til finansiering</a></p>
   </div>
 </section>
 

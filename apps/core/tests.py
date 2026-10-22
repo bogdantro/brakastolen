@@ -519,6 +519,13 @@ class PlotPickerTests(MediaTestCase):
         self.assertEqual(data[0]['group'], 'Byggetrinn 1')
         self.assertEqual(data[0]['shape'], 'M190 290 L210 290 L210 310 Z')
 
+    def test_picker_has_height_view_and_finn_link(self):
+        Plot.objects.create(number='12', altitude=980, view_direction='Sørvest mot Jotunheimen',
+                            finn_url='https://www.finn.no/realestate/plots/ad.html?finnkode=1')
+        data = self.picker_data()[0]
+        self.assertEqual((data['altitude'], data['view']), (980, 'Sørvest mot Jotunheimen'))
+        self.assertEqual(data['finnUrl'], 'https://www.finn.no/realestate/plots/ad.html?finnkode=1')
+
     def test_plot_without_position_is_still_listed(self):
         Plot.objects.create(number='5')
         self.assertIsNone(self.picker_data()[0]['x'])
@@ -567,6 +574,62 @@ class PlotPickerTests(MediaTestCase):
         with mock.patch('apps.core.notify.close_old_connections'):
             notify.send_now(inquiry.pk)
         self.assertIn('Tomt: Tomt 21', mail.outbox[0].body)
+
+
+class HomepageContentTests(MediaTestCase):
+    def test_every_supplier_has_a_card_with_photo_and_link(self):
+        from .seo import FEATURED_SUPPLIERS, SUPPLIERS
+        html = self.client.get('/').content.decode()
+        for name, _, _, url, photo, *_ in FEATURED_SUPPLIERS + SUPPLIERS:
+            with self.subTest(supplier=name):
+                self.assertIn(name.replace('&', '&amp;'), html)
+                self.assertIn(f'href="{url}"', html)
+                self.assertIn(photo, html)
+        self.assertIn('https://www.rhkvalitetsbygg.no', html)
+
+    def test_footer_has_no_tranberg_group_and_the_logo_is_the_deer(self):
+        html = self.client.get('/').content.decode()
+        self.assertNotIn('Tranberg-gruppen', html)
+        self.assertIn('images/logo/tranberg-hjort-hvit', html)
+        self.assertIn('Vaset · Valdres', html)
+
+    def test_prices_carry_the_omk_star(self):
+        self.assertContains(self.client.get('/'), '+ omk.*')
+
+    def test_price_footnote_shows_only_when_written(self):
+        self.assertNotContains(self.client.get('/'), 'class="price-footnote"')
+        with mock.patch('apps.core.context_processors.PRICE_FOOTNOTE', 'Omkostninger er dokumentavgift og tinglysing.'):
+            self.assertContains(self.client.get('/'), 'Omkostninger er dokumentavgift og tinglysing.')
+
+
+class PortraitMapTests(TestCase):
+    """The map stands like the old website's (east up). Old positions are moved by migration 0007."""
+
+    def migration(self):
+        import importlib
+        return importlib.import_module('apps.core.migrations.0007_portrait_plot_map')
+
+    def test_old_position_moves_to_the_same_spot_on_the_standing_map(self):
+        x, y = self.migration().old_to_new(524.2, 79.0)  # plot 11 on the old turned map
+        self.assertAlmostEqual(x, 51.4, delta=0.2)
+        self.assertAlmostEqual(y, 410.7, delta=0.2)
+
+    def test_transform_can_be_undone(self):
+        m = self.migration()
+        x, y = m.new_to_old(*m.old_to_new(300.0, 200.0))
+        self.assertAlmostEqual(x, 300.0, places=3)
+        self.assertAlmostEqual(y, 200.0, places=3)
+
+    def test_outlines_move_point_by_point(self):
+        moved = self.migration().move_shape('M524.2 79.0 L530 80 Z', self.migration().old_to_new)
+        self.assertTrue(moved.startswith('M51.4 410.7 L'))
+        self.assertTrue(moved.endswith(' Z'))
+
+    def test_seed_data_lies_inside_the_standing_map(self):
+        call_command('seed_plots', stdout=io.StringIO())
+        for plot in Plot.objects.all():
+            with self.subTest(plot=plot.number):
+                self.assertTrue(0 < plot.map_x < 720 and 0 < plot.map_y < 1000)
 
 
 class SeedPlotsTests(TestCase):

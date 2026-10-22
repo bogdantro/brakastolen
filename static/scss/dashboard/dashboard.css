@@ -382,6 +382,15 @@ fieldset.panel {
   margin-bottom: 16px;
 }
 
+.panel > h2 + .panel-note {
+  margin: -8px 0 18px;
+}
+
+.field-link {
+  margin: -6px 0 0;
+  font-size: 15px;
+}
+
 details.panel summary {
   cursor: pointer;
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
@@ -826,13 +835,13 @@ input[type=file] {
   transition: flex-grow 0.3s ease;
 }
 .share-bar .share-available {
-  background: #90AE8C;
+  background: #6E9268;
 }
 .share-bar .share-reserved {
   background: #C9A45C;
 }
 .share-bar .share-sold {
-  background: #8C4045;
+  background: #DDB8B2;
 }
 
 .sales-map-frame {
@@ -845,6 +854,7 @@ input[type=file] {
   display: block;
   width: 100%;
   height: auto;
+  max-height: 680px;
 }
 
 .sales-map .parcel {
@@ -867,10 +877,10 @@ input[type=file] {
   fill: #fff;
 }
 .sales-map .parcel.status-available path {
-  fill: #90AE8C;
+  fill: #6E9268;
 }
 .sales-map .parcel.status-available text {
-  fill: #002223;
+  fill: #fff;
 }
 .sales-map .parcel.status-reserved path {
   fill: #C9A45C;
@@ -879,6 +889,9 @@ input[type=file] {
   fill: #3E2C0B;
 }
 .sales-map .parcel.status-sold path {
+  fill: #DDB8B2;
+}
+.sales-map .parcel.status-sold text {
   fill: #8C4045;
 }
 .sales-map .parcel:hover path, .sales-map .parcel:focus-visible path, .sales-map .parcel.is-hover path {
@@ -925,13 +938,13 @@ input[type=file] {
   height: 14px;
 }
 .map-key .swatch.status-available {
-  background: #90AE8C;
+  background: #6E9268;
 }
 .map-key .swatch.status-reserved {
   background: #C9A45C;
 }
 .map-key .swatch.status-sold {
-  background: #8C4045;
+  background: #DDB8B2;
 }
 
 .map-facts {
@@ -1186,6 +1199,16 @@ input[type=file] {
   font-size: 13px;
   color: #5C5956;
   white-space: normal;
+}
+
+.plot-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  max-width: 200px;
+}
+.plot-facts a {
+  color: #002223;
 }
 
 .cell-input.input {

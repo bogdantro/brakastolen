@@ -19,6 +19,9 @@ $reservedBg: #F3E7CD;
 $reservedFill: #C9A45C;
 $sold: #8C4045;
 $soldBg: #F2E0DE;
+// On the map: free plots a darker green than the sage, sold plots a soft red (as on the website)
+$availableFill: #6E9268;
+$soldFill: #DDB8B2;
 $danger: #A23B2A;
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -305,6 +308,8 @@ fieldset.panel { padding-top: 22px; }
 .panel-head .panel-note { flex-basis: 100%; }
 .panel-legend { float: left; width: 100%; padding: 0; margin-bottom: 6px; font-family: $fontDisplay; font-size: 23px; color: $heroText; }
 .panel-legend + .panel-note { clear: both; margin-bottom: 16px; }
+.panel > h2 + .panel-note { margin: -8px 0 18px; }
+.field-link { margin: -6px 0 0; font-size: 15px; }
 
 details.panel {
   summary {
@@ -566,9 +571,9 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
   background: $paper;
 
   span { flex-basis: 0; transition: flex-grow 0.3s ease; }
-  .share-available { background: $sage; }
+  .share-available { background: $availableFill; }
   .share-reserved { background: $reservedFill; }
-  .share-sold { background: $sold; }
+  .share-sold { background: $soldFill; }
 }
 
 // ------------------------------------------------------------
@@ -580,7 +585,8 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
   background: #E7E2D2;
   overflow: hidden;
 
-  svg { display: block; width: 100%; height: auto; }
+  // The plan stands (720 × 1000); in a wide panel it is capped and centred instead of growing tall
+  svg { display: block; width: 100%; height: auto; max-height: 680px; }
 }
 
 .sales-map .parcel {
@@ -598,11 +604,12 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
     fill: #fff;
   }
 
-  &.status-available path { fill: $sage; }
-  &.status-available text { fill: $primaryColor; }
+  &.status-available path { fill: $availableFill; }
+  &.status-available text { fill: #fff; }
   &.status-reserved path { fill: $reservedFill; }
   &.status-reserved text { fill: #3E2C0B; }
-  &.status-sold path { fill: $sold; }
+  &.status-sold path { fill: $soldFill; }
+  &.status-sold text { fill: $sold; }
 
   &:hover path, &:focus-visible path, &.is-hover path { stroke: $primaryColor; stroke-width: 3; }
 }
@@ -634,9 +641,9 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
 
   li { display: inline-flex; align-items: center; gap: 8px; }
   .swatch { width: 14px; height: 14px; }
-  .swatch.status-available { background: $sage; }
+  .swatch.status-available { background: $availableFill; }
   .swatch.status-reserved { background: $reservedFill; }
-  .swatch.status-sold { background: $sold; }
+  .swatch.status-sold { background: $soldFill; }
 }
 
 .map-facts {
@@ -813,6 +820,14 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
 }
 
 .plot-note { display: block; max-width: 180px; margin-top: 3px; font-size: 13px; color: $mutedText; white-space: normal; }
+.plot-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  max-width: 200px;
+
+  a { color: $primaryColor; }
+}
 
 // Inputs that sit quietly in the table until they are used
 .cell-input.input {

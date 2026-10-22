@@ -19,7 +19,7 @@ class InquiryAdmin(admin.ModelAdmin):
 
 @admin.register(Plot)
 class PlotAdmin(admin.ModelAdmin):
-    list_display = ('number', 'category', 'status', 'area_m2', 'price', 'altitude')
+    list_display = ('number', 'category', 'status', 'area_m2', 'price', 'altitude', 'view_direction')
     list_filter = ('status', 'category')
     search_fields = ('number', 'note')
 

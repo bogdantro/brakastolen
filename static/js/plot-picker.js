@@ -276,7 +276,10 @@ document.addEventListener('DOMContentLoaded', function(){
         selectedCard.hidden = false;
 
         const top = el('div', 'card-top');
-        top.appendChild(el('strong', '', plotLabel(plot)));
+        const heading = el('div');
+        heading.appendChild(el('strong', '', plotLabel(plot)));
+        heading.appendChild(el('span', 'status status-' + plot.status, plot.statusLabel));
+        top.appendChild(heading);
         const close = el('button', 'card-close', '×');
         close.type = 'button';
         close.setAttribute('aria-label', 'Lukk detaljene');
@@ -287,23 +290,33 @@ document.addEventListener('DOMContentLoaded', function(){
         top.appendChild(close);
         selectedCard.appendChild(top);
 
-        const facts = [plot.statusLabel];
-        if (plot.area) facts.push(formatArea(plot.area));
-        if (plot.altitude) facts.push(plot.altitude + ' moh.');
-        if (plot.group) facts.push(plot.group);
-        selectedCard.appendChild(el('p', 'card-meta', facts.join(' · ')));
-        if (plot.note) selectedCard.appendChild(el('p', 'card-note', plot.note));
-
         const price = el('p', 'card-price');
         if (plot.status === 'sold') {
             price.textContent = 'Solgt';
         } else if (plot.price) {
             price.textContent = formatPrice(plot.price);
-            price.appendChild(el('small', '', ' + omk.'));
+            price.appendChild(el('small', '', ' + omk.*'));
         } else {
             price.textContent = 'Ta kontakt for pris';
         }
         selectedCard.appendChild(price);
+
+        // The facts the client fills in for each plot (Dashboard → Tomter)
+        const facts = el('dl', 'card-facts');
+        [
+            ['Størrelse', plot.area ? formatArea(plot.area) : ''],
+            ['Høyde over havet', plot.altitude ? numberFormat.format(plot.altitude) + ' moh.' : ''],
+            ['Utsikt', plot.view],
+            ['Område', plot.group],
+        ].forEach(function(row){
+            if (!row[1]) return;
+            const item = el('div');
+            item.appendChild(el('dt', '', row[0]));
+            item.appendChild(el('dd', '', row[1]));
+            facts.appendChild(item);
+        });
+        if (facts.children.length) selectedCard.appendChild(facts);
+        if (plot.note) selectedCard.appendChild(el('p', 'card-note', plot.note));
 
         const action = el('button', 'button');
         action.type = 'button';
@@ -315,6 +328,15 @@ document.addEventListener('DOMContentLoaded', function(){
             action.disabled = true;
         }
         selectedCard.appendChild(action);
+
+        if (plot.finnUrl) {
+            const finn = el('a', 'card-finn', 'Se annonsen på Finn');
+            finn.href = plot.finnUrl;
+            finn.target = '_blank';
+            finn.rel = 'noopener';
+            finn.appendChild(el('span', 'visually-hidden', ' (åpnes i ny fane)'));
+            selectedCard.appendChild(finn);
+        }
     }
 
     function choose(id, fromMap){
@@ -347,9 +369,9 @@ document.addEventListener('DOMContentLoaded', function(){
         svg.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + zoom + ')';
     }
 
-    // Below desktop width the wide drawing would shrink to fit, so the map frames
-    // the area where the plots are instead – the plots come out much larger
-    const FULL_VIEW = [0, 0, 960, 760];
+    // The whole drawing, as the map's SVG declares it (720 × 1000, standing). Below desktop
+    // width the map frames the area where the plots are instead, so they come out larger.
+    const FULL_VIEW = svg.getAttribute('viewBox').split(' ').map(Number);
     const NARROW_SCREEN = 1140;
     const FRAME_PADDING = 55;
 
@@ -469,8 +491,8 @@ document.addEventListener('DOMContentLoaded', function(){
             MINI_MAP_SIZE[0], MINI_MAP_SIZE[1]].join(' '));
         const image = document.createElementNS(SVG_NS, 'image');
         image.setAttribute('href', planImage.getAttribute('href'));
-        image.setAttribute('width', '960');
-        image.setAttribute('height', '760');
+        image.setAttribute('width', planImage.getAttribute('width'));
+        image.setAttribute('height', planImage.getAttribute('height'));
         mini.appendChild(image);
         // The other plots, faintly, so the chosen one is seen among its neighbours
         plots.forEach(function(other){
@@ -499,8 +521,9 @@ document.addEventListener('DOMContentLoaded', function(){
         const rows = [];
         if (plot.group) rows.push(['Område', plot.group]);
         if (plot.area) rows.push(['Størrelse', formatArea(plot.area)]);
-        if (plot.altitude) rows.push(['Høyde', plot.altitude + ' moh.']);
-        rows.push(['Pris', plot.price ? formatPrice(plot.price) + ' + omk.' : 'Ta kontakt']);
+        if (plot.altitude) rows.push(['Høyde', numberFormat.format(plot.altitude) + ' moh.']);
+        if (plot.view) rows.push(['Utsikt', plot.view]);
+        rows.push(['Pris', plot.price ? formatPrice(plot.price) + ' + omk.*' : 'Ta kontakt']);
         rows.forEach(function(row){
             const item = el('div');
             item.appendChild(el('dt', '', row[0]));

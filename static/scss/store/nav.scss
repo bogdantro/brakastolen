@@ -117,7 +117,8 @@
       z-index: 2;
 
       img {
-        width: 52px;
+        width: 40px;
+        height: auto;
       }
     }
 
@@ -235,7 +236,8 @@
       gap: u(22);
 
       img {
-        width: max(46px, u(78));
+        width: max(44px, u(58));
+        height: auto;
       }
     }
 
@@ -329,7 +331,7 @@
       background: $primaryColor;
       box-shadow: 0 10px 30px rgba(0, 20, 20, 0.18);
 
-      .logo img { width: max(38px, u(54)); }
+      .logo img { width: max(36px, u(44)); }
       .logo-name { font-size: max(18px, u(25)); }
       .logo-place { display: none; }
 

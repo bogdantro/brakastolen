@@ -307,3 +307,12 @@ the plot table – the client should confirm current status per plot, then enter
     the template uses "61,0° N · 9,0° Ø".
 14. Typo in the design reference: "Mer ennet sted." → used **"Mer enn et sted."**
 15. Analytics: does the client want Google Analytics? (Off until `GA_MEASUREMENT_ID` is set.)
+16. **Supplier photos and texts on the homepage** («Våre hytteleverandører»): Telemarkhytter, Øverbygg,
+    Nordlyshytter, Familiehytta, Slidre Bygg & Prosjektering and RH Kvalitetsbygg – texts written from
+    their own websites, photos taken from those sites (22.10.2026, originals in `originals/suppliers/`).
+    Confirm the partners are happy for their photos to be used, and that Nordlyshytter and Familiehytta
+    are still in FAUN Gruppen and part of Brakastølen.
+17. **What «+ omk.*» covers**: the asterisk is in place on every price; write the explanation in
+    `PRICE_FOOTNOTE` in `apps/core/seo.py` and it shows under «Finn din plass på fjellet».
+18. **Height, view and Finn link per plot**: the fields are in Dashboard → Tomter → a plot
+    («Beliggenhet og annonse»); the old site has no per-plot values, so they start empty.

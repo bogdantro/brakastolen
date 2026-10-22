@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     // ------------------------------------------------------------
     // Plot placement – click in the map to set where the plot sits in the
-    // plot picker (map_x / map_y in the 960 × 760 drawing). A plot with its real
+    // plot picker (map_x / map_y in the 720 × 1000 drawing). A plot with its real
     // outline from the site plan keeps it until it is moved by hand.
     // ------------------------------------------------------------
     const placer = document.querySelector('[data-plot-placer]');

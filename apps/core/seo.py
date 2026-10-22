@@ -60,28 +60,55 @@ BUSINESS = {
     'same_as': [],
 }
 
-# The Tranberg group (tranberg-gruppen.no, read 20.10.2026; org. numbers from brreg.no).
-# Shown in the footer. (name, org. number, what it does, link, logo in static/)
-GROUP = [
-    ('Tranberg Holding AS', '883 074 602', 'Finans, eiendomsforvaltning, eiendomsutvikling og gårdsdrift',
-     'https://tranberg-gruppen.no/', 'images/logo/tranberg/tranberg-holding.png'),
-    ('Tranberg Gård AS', '915 651 143', 'Hestefor, utleie av næringslokaler og konsulenttjenester',
-     'https://tranberg-gruppen.no/tranberg-gard-as/', 'images/logo/tranberg/tranberg-gard.png'),
-    ('Tranberg Utvikling AS', '925 233 498', 'Utvikling av hytteområder – Brakastølen',
-     'https://tranberg-gruppen.no/tranberg-utvikling-a-s/', 'images/logo/logo-brakastolen-hvit.png'),
-]
-
 # Partners named on the old website ("Våre samarbeidspartnere på Brakastølen")
 PARTNERS = [
     ('Hytteleverandør', 'Tinde Hytter', 'https://www.tindehytter.no'),
     ('Hytteleverandør', 'FAUN Gruppen: Leve Hytter, Telemarkhytter, Øverbygg, Nordlyshytter, Familiehytta', 'https://www.levehytter.no'),
-    ('Hytteleverandør', 'Slidre Bygg & Prosjektering', ''),
+    ('Hytteleverandør', 'Slidre Bygg & Prosjektering', 'https://www.slidre-bygg.no'),
+    ('Byggmester', 'RH Kvalitetsbygg AS', 'https://www.rhkvalitetsbygg.no'),
     ('Opparbeidelse av tomt og grunnmur', 'VA Entreprenør AS', ''),
     ('Planlegging av hytte på tomt', 'Plan og Oppmåling Valdres AS', ''),
     ('Finansiering', 'SpareBank 1 Hallingdal Valdres', ''),
     ('Oppgjørsmegler', 'EIE Fjellmegleren Fagernes', ''),
     ('Byggesak', 'Vestre Slidre kommune', ''),
 ]
+
+# The cabin suppliers and builders shown as cards on the homepage («Våre hytteleverandører»).
+# Texts written from each company's own website (read 22.10.2026); photos from those sites are
+# in static/images/suppliers/. Tinde and Leve get a large card (FEATURED_SUPPLIERS: their section
+# on the Hytter page is the last field); the rest a smaller one. (name, what they are, text, link, photo)
+FEATURED_SUPPLIERS = [
+    ('Tinde Hytter', 'Stedet for dine beste stunder',
+     'Serier av kvalitetshytter, alle med hver sine særtrekk – bygget spesielt for deg og dine.',
+     'https://www.tindehytter.no', 'images/projects/tinde-vaset-3939.jpg', 'tinde'),
+    ('Leve Hytter', 'Tidløst design og solid håndverk',
+     'Hytteserien Vy er tegnet sammen med en av Norges fremste arkitekter, i flere grunnmodeller og størrelser.',
+     'https://www.levehytter.no', 'images/projects/leve-hytter-vy-overblikk.jpg', 'leve'),
+]
+SUPPLIERS = [
+    ('Telemarkhytter', 'Hytteleverandør i FAUN Gruppen',
+     'Nøkkelferdige hytter på ett plan, med hems eller oppstue – tilpasset dine behov, med rådgivere fra første møte.',
+     'https://telemarkhytter.no', 'images/suppliers/telemarkhytter.jpg'),
+    ('Øverbygg', 'Hytteleverandør i FAUN Gruppen',
+     'Skreddersydde tømmerhytter i ekte norsk laft fra Snåsa – over 1400 hytter og boliger levert gjennom mer enn 35 år.',
+     'https://overbygg.no', 'images/suppliers/overbygg.jpg'),
+    ('Nordlyshytter', 'Hytteleverandør i FAUN Gruppen',
+     'Mye lys og luft og store vindusflater. Leveres som byggesett, elektroklare eller nøkkelferdige hytter.',
+     'https://nordlyshytter.no', 'images/suppliers/nordlyshytter.jpg'),
+    ('Familiehytta', 'Hytteleverandør i FAUN Gruppen',
+     'Over 5000 leverte hytter, på ett plan eller med hems – en trygg prosess fra første møte til nøkkel i døra.',
+     'https://familiehytta.no', 'images/suppliers/familiehytta.jpg'),
+    ('Slidre Bygg & Prosjektering', 'Totalentreprenør i Vestre Slidre',
+     'Lokalt forankret totalentreprenør med 18 ansatte og lang erfaring med arkitekttegnede prosjekter.',
+     'https://www.slidre-bygg.no', 'images/suppliers/slidrebygg.jpg'),
+    ('RH Kvalitetsbygg', 'Byggmester på Lillehammer',
+     'Sentralt godkjent byggmester med over 20 års erfaring – spesialister på laft og stavlaft, fra grunnarbeid til nøkkelferdig.',
+     'https://www.rhkvalitetsbygg.no', 'images/suppliers/rhkvalitetsbygg.jpg'),
+]
+
+# What «+ omk.*» on the prices means. Shown under the plot picker's intro and wherever a
+# price has the asterisk. Fill in when the client has confirmed the wording – empty hides it.
+PRICE_FOOTNOTE = ''
 
 FAQ = [
     {

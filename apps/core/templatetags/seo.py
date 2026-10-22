@@ -90,6 +90,16 @@ def schema_home():
     return render_jsonld(seo.graph(page, business, catalog, seo.faq_schema()))
 
 
+def plot_facts(plot):
+    """Height and view as schema.org PropertyValues, for the plots that have them."""
+    facts = []
+    if plot.altitude:
+        facts.append({'@type': 'PropertyValue', 'name': 'Høyde over havet', 'value': plot.altitude, 'unitText': 'moh.'})
+    if plot.view_direction:
+        facts.append({'@type': 'PropertyValue', 'name': 'Utsikt', 'value': plot.view_direction})
+    return facts
+
+
 @register.simple_tag
 def schema_plots(plots):
     """Tomter page: each plot for sale as an Offer, plus the FAQ and breadcrumbs."""
@@ -109,7 +119,9 @@ def schema_plots(plots):
                 'name': f'Hyttetomt {plot.number}',
                 'containedInPlace': {'@id': seo.place_id()},
                 **({'floorSize': {'@type': 'QuantitativeValue', 'value': plot.area_m2, 'unitCode': 'MTK'}} if plot.area_m2 else {}),
+                **({'additionalProperty': facts} if (facts := plot_facts(plot)) else {}),
             },
+            **({'url': plot.finn_url} if plot.finn_url else {}),
         })
     page = webpage('CollectionPage', reverse('tomter'), 'Hyttetomter på Brakastølen')
     nodes = [page, seo.breadcrumb_schema([('Tomter', reverse('tomter'))]), seo.faq_schema()]

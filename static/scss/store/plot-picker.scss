@@ -5,8 +5,15 @@
 $panel: #FBF8F1;
 $reserved: #C9A65E;
 $reservedText: #7E5F22;
-$soldFill: #D6CFBF;
+// Free plots a step darker than the site's sage, so they stand out on the light plan;
+// sold plots a soft, quiet red – there, but not competing with what is for sale
+$availableFill: #6E9268;
+$availableHover: #557550;
+$soldFill: #DDB8B2;
+$soldText: #8C4045;
 $mapGround: #E6E3D3;
+// The plan is drawn 720 × 1000 (standing, east up – as on the old website's map)
+$mapRatio: #{720 / 1000};
 
 .plot-picker {
   background: $card;
@@ -296,7 +303,7 @@ $mapGround: #E6E3D3;
 
     &.status-available { color: $sageDeep; }
     &.status-reserved { color: $reservedText; }
-    &.status-sold { color: $mutedText; }
+    &.status-sold { color: $soldText; }
   }
 
   .lot-meta {
@@ -365,22 +372,6 @@ $mapGround: #E6E3D3;
     pointer-events: none;
   }
 
-  .map-name {
-    background: $panel;
-    border: 1px solid $border;
-    padding: 10px 14px;
-    font-size: 13px;
-    color: $mutedText;
-
-    strong {
-      display: block;
-      font-family: $fontDisplay;
-      font-weight: 400;
-      font-size: 19px;
-      color: $heroText;
-    }
-  }
-
   .map-tools {
     display: flex;
     gap: 6px;
@@ -406,8 +397,8 @@ $mapGround: #E6E3D3;
 
   .map-viewport {
     position: relative;
-    flex: 1;
-    min-height: 0;
+    flex: none;
+    aspect-ratio: #{$mapRatio};
     overflow: hidden;
     cursor: grab;
     touch-action: pan-y;
@@ -449,13 +440,13 @@ $mapGround: #E6E3D3;
       pointer-events: none;
     }
 
-    &.status-available .parcel { fill: $sage; }
+    &.status-available .parcel { fill: $availableFill; }
+    &.status-available .parcel-number { fill: #fff; }
     &.status-available:hover .parcel,
-    &.status-available:focus-visible .parcel { fill: $sageDeep; }
-    &.status-available:hover .parcel-number { fill: #fff; }
+    &.status-available:focus-visible .parcel { fill: $availableHover; }
     &.status-reserved .parcel { fill: $reserved; }
     &.status-sold .parcel { fill: $soldFill; }
-    &.status-sold .parcel-number { fill: #8C8577; }
+    &.status-sold .parcel-number { fill: $soldText; }
 
     &:focus-visible .parcel {
       stroke: $primaryColor;
@@ -474,6 +465,11 @@ $mapGround: #E6E3D3;
 
     &.is-filtered {
       opacity: 0.2;
+    }
+
+    // «Bare ledige tomter» is on by default; sold plots still show as quietly sold, not grey
+    &.status-sold.is-filtered {
+      opacity: 0.85;
     }
   }
 
@@ -502,7 +498,7 @@ $mapGround: #E6E3D3;
     .dot {
       width: 12px;
       height: 12px;
-      &.available { background: $sage; }
+      &.available { background: $availableFill; }
       &.reserved { background: $reserved; }
       &.sold { background: $soldFill; }
       &.selected { background: $primaryColor; }
@@ -542,56 +538,74 @@ $mapGround: #E6E3D3;
     }
   }
 
-  // The chosen plot's details, floating over the map
-  .selected-card {
-    position: absolute;
-    z-index: 5;
-    background: $background;
+  // ------------------------------------------------------------
+  // The chosen plot – its own column beside the standing map
+  // ------------------------------------------------------------
+  .picker-detail {
+    display: flex;
+    flex-direction: column;
+    background: $panel;
     border: 1px solid $border;
-    box-shadow: 0 18px 50px rgba(0, 34, 35, 0.22);
-    padding: 20px 22px 22px;
+    min-height: 0;
+  }
+
+  .detail-empty {
+    margin: 0;
+    padding: 28px 24px;
+    color: $mutedText;
+  }
+
+  // Only one of the two shows: the hint, or the chosen plot
+  .picker-detail:has(.selected-card:not([hidden])) .detail-empty {
+    display: none;
+  }
+
+  .selected-card {
+    padding: 24px 24px 26px;
     animation: card-in 0.2s ease-out;
 
     .card-top {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
+      gap: 12px;
 
       strong {
+        display: block;
         font-family: $fontDisplay;
         font-weight: 400;
-        font-size: 28px;
+        font-size: 34px;
+        line-height: 1.05;
         color: $heroText;
+      }
+
+      .status {
+        display: inline-block;
+        margin-top: 6px;
       }
     }
 
     .card-close {
-      width: 32px;
-      height: 32px;
+      flex: none;
+      width: 34px;
+      height: 34px;
       background: none;
       border: 1px solid $border;
       font-size: 20px;
       line-height: 1;
       color: $mutedText;
       cursor: pointer;
-    }
 
-    .card-meta {
-      margin-top: 6px;
-      font-size: 14px;
-      color: $mutedText;
-    }
-
-    .card-note {
-      margin-top: 6px;
-      font-size: 14px;
-      color: $sageDeep;
+      &:hover {
+        background: #fff;
+        color: $primaryColor;
+      }
     }
 
     .card-price {
-      margin-top: 14px;
+      margin: 18px 0 0;
       font-family: $fontDisplay;
-      font-size: 32px;
+      font-size: 34px;
       line-height: 1;
       color: $primaryColor;
 
@@ -599,19 +613,64 @@ $mapGround: #E6E3D3;
         font-family: $fontBody;
         font-size: 15px;
         color: $mutedText;
+        white-space: nowrap;
       }
+    }
+
+    .card-facts {
+      display: grid;
+      gap: 0;
+      margin: 20px 0 0;
+      border-top: 1px solid $border;
+
+      div {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 16px;
+        padding: 10px 0;
+        border-bottom: 1px solid $border;
+      }
+
+      dt {
+        font-size: 14px;
+        color: $mutedText;
+      }
+
+      dd {
+        margin: 0;
+        text-align: right;
+        font-size: 16px;
+        color: $heroText;
+      }
+    }
+
+    .card-note {
+      margin: 14px 0 0;
+      font-size: 15px;
+      color: $sageDeep;
     }
 
     .button {
       width: 100%;
       justify-content: center;
-      margin-top: 18px;
+      margin-top: 22px;
 
       &:disabled {
-        background: $soldFill;
+        background: #E2DCCD;
         color: $mutedText;
         cursor: not-allowed;
       }
+    }
+
+    .card-finn {
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 15px;
+      color: $primaryColor;
+      text-decoration: underline;
+      text-decoration-color: $sage;
+      text-underline-offset: 4px;
     }
   }
 }
@@ -683,13 +742,13 @@ html.dialog-open {
     }
 
     .mini-other {
-      fill: $sage;
+      fill: $availableFill;
       stroke: #FBF8F1;
       stroke-width: 1.2;
       opacity: 0.55;
     }
 
-    .mini-other.status-sold { fill: #8C4045; opacity: 0.35; }
+    .mini-other.status-sold { fill: $soldFill; opacity: 0.8; }
     .mini-other.status-reserved { fill: #C9A45C; }
 
     .mini-chosen {
@@ -1140,6 +1199,10 @@ html.dialog-open {
       margin-bottom: 28px;
     }
 
+    .price-footnote {
+      font-size: 14px;
+    }
+
     .picker-intro .picker-from {
       text-align: left;
     }
@@ -1159,44 +1222,41 @@ html.dialog-open {
       gap: 14px;
     }
 
-    // The map runs edge to edge and gets most of the screen's height;
-    // the chosen plot's card sits below it, so it never covers the plots
+    // The map runs edge to edge, standing; the chosen plot comes right under it, then the list
     .picker-map {
-      order: -1;
+      order: -2;
       margin: 0 -20px;
       border-left: 0;
       border-right: 0;
     }
 
     .map-viewport {
-      flex: none;
-      height: 66vh;
-      height: 66svh;
-      min-height: 460px;
-      max-height: 700px;
+      max-height: 82svh;
+    }
+
+    .picker-detail {
+      order: -1;
+    }
+
+    .detail-empty {
+      display: none;
     }
 
     .picker-list {
       max-height: 520px;
     }
 
-    .map-name {
-      display: none;
-    }
 
     .map-note {
       display: none;
     }
 
     .selected-card {
-      position: static;
-      border-width: 1px 0 0;
-      box-shadow: none;
       padding: 18px 20px 22px;
 
-      .card-top strong { font-size: 24px; }
-      .card-price { font-size: 28px; margin-top: 10px; }
-      .button { margin-top: 14px; min-height: 50px; }
+      .card-top strong { font-size: 28px; }
+      .card-price { font-size: 30px; margin-top: 12px; }
+      .button { margin-top: 16px; min-height: 50px; }
     }
 
     // In the free top-left corner (the zoom buttons are top-right)
@@ -1235,16 +1295,27 @@ html.dialog-open {
       }
     }
 
+    // The map sets the height (its width × 1000/720); the list and the details fill the
+    // same height and scroll inside themselves instead of stretching the row
     .picker-grid {
-      grid-template-columns: minmax(330px, 380px) minmax(0, 1fr);
+      grid-template-columns: minmax(270px, 1fr) minmax(0, 600px) minmax(270px, 1fr);
+      align-items: stretch;
       gap: 18px;
-      height: max(600px, u(700));
     }
 
-    .selected-card {
-      right: 16px;
-      bottom: 62px;
-      width: 300px;
+    .picker-list,
+    .picker-detail {
+      height: 0;
+      min-height: 100%;
+    }
+
+    .cards {
+      flex: 1;
+      min-height: 0;
+    }
+
+    .picker-detail {
+      overflow-y: auto;
     }
   }
 }
@@ -1264,7 +1335,7 @@ html.dialog-open {
 // Tablet (700–1139 px)
 // ------------------------------------------------------------
 @media (min-width: 700px) and (max-width: 1139px) {
-  // List and map side by side; the chosen plot's card floats in the map's corner
+  // The chosen plot and the list on the left, the standing map on the right
   .plot-picker {
     padding: 96px 0;
 
@@ -1286,41 +1357,43 @@ html.dialog-open {
     }
 
     .picker-grid {
-      grid-template-columns: 290px minmax(0, 1fr);
-      height: 640px;
+      grid-template-columns: minmax(260px, 1fr) minmax(0, 1.35fr);
+      grid-template-areas:
+        'detail map'
+        'list map';
+      grid-template-rows: auto minmax(0, 1fr);
     }
 
     .picker-map {
+      grid-area: map;
       order: 0;
-      height: auto;
-    }
-
-    .picker-list {
-      max-height: none;
-    }
-
-    .map-name { display: block; }
-
-    .map-viewport {
-      flex: 1;
-      height: auto;
-      min-height: 0;
-      max-height: none;
-    }
-
-    .picker-map {
       margin: 0;
       border: 1px solid $border;
     }
 
-    .selected-card {
-      position: absolute;
-      left: auto;
-      right: 14px;
-      bottom: 60px;
-      width: 270px;
-      border-width: 1px;
-      box-shadow: 0 18px 50px rgba(0, 34, 35, 0.22);
+    .picker-detail {
+      grid-area: detail;
+    }
+
+    .detail-empty {
+      display: block;
+    }
+
+    .picker-list {
+      grid-area: list;
+      height: 0;
+      min-height: 100%;
+      max-height: none;
+    }
+
+    .cards {
+      flex: 1;
+      min-height: 0;
+    }
+
+
+    .map-viewport {
+      max-height: none;
     }
 
     .map-legend {

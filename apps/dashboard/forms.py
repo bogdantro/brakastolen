@@ -1,4 +1,5 @@
 import re
+from urllib.parse import urlparse
 
 from django import forms
 
@@ -50,14 +51,18 @@ class PlotForm(forms.ModelForm):
 
     class Meta:
         model = Plot
-        fields = ['number', 'category', 'status', 'area_m2', 'price', 'altitude', 'note',
+        fields = ['number', 'category', 'status', 'area_m2', 'price', 'altitude', 'view_direction', 'finn_url', 'note',
                   'map_x', 'map_y', 'map_rotation', 'map_shape']
         widgets = {
             'number': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. 67'}),
             'category': forms.Select(attrs={'class': 'input'}),
             'status': forms.RadioSelect,
             'area_m2': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 1400', 'min': 0}),
-            'altitude': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 980', 'min': 0}),
+            'altitude': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 980', 'min': 0, 'max': 2500}),
+            # The list of directions is offered by a <datalist>, but anything can be typed
+            'view_direction': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Sørvest mot Jotunheimen',
+                                                     'list': 'view-directions', 'autocomplete': 'off'}),
+            'finn_url': forms.URLInput(attrs={'class': 'input', 'placeholder': 'https://www.finn.no/realestate/plots/ad.html?finnkode=…'}),
             'note': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Rett ved langrennssporet'}),
             # Set by clicking on the map in the plot form (dashboard.js)
             'map_x': forms.HiddenInput,
@@ -73,6 +78,14 @@ class PlotForm(forms.ModelForm):
         self.fields['price'].help_text = 'Tomt uten pris vises som «Ta kontakt for pris».'
         self.fields['category'].empty_label = 'Uten kategori'
         self.fields['map_rotation'].required = False
+
+    def clean_finn_url(self):
+        """Only finn.no links – a typo'd or foreign link would send buyers somewhere else."""
+        url = self.cleaned_data.get('finn_url', '')
+        host = urlparse(url).hostname or ''
+        if url and host != 'finn.no' and not host.endswith('.finn.no'):
+            raise forms.ValidationError('Lim inn lenken til annonsen på finn.no, f.eks. https://www.finn.no/…')
+        return url
 
     def clean_map_rotation(self):
         """Empty -> the default angle, so a plot can always be saved without touching the map."""

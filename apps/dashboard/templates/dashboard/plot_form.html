@@ -41,10 +41,23 @@
           {% include 'dashboard/_field.html' with field=form.number %}
           {% include 'dashboard/_field.html' with field=form.category %}
         </div>
+        {% include 'dashboard/_field.html' with field=form.note %}
+      </section>
+
+      <section class="panel">
+        <h2>Beliggenhet og annonse</h2>
+        <p class="panel-note">Vises på tomten i tomtekartet på nettsiden.</p>
         <div class="field-row">
           {% include 'dashboard/_field.html' with field=form.altitude %}
-          {% include 'dashboard/_field.html' with field=form.note %}
+          {% include 'dashboard/_field.html' with field=form.view_direction %}
         </div>
+        <datalist id="view-directions">
+          <option value="Nord"><option value="Nordøst"><option value="Øst"><option value="Sørøst">
+          <option value="Sør"><option value="Sørvest"><option value="Vest"><option value="Nordvest">
+          <option value="Sørvest mot Jotunheimen"><option value="Vest mot Jotunheimen"><option value="180 grader utsikt">
+        </datalist>
+        {% include 'dashboard/_field.html' with field=form.finn_url %}
+        {% if plot.finn_url %}<p class="field-link"><a href="{{ plot.finn_url }}" target="_blank" rel="noopener" class="text-link">Åpne annonsen på Finn</a></p>{% endif %}
       </section>
 
       <div class="form-actions">

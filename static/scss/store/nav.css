@@ -91,7 +91,8 @@
     z-index: 2;
   }
   .nav .logo img {
-    width: 52px;
+    width: 40px;
+    height: auto;
   }
   .nav .logo-name {
     font-size: 21px;
@@ -195,7 +196,8 @@
     gap: calc(var(--u) * 22);
   }
   .nav .logo img {
-    width: max(46px, var(--u) * 78);
+    width: max(44px, var(--u) * 58);
+    height: auto;
   }
   .nav .logo-name {
     font-size: max(19px, var(--u) * 29);
@@ -265,7 +267,7 @@
     box-shadow: 0 10px 30px rgba(0, 20, 20, 0.18);
   }
   .site-header.is-sticky .nav .logo img {
-    width: max(38px, var(--u) * 54);
+    width: max(36px, var(--u) * 44);
   }
   .site-header.is-sticky .nav .logo-name {
     font-size: max(18px, var(--u) * 25);

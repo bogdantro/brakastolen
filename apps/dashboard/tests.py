@@ -229,6 +229,22 @@ class PlotTests(DashboardTestCase):
         self.client.post(reverse('dashboard_plot_delete', args=[plot.pk]))
         self.assertFalse(Plot.objects.exists())
 
+    def test_height_view_and_finn_link_are_saved_from_the_dashboard(self):
+        self.client.post(reverse('dashboard_plot_create'), {
+            'number': '68', 'status': 'available', 'altitude': '1010', 'view_direction': 'Sørvest',
+            'finn_url': 'https://www.finn.no/realestate/plots/ad.html?finnkode=123',
+        })
+        plot = Plot.objects.get(number='68')
+        self.assertEqual((plot.altitude, plot.view_direction), (1010, 'Sørvest'))
+        self.assertTrue(plot.finn_url.startswith('https://www.finn.no/'))
+        self.assertContains(self.client.get(reverse('dashboard_plots')), '1010 moh.')
+
+    def test_finn_link_must_go_to_finn(self):
+        response = self.client.post(reverse('dashboard_plot_create'), {
+            'number': '69', 'status': 'available', 'finn_url': 'https://finn.no.example.com/annonse'})
+        self.assertContains(response, 'Lim inn lenken til annonsen på finn.no')
+        self.assertFalse(Plot.objects.filter(number='69').exists())
+
     def test_price_can_be_typed_the_norwegian_way(self):
         self.client.post(reverse('dashboard_plot_create'), {'number': '67', 'status': 'available', 'price': '1 450 000'})
         self.assertEqual(Plot.objects.get(number='67').price, 1450000)

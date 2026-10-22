@@ -20,7 +20,7 @@ from apps.blog.models import Blog
 from . import notify
 from .forms import InquiryForm
 from .models import Inquiry, Plot
-from .seo import BUSINESS, FAQ, PARTNERS, site_url
+from .seo import BUSINESS, FAQ, FEATURED_SUPPLIERS, PARTNERS, SUPPLIERS, site_url
 
 log = logging.getLogger(__name__)
 
@@ -84,6 +84,8 @@ def hjemme(request):
     return render(request, 'core/index.html', {
         'hero_images': hero_images(),
         'latest_posts': Blog.objects.public()[:3],
+        'featured_suppliers': FEATURED_SUPPLIERS,
+        'suppliers': SUPPLIERS,
         'faq': FAQ,
         **plot_picker_context(),
     })
