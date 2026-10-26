@@ -1,5 +1,6 @@
-// Aktiviteter: intro with real numbers, one block per activity (photo with a cream fact
-// block stepping out of it, text with a short fact list), and "Bo midt i det".
+// Aktiviteter: intro with real numbers, one block per activity (photo with its key number
+// lying on it – no box behind the text, client 26.10.2026 – text with a short fact list),
+// and "Bo midt i det".
 @use '../global/variables' as *;
 
 .activity-stats {
@@ -11,15 +12,12 @@
 
   &:nth-of-type(odd) {
     background: $card;
-
-    .photo-fact {
-      background: $card;
-    }
   }
 
   .activity-photo {
     position: relative;
     margin: 0;
+    overflow: hidden;
 
     img {
       width: 100%;
@@ -29,14 +27,15 @@
     }
   }
 
-  // Key number stepping out of the photo's lower-left corner
+  // Key number on the photo's lower left, on a see-through dark wash
   .photo-fact {
     position: absolute;
     left: 0;
+    right: 0;
     bottom: 0;
-    background: $background;
-    padding: 18px 24px 0 0;
-    color: $mutedText;
+    padding: 90px 24px 22px;
+    background: linear-gradient(0deg, rgba(4, 14, 17, 0.72) 0%, rgba(4, 14, 17, 0.4) 55%, rgba(4, 14, 17, 0) 100%);
+    color: rgba($white, 0.85);
     font-size: 16px;
 
     strong {
@@ -45,7 +44,7 @@
       font-weight: 400;
       font-size: clamp(40px, 4vw, 68px);
       line-height: 1;
-      color: $primaryColor;
+      color: $white;
       letter-spacing: -0.02em;
     }
 
@@ -55,7 +54,7 @@
   }
 
   .season {
-    color: $sageDeep;
+    color: $accentDeep;
     font-weight: 500;
     margin-bottom: 8px;
   }
@@ -97,7 +96,7 @@
         top: 1.25em;
         width: 12px;
         height: 2px;
-        background: $sage;
+        background: $accent;
       }
     }
   }

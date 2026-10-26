@@ -22,7 +22,7 @@ img {
 }
 
 :focus-visible {
-  outline: 2px solid $sageDeep;
+  outline: 2px solid $accentDeep;
   outline-offset: 3px;
 }
 
@@ -85,7 +85,7 @@ img {
     margin-top: 8px;
     font-size: 13px;
     letter-spacing: 0.14em;
-    color: $sage;
+    color: $accent;
   }
 }
 
@@ -107,7 +107,7 @@ img {
     width: 48px;
     height: 2px;
     margin-bottom: 18px;
-    background: $sageDeep;
+    background: $accentDeep;
   }
 }
 
@@ -128,7 +128,7 @@ img {
 .login-kicker {
   margin: 0 0 10px;
   font-size: 15px;
-  color: $sageDeep;
+  color: $accentDeep;
 }
 
 h1 {
@@ -146,7 +146,7 @@ h1 {
   width: 56px;
   height: 2px;
   margin: 26px 0 30px;
-  background: $sageDeep;
+  background: $accentDeep;
 }
 
 .login-error {
@@ -176,7 +176,7 @@ h1 {
     font: inherit;
     font-size: 18px;
     color: $black;
-    background: #FBF8F1;
+    background: $surface;
     border: 1px solid $border;
     border-radius: 2px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -184,7 +184,7 @@ h1 {
     &:focus {
       outline: none;
       border-color: $primaryColor;
-      box-shadow: 0 0 0 3px rgba(144, 174, 140, 0.35);
+      box-shadow: 0 0 0 3px rgba($accent, 0.35);
     }
   }
 }
@@ -238,7 +238,7 @@ h1 {
   transition: background 0.25s ease;
 
   &:hover {
-    background: $sageDeep;
+    background: $accentDeep;
   }
 
   &.is-busy {
@@ -262,7 +262,7 @@ h1 {
   font-size: 16px;
   color: $primaryColor;
   text-decoration: underline;
-  text-decoration-color: $sage;
+  text-decoration-color: $accent;
   text-underline-offset: 5px;
 }
 

@@ -81,6 +81,25 @@ class InquiryNote(models.Model):
 # Plots (tomter)
 # ------------------------------------------------------------------
 
+# The street each plot lies on, by plot number – from the client (26.10.2026).
+# A new plot gets its street from here when it is saved; it can be changed in the dashboard.
+PLOT_STREETS = [
+    (11, 12, 'Brakastølvegen'),
+    (13, 28, 'Brakastøllie'),
+    (29, 37, 'Nye Øyevegen'),
+    (38, 63, 'Øyebakkin'),
+    (64, 66, 'Nye Øyevegen'),
+]
+
+
+def street_for_plot(number):
+    """'21' -> 'Brakastøllie'. A number outside the list, or not a number ('T10'), -> ''."""
+    if not str(number).strip().isdigit():
+        return ''
+    n = int(number)
+    return next((street for first, last, street in PLOT_STREETS if first <= n <= last), '')
+
+
 class PlotQuerySet(models.QuerySet):
     def public(self):
         """The plots visitors see – all of them, sold ones included, so the map stays complete."""
@@ -116,6 +135,8 @@ class Plot(models.Model):
         verbose_name='Kategori',
     )
     number = models.CharField('Tomtenummer', max_length=20)
+    street = models.CharField('Gateadresse', max_length=80, blank=True,
+                              help_text='Fylles ut av seg selv ut fra tomtenummeret hvis feltet står tomt.')
     status = models.CharField('Status', max_length=20, choices=STATUS_CHOICES, default='available')
     area_m2 = models.PositiveIntegerField('Tomteareal (m²)', null=True, blank=True)
     price = models.PositiveIntegerField('Pris (kr)', null=True, blank=True)
@@ -145,6 +166,11 @@ class Plot(models.Model):
 
     def __str__(self):
         return f'Tomt {self.number}'
+
+    def save(self, *args, **kwargs):
+        if not self.street:
+            self.street = street_for_plot(self.number)
+        super().save(*args, **kwargs)
 
     @property
     def group_name(self):
@@ -178,6 +204,7 @@ class Plot(models.Model):
             'id': self.pk,
             'number': self.number,
             'group': self.group_name,
+            'street': self.street,
             'status': self.status,
             'statusLabel': self.get_status_display(),
             'area': self.area_m2,

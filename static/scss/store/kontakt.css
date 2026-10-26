@@ -1,5 +1,5 @@
 .contact-section .form-column {
-  background: #E7DFCE;
+  background: #E6ECEF;
 }
 .contact-section .form-column .copper-rule {
   margin: 22px 0 30px;
@@ -12,11 +12,11 @@
   gap: 22px;
 }
 .contact-section .contact-info {
-  background: #002223;
-  color: rgba(246, 243, 233, 0.8);
+  border-top: 2px solid #002223;
+  color: #4B5A61;
 }
 .contact-section .contact-info h2 {
-  color: #F6F3E9;
+  color: #0B1619;
   font-size: clamp(28px, 2.2vw, 38px);
   margin-bottom: 28px;
 }
@@ -24,9 +24,9 @@
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
   font-size: clamp(26px, 2vw, 34px);
   line-height: 1.4;
-  color: #F6F3E9;
+  color: #002223;
   text-decoration: none;
-  border-bottom: 1px solid #90AE8C;
+  border-bottom: 1px solid #2C6278;
   word-break: break-word;
 }
 .contact-section .contact-info .small {
@@ -36,22 +36,22 @@
 .contact-section .contact-info .contact-person {
   margin-bottom: 20px;
   padding-bottom: 20px;
-  border-bottom: 1px solid rgba(246, 243, 233, 0.24);
+  border-bottom: 1px solid rgba(17, 26, 29, 0.16);
 }
 .contact-section .contact-info .person-role {
   margin: 0 0 4px;
   font-size: 15px;
-  color: #90AE8C;
+  color: #2C6278;
 }
 .contact-section .contact-info .person-name {
   margin: 0;
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
   font-size: clamp(24px, 1.9vw, 30px);
-  color: #F6F3E9;
+  color: #0B1619;
 }
 
 .faq-section {
-  border-top: 1px solid rgba(20, 22, 22, 0.16);
+  border-top: 1px solid rgba(17, 26, 29, 0.16);
 }
 
 @media (max-width: 1139px) {

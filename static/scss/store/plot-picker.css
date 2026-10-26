@@ -1,6 +1,6 @@
 @charset "UTF-8";
 .plot-picker {
-  background: #E7DFCE;
+  background: #E6ECEF;
   scroll-margin-top: 64px;
 }
 .plot-picker .picker-intro {
@@ -13,7 +13,7 @@
   margin: 24px 0 20px;
 }
 .plot-picker .picker-intro p {
-  color: #5C5956;
+  color: #4B5A61;
   max-width: 34em;
 }
 .plot-picker .picker-intro .picker-from {
@@ -21,7 +21,7 @@
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
   font-size: clamp(30px, 2.6vw, 44px);
   line-height: 1;
-  color: #0D1716;
+  color: #0B1619;
   white-space: nowrap;
 }
 .plot-picker .picker-intro .picker-from span {
@@ -29,17 +29,17 @@
   margin-bottom: 10px;
   font-family: "Newsreader", Georgia, serif;
   font-size: 15px;
-  color: #5E7D5A;
+  color: #2C6278;
 }
 .plot-picker .picker-intro .picker-from small {
   font-family: "Newsreader", Georgia, serif;
   font-size: 16px;
-  color: #5C5956;
+  color: #4B5A61;
 }
 .plot-picker .picker-intro .picker-from small a {
   color: inherit;
   text-decoration: underline;
-  text-decoration-color: #90AE8C;
+  text-decoration-color: #9CC3D0;
   text-underline-offset: 3px;
 }
 .plot-picker .price-footnote {
@@ -47,9 +47,9 @@
   font-size: 15px;
 }
 .plot-picker .price-footnote a {
-  color: #5C5956;
+  color: #4B5A61;
   text-decoration: underline;
-  text-decoration-color: #90AE8C;
+  text-decoration-color: #9CC3D0;
   text-underline-offset: 4px;
 }
 .plot-picker .price-footnote a:hover {
@@ -59,14 +59,14 @@
   display: grid;
   gap: 18px 22px;
   align-items: end;
-  background: #FBF8F1;
-  border: 1px solid rgba(20, 22, 22, 0.16);
+  background: #FBFCFD;
+  border: 1px solid rgba(17, 26, 29, 0.16);
 }
 .plot-picker .filter-label {
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: #5E7D5A;
+  color: #2C6278;
   margin-bottom: 8px;
 }
 .plot-picker .input {
@@ -75,15 +75,15 @@
   padding: 0 14px;
   font: inherit;
   font-size: 16px;
-  color: #141616;
+  color: #111A1D;
   background: #fff;
-  border: 1px solid rgba(20, 22, 22, 0.16);
+  border: 1px solid rgba(17, 26, 29, 0.16);
   border-radius: 2px;
 }
 .plot-picker .input:focus {
   outline: none;
   border-color: #002223;
-  box-shadow: 0 0 0 3px rgba(144, 174, 140, 0.35);
+  box-shadow: 0 0 0 3px rgba(156, 195, 208, 0.35);
 }
 .plot-picker select.input {
   appearance: none;
@@ -98,7 +98,7 @@
   justify-content: space-between;
   font-size: 15px;
   font-weight: 500;
-  color: #0D1716;
+  color: #0B1619;
   margin-bottom: 12px;
   font-variant-numeric: tabular-nums;
 }
@@ -116,7 +116,7 @@
   right: 0;
 }
 .plot-picker .dual-range .range-rail {
-  background: #DDD2BD;
+  background: #D3DDE2;
 }
 .plot-picker .dual-range .range-fill {
   background: #002223;
@@ -138,7 +138,7 @@
   height: 20px;
   border-radius: 50%;
   background: #002223;
-  border: 3px solid #FBF8F1;
+  border: 3px solid #FBFCFD;
   box-shadow: 0 0 0 1px #002223;
   cursor: ew-resize;
   pointer-events: auto;
@@ -148,13 +148,13 @@
   height: 14px;
   border-radius: 50%;
   background: #002223;
-  border: 3px solid #FBF8F1;
+  border: 3px solid #FBFCFD;
   box-shadow: 0 0 0 1px #002223;
   cursor: ew-resize;
   pointer-events: auto;
 }
 .plot-picker .dual-range input:focus-visible::-webkit-slider-thumb {
-  outline: 2px solid #90AE8C;
+  outline: 2px solid #9CC3D0;
   outline-offset: 2px;
 }
 .plot-picker .toggle {
@@ -164,7 +164,7 @@
   height: 46px;
   padding: 0 14px;
   background: #fff;
-  border: 1px solid rgba(20, 22, 22, 0.16);
+  border: 1px solid rgba(17, 26, 29, 0.16);
   font-size: 16px;
   white-space: nowrap;
   cursor: pointer;
@@ -183,7 +183,7 @@
   font-size: 15px;
   color: #002223;
   text-decoration: underline;
-  text-decoration-color: #90AE8C;
+  text-decoration-color: #9CC3D0;
   text-underline-offset: 5px;
   cursor: pointer;
 }
@@ -193,8 +193,8 @@
 .plot-picker .picker-list {
   display: flex;
   flex-direction: column;
-  background: #FBF8F1;
-  border: 1px solid rgba(20, 22, 22, 0.16);
+  background: #FBFCFD;
+  border: 1px solid rgba(17, 26, 29, 0.16);
   min-height: 0;
 }
 .plot-picker .list-head {
@@ -207,7 +207,7 @@
   font-size: 26px;
 }
 .plot-picker .count {
-  color: #5E7D5A;
+  color: #2C6278;
   font-size: 15px;
   font-weight: 500;
 }
@@ -217,26 +217,26 @@
   align-items: center;
   gap: 10px;
   padding: 10px 22px 16px;
-  border-bottom: 1px solid rgba(20, 22, 22, 0.16);
+  border-bottom: 1px solid rgba(17, 26, 29, 0.16);
   font-size: 14px;
-  color: #5C5956;
+  color: #4B5A61;
 }
 .plot-picker .cards {
   flex: 1;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: #DDD2BD transparent;
+  scrollbar-color: #D3DDE2 transparent;
 }
 .plot-picker .lot-card {
   position: relative;
-  border-bottom: 1px solid rgba(20, 22, 22, 0.16);
+  border-bottom: 1px solid rgba(17, 26, 29, 0.16);
   transition: background 0.2s ease;
 }
 .plot-picker .lot-card:hover {
   background: #fff;
 }
 .plot-picker .lot-card.is-selected {
-  background: #F1EBDF;
+  background: #F3F6F7;
   box-shadow: inset 3px 0 0 #002223;
 }
 .plot-picker .lot-pick {
@@ -258,26 +258,26 @@
 .plot-picker .lot-title {
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
   font-size: 22px;
-  color: #0D1716;
+  color: #0B1619;
 }
 .plot-picker .status {
   font-size: 13px;
   font-weight: 600;
 }
 .plot-picker .status.status-available {
-  color: #5E7D5A;
+  color: #2C6278;
 }
 .plot-picker .status.status-reserved {
-  color: #7E5F22;
+  color: #8F4A0C;
 }
 .plot-picker .status.status-sold {
-  color: #8C4045;
+  color: #8A2421;
 }
 .plot-picker .lot-meta {
   display: block;
   margin-top: 4px;
   font-size: 14px;
-  color: #5C5956;
+  color: #4B5A61;
 }
 .plot-picker .lot-price {
   display: block;
@@ -290,19 +290,19 @@
 .plot-picker .status-reserved .lot-price {
   font-family: "Newsreader", Georgia, serif;
   font-size: 16px;
-  color: #5C5956;
+  color: #4B5A61;
 }
 .plot-picker .empty {
   padding: 48px 22px;
   text-align: center;
-  color: #5C5956;
+  color: #4B5A61;
 }
 .plot-picker .empty strong {
   display: block;
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
   font-weight: 400;
   font-size: 22px;
-  color: #0D1716;
+  color: #0B1619;
   margin-bottom: 8px;
 }
 .plot-picker .empty .text-reset {
@@ -313,8 +313,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid rgba(20, 22, 22, 0.16);
-  background: #E6E3D3;
+  border: 1px solid rgba(17, 26, 29, 0.16);
+  background: #6C8A60;
 }
 .plot-picker .map-toolbar {
   position: absolute;
@@ -339,8 +339,8 @@
   place-items: center;
   width: 40px;
   height: 40px;
-  background: #FBF8F1;
-  border: 1px solid rgba(20, 22, 22, 0.16);
+  background: #FBFCFD;
+  border: 1px solid rgba(17, 26, 29, 0.16);
   border-radius: 2px;
   color: #002223;
   cursor: pointer;
@@ -353,8 +353,10 @@
   flex: none;
   aspect-ratio: 720/1000;
   overflow: hidden;
+}
+.plot-picker .map-viewport.is-zoomed {
   cursor: grab;
-  touch-action: pan-y;
+  touch-action: none;
 }
 .plot-picker .map-viewport.is-dragging {
   cursor: grabbing;
@@ -374,8 +376,8 @@
   outline: none;
 }
 .plot-picker .plot .parcel {
-  stroke: #FBF8F1;
-  stroke-width: 2.2;
+  stroke: #fff;
+  stroke-width: 2;
   stroke-linejoin: round;
   transition: fill 0.12s ease, opacity 0.12s ease;
 }
@@ -385,33 +387,30 @@
   font-weight: 600;
   text-anchor: middle;
   dominant-baseline: middle;
-  fill: #002223;
+  fill: #fff;
   pointer-events: none;
 }
 .plot-picker .plot.status-available .parcel {
-  fill: #6E9268;
-}
-.plot-picker .plot.status-available .parcel-number {
-  fill: #fff;
+  fill: #003C2A;
 }
 .plot-picker .plot.status-available:hover .parcel, .plot-picker .plot.status-available:focus-visible .parcel {
-  fill: #557550;
+  fill: #00291D;
 }
 .plot-picker .plot.status-reserved .parcel {
-  fill: #C9A65E;
+  fill: #D9771A;
 }
 .plot-picker .plot.status-sold .parcel {
-  fill: #DDB8B2;
+  fill: #B3302C;
 }
 .plot-picker .plot.status-sold .parcel-number {
-  fill: #8C4045;
+  fill: #fff;
 }
 .plot-picker .plot:focus-visible .parcel {
-  stroke: #002223;
+  stroke: #9CC3D0;
   stroke-width: 3;
 }
 .plot-picker .plot.is-selected .parcel {
-  fill: #002223;
+  fill: #001129;
   stroke: #fff;
   stroke-width: 3.5;
 }
@@ -419,10 +418,10 @@
   fill: #fff;
 }
 .plot-picker .plot.is-filtered {
-  opacity: 0.2;
+  opacity: 0.25;
 }
 .plot-picker .plot.status-sold.is-filtered {
-  opacity: 0.85;
+  opacity: 0.9;
 }
 .plot-picker .map-legend {
   position: absolute;
@@ -435,10 +434,10 @@
   margin: 0;
   padding: 10px 14px;
   list-style: none;
-  background: #FBF8F1;
-  border: 1px solid rgba(20, 22, 22, 0.16);
+  background: #FBFCFD;
+  border: 1px solid rgba(17, 26, 29, 0.16);
   font-size: 13px;
-  color: #5C5956;
+  color: #4B5A61;
 }
 .plot-picker .map-legend li {
   display: flex;
@@ -450,24 +449,28 @@
   height: 12px;
 }
 .plot-picker .map-legend .dot.available {
-  background: #6E9268;
+  background: #003C2A;
 }
 .plot-picker .map-legend .dot.reserved {
-  background: #C9A65E;
+  background: #D9771A;
 }
 .plot-picker .map-legend .dot.sold {
-  background: #DDB8B2;
+  background: #B3302C;
 }
 .plot-picker .map-legend .dot.selected {
-  background: #002223;
+  background: #001129;
 }
 .plot-picker .map-note {
   position: absolute;
   z-index: 3;
   right: 16px;
   bottom: 16px;
+  margin: 0;
+  padding: 6px 10px;
+  background: #FBFCFD;
+  border: 1px solid rgba(17, 26, 29, 0.16);
   font-size: 12px;
-  color: #5C5956;
+  color: #4B5A61;
 }
 .plot-picker .map-note a {
   color: #002223;
@@ -476,36 +479,36 @@
   position: absolute;
   z-index: 6;
   pointer-events: none;
-  background: #FBF8F1;
-  border: 1px solid rgba(20, 22, 22, 0.16);
+  background: #FBFCFD;
+  border: 1px solid rgba(17, 26, 29, 0.16);
   padding: 9px 12px;
   font-size: 13px;
-  color: #5C5956;
-  box-shadow: 0 8px 22px rgba(0, 34, 35, 0.16);
+  color: #4B5A61;
+  box-shadow: 0 8px 22px rgba(0, 24, 25, 0.18);
 }
 .plot-picker .map-tooltip strong {
   display: block;
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
   font-weight: 400;
   font-size: 17px;
-  color: #0D1716;
+  color: #0B1619;
 }
 .plot-picker .map-tooltip .tooltip-place {
   display: block;
   margin-top: 3px;
-  color: #5E7D5A;
+  color: #2C6278;
 }
 .plot-picker .picker-detail {
   display: flex;
   flex-direction: column;
-  background: #FBF8F1;
-  border: 1px solid rgba(20, 22, 22, 0.16);
+  background: #FBFCFD;
+  border: 1px solid rgba(17, 26, 29, 0.16);
   min-height: 0;
 }
 .plot-picker .detail-empty {
   margin: 0;
   padding: 28px 24px;
-  color: #5C5956;
+  color: #4B5A61;
 }
 .plot-picker .picker-detail:has(.selected-card:not([hidden])) .detail-empty {
   display: none;
@@ -526,7 +529,7 @@
   font-weight: 400;
   font-size: 34px;
   line-height: 1.05;
-  color: #0D1716;
+  color: #0B1619;
 }
 .plot-picker .selected-card .card-top .status {
   display: inline-block;
@@ -537,10 +540,10 @@
   width: 34px;
   height: 34px;
   background: none;
-  border: 1px solid rgba(20, 22, 22, 0.16);
+  border: 1px solid rgba(17, 26, 29, 0.16);
   font-size: 20px;
   line-height: 1;
-  color: #5C5956;
+  color: #4B5A61;
   cursor: pointer;
 }
 .plot-picker .selected-card .card-close:hover {
@@ -557,14 +560,14 @@
 .plot-picker .selected-card .card-price small {
   font-family: "Newsreader", Georgia, serif;
   font-size: 15px;
-  color: #5C5956;
+  color: #4B5A61;
   white-space: nowrap;
 }
 .plot-picker .selected-card .card-facts {
   display: grid;
   gap: 0;
   margin: 20px 0 0;
-  border-top: 1px solid rgba(20, 22, 22, 0.16);
+  border-top: 1px solid rgba(17, 26, 29, 0.16);
 }
 .plot-picker .selected-card .card-facts div {
   display: flex;
@@ -572,22 +575,22 @@
   align-items: baseline;
   gap: 16px;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(20, 22, 22, 0.16);
+  border-bottom: 1px solid rgba(17, 26, 29, 0.16);
 }
 .plot-picker .selected-card .card-facts dt {
   font-size: 14px;
-  color: #5C5956;
+  color: #4B5A61;
 }
 .plot-picker .selected-card .card-facts dd {
   margin: 0;
   text-align: right;
   font-size: 16px;
-  color: #0D1716;
+  color: #0B1619;
 }
 .plot-picker .selected-card .card-note {
   margin: 14px 0 0;
   font-size: 15px;
-  color: #5E7D5A;
+  color: #2C6278;
 }
 .plot-picker .selected-card .button {
   width: 100%;
@@ -595,14 +598,14 @@
   margin-top: 22px;
 }
 .plot-picker .selected-card .button:disabled {
-  background: #E2DCCD;
-  color: #5C5956;
+  background: #D3DDE2;
+  color: #4B5A61;
   cursor: not-allowed;
 }
 .plot-picker .selected-card .card-price small a {
   color: inherit;
   text-decoration: underline;
-  text-decoration-color: #90AE8C;
+  text-decoration-color: #9CC3D0;
   text-underline-offset: 3px;
 }
 .plot-picker .selected-card .card-sun {
@@ -613,10 +616,10 @@
   min-height: 50px;
   margin-top: 10px;
   padding: 0 16px;
-  background: #F4E3B5;
-  border: 1px solid #D9B45E;
+  background: #DCEBF0;
+  border: 1px solid #A9C8D3;
   border-radius: 2px;
-  color: #4A3608;
+  color: #002223;
   font-weight: 600;
   text-decoration: none;
   transition: background 0.2s ease;
@@ -626,21 +629,21 @@
   height: 22px;
   flex: none;
   fill: none;
-  stroke: #B07A1A;
+  stroke: #C8901E;
   stroke-width: 1.8;
   stroke-linecap: round;
 }
 .plot-picker .selected-card .card-sun circle {
-  fill: #E3A72F;
-  stroke: #B07A1A;
+  fill: #F2B632;
+  stroke: #C8901E;
 }
 .plot-picker .selected-card .card-sun::after {
   content: "↗";
   font-weight: 400;
-  color: #8A6420;
+  color: #2C6278;
 }
 .plot-picker .selected-card .card-sun:hover {
-  background: #EFD58F;
+  background: #C9E0E8;
 }
 .plot-picker .selected-card .card-link {
   display: inline-block;
@@ -648,12 +651,12 @@
   font-size: 15px;
   color: #002223;
   text-decoration: underline;
-  text-decoration-color: #90AE8C;
+  text-decoration-color: #9CC3D0;
   text-underline-offset: 4px;
 }
 .plot-picker .selected-card .card-link::after {
   content: " ↗";
-  color: #5E7D5A;
+  color: #2C6278;
 }
 .plot-picker .field-info {
   display: grid;
@@ -662,8 +665,8 @@
 }
 .plot-picker .info-block {
   padding: 26px 26px 28px;
-  background: #FBF8F1;
-  border: 1px solid rgba(20, 22, 22, 0.16);
+  background: #FBFCFD;
+  border: 1px solid rgba(17, 26, 29, 0.16);
   scroll-margin-top: 90px;
 }
 .plot-picker .info-block h3 {
@@ -671,17 +674,17 @@
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
   font-weight: 400;
   font-size: 28px;
-  color: #0D1716;
+  color: #0B1619;
 }
 .plot-picker .info-block h3 span {
-  color: #5E7D5A;
+  color: #2C6278;
 }
 .plot-picker .info-block a {
   color: #002223;
 }
 .plot-picker .info-lead {
   margin: 6px 0 18px;
-  color: #5C5956;
+  color: #4B5A61;
   font-size: 16px;
 }
 .plot-picker .cost-table {
@@ -691,7 +694,7 @@
 }
 .plot-picker .cost-table th, .plot-picker .cost-table td {
   padding: 9px 0;
-  border-bottom: 1px solid rgba(20, 22, 22, 0.16);
+  border-bottom: 1px solid rgba(17, 26, 29, 0.16);
   font-weight: 400;
   text-align: left;
   vertical-align: baseline;
@@ -703,17 +706,17 @@
 }
 .plot-picker .cost-table tr:not(.cost-total):not(.cost-extra) th {
   padding-left: 16px;
-  color: #5C5956;
+  color: #4B5A61;
 }
 .plot-picker .cost-table .cost-total th, .plot-picker .cost-table .cost-total td {
   font-weight: 600;
-  color: #0D1716;
-  border-bottom-color: #0D1716;
+  color: #0B1619;
+  border-bottom-color: #0B1619;
 }
 .plot-picker .cost-table .cost-extra th, .plot-picker .cost-table .cost-extra td {
   padding-top: 14px;
   border-bottom: 0;
-  color: #0D1716;
+  color: #0B1619;
 }
 .plot-picker .finn-list, .plot-picker .doc-list, .plot-picker .map-links {
   list-style: none;
@@ -722,14 +725,14 @@
 }
 .plot-picker .finn-list {
   margin-top: 18px;
-  border-top: 1px solid rgba(20, 22, 22, 0.16);
+  border-top: 1px solid rgba(17, 26, 29, 0.16);
 }
 .plot-picker .finn-list a {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 2px 16px;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(20, 22, 22, 0.16);
+  border-bottom: 1px solid rgba(17, 26, 29, 0.16);
   text-decoration: none;
 }
 .plot-picker .finn-list a:hover .finn-title {
@@ -738,12 +741,12 @@
 }
 .plot-picker .finn-list .finn-title {
   font-size: 17px;
-  color: #0D1716;
+  color: #0B1619;
 }
 .plot-picker .finn-list .finn-meta {
   grid-column: 1;
   font-size: 14px;
-  color: #5C5956;
+  color: #4B5A61;
 }
 .plot-picker .finn-list .finn-go {
   grid-column: 2;
@@ -754,7 +757,7 @@
 }
 .plot-picker .finn-list .finn-go::after {
   content: " ↗";
-  color: #5E7D5A;
+  color: #2C6278;
 }
 .plot-picker .doc-list {
   display: grid;
@@ -766,14 +769,14 @@
   gap: 10px;
   font-size: 17px;
   text-decoration: underline;
-  text-decoration-color: #90AE8C;
+  text-decoration-color: #9CC3D0;
   text-underline-offset: 4px;
 }
 .plot-picker .doc-kind {
   padding: 1px 7px;
-  border: 1px solid rgba(20, 22, 22, 0.16);
+  border: 1px solid rgba(17, 26, 29, 0.16);
   font-size: 12px;
-  color: #5C5956;
+  color: #4B5A61;
   text-decoration: none;
 }
 .plot-picker .map-links {
@@ -797,7 +800,7 @@
 }
 .plot-picker .map-links a:hover {
   background: #002223;
-  color: #F6F3E9;
+  color: #F5F8F9;
 }
 
 @keyframes card-in {
@@ -821,8 +824,8 @@ html.dialog-open {
   max-height: calc(100dvh - 48px);
   padding: 0;
   border: 0;
-  background: #F1EBDF;
-  color: #141616;
+  background: #F3F6F7;
+  color: #111A1D;
   box-shadow: 0 40px 120px rgba(0, 20, 20, 0.45);
   overflow: hidden;
 }
@@ -846,12 +849,12 @@ html.dialog-open {
   gap: 22px;
   padding: 32px 30px 30px;
   background: #002223;
-  color: #F6F3E9;
+  color: #F5F8F9;
   overflow-y: auto;
 }
 .picker-dialog .dialog-map {
-  border: 1px solid rgba(246, 243, 233, 0.24);
-  background: #E7E2D2;
+  border: 1px solid rgba(245, 248, 249, 0.24);
+  background: #6C8A60;
 }
 .picker-dialog .dialog-map svg {
   display: block;
@@ -860,20 +863,20 @@ html.dialog-open {
   aspect-ratio: 240/170;
 }
 .picker-dialog .dialog-map .mini-other {
-  fill: #6E9268;
-  stroke: #FBF8F1;
+  fill: #003C2A;
+  stroke: #FBFCFD;
   stroke-width: 1.2;
   opacity: 0.55;
 }
 .picker-dialog .dialog-map .mini-other.status-sold {
-  fill: #DDB8B2;
+  fill: #B3302C;
   opacity: 0.8;
 }
 .picker-dialog .dialog-map .mini-other.status-reserved {
-  fill: #C9A45C;
+  fill: #D9771A;
 }
 .picker-dialog .dialog-map .mini-chosen {
-  fill: #002223;
+  fill: #001129;
   stroke: #fff;
   stroke-width: 2.5;
   stroke-linejoin: round;
@@ -898,11 +901,11 @@ html.dialog-open {
   gap: 14px 18px;
   margin: 0;
   padding-bottom: 22px;
-  border-bottom: 1px solid rgba(246, 243, 233, 0.24);
+  border-bottom: 1px solid rgba(245, 248, 249, 0.24);
 }
 .picker-dialog .dialog-facts dt {
   font-size: 14px;
-  color: #90AE8C;
+  color: #9CC3D0;
 }
 .picker-dialog .dialog-facts dd {
   margin: 2px 0 0;
@@ -919,7 +922,7 @@ html.dialog-open {
   gap: 12px;
   counter-reset: step;
   font-size: 16px;
-  color: rgba(246, 243, 233, 0.86);
+  color: rgba(245, 248, 249, 0.86);
 }
 .picker-dialog .dialog-steps li {
   display: flex;
@@ -933,20 +936,20 @@ html.dialog-open {
   height: 26px;
   display: grid;
   place-items: center;
-  border: 1px solid #90AE8C;
+  border: 1px solid #9CC3D0;
   border-radius: 50%;
   font-size: 13px;
-  color: #90AE8C;
+  color: #9CC3D0;
 }
 .picker-dialog .dialog-call {
   margin: auto 0 0;
   font-size: 15px;
-  color: rgba(246, 243, 233, 0.75);
+  color: rgba(245, 248, 249, 0.75);
 }
 .picker-dialog .dialog-call a {
-  color: #F6F3E9;
+  color: #F5F8F9;
   font-size: 18px;
-  text-decoration-color: #90AE8C;
+  text-decoration-color: #9CC3D0;
   text-underline-offset: 4px;
   white-space: nowrap;
 }
@@ -967,7 +970,7 @@ html.dialog-open {
   background: none;
   border: 1px solid transparent;
   border-radius: 50%;
-  color: #5C5956;
+  color: #4B5A61;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 }
@@ -980,7 +983,7 @@ html.dialog-open {
   stroke-linecap: round;
 }
 .picker-dialog .dialog-close:hover {
-  background: #E7DFCE;
+  background: #E6ECEF;
   color: #002223;
 }
 .picker-dialog .form {
@@ -996,7 +999,7 @@ html.dialog-open {
 }
 .picker-dialog .dialog-intro {
   margin: 10px 0 4px;
-  color: #5C5956;
+  color: #4B5A61;
 }
 .picker-dialog .field-pair {
   display: grid;
@@ -1037,7 +1040,7 @@ html.dialog-open {
 .picker-dialog .chips label {
   padding: 9px 16px;
   background: #fff;
-  border: 1px solid rgba(20, 22, 22, 0.16);
+  border: 1px solid rgba(17, 26, 29, 0.16);
   border-radius: 2px;
   font-weight: 400;
   cursor: pointer;
@@ -1049,17 +1052,17 @@ html.dialog-open {
 .picker-dialog .chips input:checked + label {
   background: #002223;
   border-color: #002223;
-  color: #F6F3E9;
+  color: #F5F8F9;
 }
 .picker-dialog .chips input:focus-visible + label {
-  outline: 2px solid #5E7D5A;
+  outline: 2px solid #2C6278;
   outline-offset: 2px;
 }
 .picker-dialog .form-status {
   margin: 0;
   padding: 12px 16px;
-  background: #E3ECDF;
-  border-left: 2px solid #5E7D5A;
+  background: #DCEBF0;
+  border-left: 2px solid #2C6278;
   color: #002223;
 }
 .picker-dialog .form-status.is-error {
@@ -1095,7 +1098,7 @@ html.dialog-open {
 .picker-dialog .dialog-done p {
   margin: 0;
   max-width: 30em;
-  color: #5C5956;
+  color: #4B5A61;
   font-size: 18px;
 }
 .picker-dialog .done-mark {
@@ -1104,7 +1107,7 @@ html.dialog-open {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #90AE8C;
+  background: #9CC3D0;
   animation: done-pop 0.35s ease-out;
 }
 .picker-dialog .done-mark svg {
@@ -1224,11 +1227,11 @@ html.dialog-open {
   .picker-dialog .dialog-close {
     top: 12px;
     right: 10px;
-    color: #F6F3E9;
+    color: #F5F8F9;
   }
   .picker-dialog .dialog-close:hover {
-    background: rgba(246, 243, 233, 0.12);
-    color: #F6F3E9;
+    background: rgba(245, 248, 249, 0.12);
+    color: #F5F8F9;
   }
   .picker-dialog .dialog-head {
     padding-right: 0;
@@ -1412,7 +1415,7 @@ html.dialog-open {
     grid-area: map;
     order: 0;
     margin: 0;
-    border: 1px solid rgba(20, 22, 22, 0.16);
+    border: 1px solid rgba(17, 26, 29, 0.16);
   }
   .plot-picker .picker-detail {
     grid-area: detail;

@@ -15,7 +15,14 @@
 {% if not post.is_published %}<p class="draft-notice" role="status">Utkast – bare synlig for innloggede.</p>{% endif %}
 
 <article class="article{% if post.image and not image_portrait %} has-wide-image{% endif %}">
+  {% comment %} A wide photo lies behind the title, like the page headers – no green band
+  behind the text (client, 26.10.2026). Tall images (ads) stay beside the text below. {% endcomment %}
   <header class="article-header">
+    {% if post.image and not image_portrait %}
+    <div class="article-header-photo">
+      <img src="{{ post.image.url }}" alt="{{ post.image_alt|default:post.title }}" fetchpriority="high">
+    </div>
+    {% endif %}
     <div class="content">
       <a href="{% url 'nyheter' %}" class="crumb"><span aria-hidden="true">←</span> Alle nyheter</a>
       <h1>{{ post.title }}</h1>
@@ -27,13 +34,6 @@
       {% if post.excerpt %}<p class="article-lead">{{ post.excerpt }}</p>{% endif %}
     </div>
   </header>
-
-  {% if post.image and not image_portrait %}
-  <figure class="article-figure is-wide">
-    <img src="{{ post.image.url }}" alt="{{ post.image_alt|default:post.title }}" fetchpriority="high">
-    {% if post.image_alt %}<figcaption>{{ post.image_alt }}</figcaption>{% endif %}
-  </figure>
-  {% endif %}
 
   <div class="content article-body">
     <aside class="article-aside" aria-label="Om innlegget">

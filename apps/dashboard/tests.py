@@ -230,6 +230,12 @@ class PlotTests(DashboardTestCase):
         self.client.post(reverse('dashboard_plot_delete', args=[plot.pk]))
         self.assertFalse(Plot.objects.exists())
 
+    def test_street_is_filled_in_from_the_number_or_typed_by_hand(self):
+        self.client.post(reverse('dashboard_plot_create'), {'number': '20', 'status': 'available'})
+        self.client.post(reverse('dashboard_plot_create'), {'number': '70', 'status': 'available', 'street': 'Knippesetvegen'})
+        self.assertEqual(Plot.objects.get(number='20').street, 'Brakastøllie')
+        self.assertEqual(Plot.objects.get(number='70').street, 'Knippesetvegen')
+
     def test_height_view_and_finn_link_are_saved_from_the_dashboard(self):
         self.client.post(reverse('dashboard_plot_create'), {
             'number': '68', 'status': 'available', 'altitude': '1010', 'view_direction': 'Sørvest',

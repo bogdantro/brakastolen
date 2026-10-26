@@ -77,7 +77,7 @@ def field_info():
     ads = [{'title': ad.title, 'kind': ad.kind, 'price': ad.price_display, 'url': ad.url}
            for ad in FinnAd.objects.filter(is_active=True)]
     for plot in Plot.objects.public().available().exclude(finn_url='').select_related('category'):
-        ads.append({'title': f'Hyttetomt {plot.number}', 'kind': ' – '.join(filter(None, ['Tomt', plot.group_name])),
+        ads.append({'title': f'Hyttetomt {plot.number}', 'kind': ' – '.join(filter(None, ['Tomt', plot.street])),
                     'price': plot.price_display, 'url': plot.finn_url})
     return {
         'fixed_costs': fixed,
@@ -99,6 +99,25 @@ def plot_picker_context():
     }
 
 
+# The activity carousel on the homepage, in order. Each slide links to its part of /aktiviteter/.
+HOME_ACTIVITIES = [
+    {'anchor': 'alpint', 'season': 'Vinter', 'title': 'Alpint', 'fact': '9', 'fact_label': 'nedfarter',
+     'text': 'Vaset skiheiser har nedfarter i ulike vanskelighetsgrader – et flott alternativ for barnefamilier '
+             'og de som vil øve på rails eller hopp.',
+     'photo': 'images/misc/kiting-pa-vaset.jpg', 'alt': 'Snøkiting på fjellet ved Vaset'},
+    {'anchor': 'langrenn', 'season': 'Vinter', 'title': 'Langrenn', 'fact': '120', 'fact_label': 'km løyper',
+     'text': 'Preparerte løyper med to klassiske spor og skøytetrasé – fra lysløype i granskog til snaufjellet innenfor Gomobu.',
+     'photo': 'images/misc/langrenn-vaset.jpg', 'alt': 'Preparerte langrennsløyper over snaufjellet ved Vaset'},
+    {'anchor': 'langrenn', 'season': 'Vinter', 'title': 'Skitur til Syni', 'fact': '1137', 'fact_label': 'moh.',
+     'text': 'Gå skiturer på slake vidder – og helt opp på toppen av fjellet «Syni».',
+     'photo': 'images/misc/vaset-vinter-svarthvit.jpg', 'alt': 'Vinterfjellet ved Vaset med preparerte skiløyper'},
+    {'anchor': 'sykkel', 'season': 'Sommer', 'title': 'Sykkel', 'fact': 'Mjølkevegen', 'fact_label': 'nasjonal sykkelrute',
+     'fact_is_word': True,
+     'text': 'Flere titalls merkede sykkelløyper fra Gomobu for hele familien, og den nasjonale sykkelruta «Mjølkevegen».',
+     'photo': 'images/projects/tinde-hytte-04-12031241.jpg', 'alt': 'Hytte med torvtak i sommerfjellet ved Vaset'},
+]
+
+
 @never_cache  # the plot picker's viewing form carries a CSRF token, which must never be stale
 def hjemme(request):
     return render(request, 'core/index.html', {
@@ -106,6 +125,7 @@ def hjemme(request):
         'latest_posts': Blog.objects.public()[:3],
         'featured_suppliers': FEATURED_SUPPLIERS,
         'suppliers': SUPPLIERS,
+        'activities': HOME_ACTIVITIES,
         'faq': FAQ,
         **plot_picker_context(),
     })

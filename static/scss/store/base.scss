@@ -29,7 +29,7 @@ h3 {
   display: block;
   width: 56px;
   height: 2px;
-  background: $sageDeep;
+  background: $accentDeep;
 }
 
 .prose {
@@ -43,7 +43,7 @@ h3 {
   &.large {
     font-size: clamp(19px, 1.45vw, 23px);
     line-height: 1.55;
-    color: #45433f;
+    color: #33434A;
   }
 
   h2 {
@@ -68,14 +68,14 @@ h3 {
 
   a {
     color: $primaryColor;
-    text-decoration-color: $sage;
+    text-decoration-color: $accent;
     text-underline-offset: 3px;
   }
 
   blockquote {
     margin: 1.5em 0;
     padding-left: 24px;
-    border-left: 2px solid $sage;
+    border-left: 2px solid $accent;
     font-style: italic;
   }
 }
@@ -111,7 +111,7 @@ h3 {
   color: $primaryColor;
   font-weight: 500;
   text-decoration: underline;
-  text-decoration-color: $sage;
+  text-decoration-color: $accent;
   text-decoration-thickness: 1px;
   text-underline-offset: 6px;
   transition: text-decoration-color 0.25s ease;
@@ -144,7 +144,7 @@ h3 {
   }
 
   &:hover {
-    background: $sageDeep;
+    background: $accentDeep;
   }
 }
 
@@ -172,21 +172,27 @@ h3 {
   }
 
   &:hover .circle {
-    background: $sage;
+    background: $accent;
     color: $primaryColor;
   }
 }
 
 // ------------------------------------------------------------
-// Page header – the hero's split, for every other page
+// Page header – the homepage hero's look for every other page: the photo across the full
+// width, the text straight on it in one colour with no box behind it, never wider than
+// half the screen (client, 26.10.2026)
 // ------------------------------------------------------------
 .page-header {
   position: relative;
-  background: $background;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: #24323A;
+  color: $white;
 
   .page-header-photo {
-    overflow: hidden;
-    background: #2b2f2c;
+    position: absolute;
+    inset: 0;
 
     img {
       width: 100%;
@@ -194,63 +200,49 @@ h3 {
       object-fit: cover;
     }
 
-    // Same soft wash as the hero, so the white nav links stay readable
+    // Dark at the top for the nav, and from the lower left for the text
     &::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(18, 20, 22, 0.42) 0%, rgba(18, 20, 22, 0) 32%);
+      background:
+        linear-gradient(180deg, rgba(4, 14, 17, 0.5) 0%, rgba(4, 14, 17, 0) 30%),
+        linear-gradient(90deg, rgba(4, 14, 17, 0.6) 0%, rgba(4, 14, 17, 0.28) 45%, rgba(4, 14, 17, 0) 70%),
+        linear-gradient(0deg, rgba(4, 14, 17, 0.5) 0%, rgba(4, 14, 17, 0) 50%);
       pointer-events: none;
     }
   }
 
+  .page-header-text {
+    position: relative;
+    z-index: 2;
+    max-width: 50%;
+  }
+
   h1 {
-    letter-spacing: -0.03em;
-
-    // Each line of the heading sits on cream – it steps out over the photo like the hero
-    span {
-      background: $background;
-      -webkit-box-decoration-break: clone;
-      box-decoration-break: clone;
-    }
+    color: inherit;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    text-shadow: 0 2px 30px rgba(4, 14, 17, 0.35);
+    // Long words ("Personvernerklæring") break instead of running off the screen
+    overflow-wrap: anywhere;
+    hyphens: auto;
   }
 
-  .meta {
-    color: $sageDeep;
-    font-weight: 500;
-  }
-
+  .meta,
   .lead {
-    color: $mutedText;
+    margin: 0;
+    color: inherit;
+  }
+
+  .copper-rule {
+    background: currentColor;
   }
 
   // Pages without a photo: a band of the brand green, so the white nav links stay readable
   &.is-plain {
     background: $primaryColor;
-
-    h1 {
-      color: $white;
-
-      span {
-        background: none;
-      }
-    }
-
-    .lead {
-      color: rgba(246, 243, 233, 0.8);
-    }
-
-    .meta {
-      color: $sage;
-    }
-
-    .copper-rule {
-      background: $sage;
-    }
-
-
   }
-
 }
 
 // ------------------------------------------------------------
@@ -265,7 +257,7 @@ h3 {
   }
 
   dt {
-    color: $sageDeep;
+    color: $accentDeep;
     font-size: 15px;
     letter-spacing: 0.04em;
   }
@@ -305,7 +297,7 @@ h3 {
 
     a {
       color: $primaryColor;
-      text-decoration-color: $sage;
+      text-decoration-color: $accent;
       text-underline-offset: 3px;
     }
   }
@@ -334,12 +326,12 @@ h3 {
 
     &:hover h3,
     &:hover h2 {
-      color: $sageDeep;
+      color: $accentDeep;
     }
   }
 
   time {
-    color: $sageDeep;
+    color: $accentDeep;
     font-size: 16px;
   }
 
@@ -365,7 +357,7 @@ h3 {
     transition: background 0.3s ease;
 
     &[open] {
-      background: #FBF8F1;
+      background: $surface;
     }
   }
 
@@ -388,7 +380,7 @@ h3 {
     }
 
     &:hover {
-      color: $sageDeep;
+      color: $accentDeep;
     }
 
     &:hover .plus {
@@ -443,7 +435,7 @@ h3 {
   details p {
     margin: 0 24px 0 24px;
     padding: 0 60px 30px 22px;
-    border-left: 2px solid $sage;
+    border-left: 2px solid $accent;
     color: $mutedText;
     font-size: 18px;
     line-height: 1.65;
@@ -489,7 +481,7 @@ h3 {
     text-align: left;
     font-weight: 500;
     font-size: 15px;
-    color: $sageDeep;
+    color: $accentDeep;
     padding: 0 16px 14px 0;
     border-bottom: 1px solid $heroText;
   }
@@ -507,8 +499,8 @@ h3 {
   .plot-status {
     font-weight: 500;
 
-    &.status-available { color: $sageDeep; }
-    &.status-reserved { color: #8A6A2E; }
+    &.status-available { color: $accentDeep; }
+    &.status-reserved { color: $reservedText; }
     &.status-sold { color: $mutedText; }
   }
 }
@@ -532,7 +524,7 @@ h3 {
   }
 
   .required {
-    color: $sageDeep;
+    color: $accentDeep;
   }
 
   .optional {
@@ -545,7 +537,7 @@ h3 {
     font-size: 18px;
     width: 100%;
     padding: 14px 16px;
-    background: #FBF8F1;
+    background: $surface;
     border: 1px solid $border;
     border-radius: 2px;
     color: $black;
@@ -554,7 +546,7 @@ h3 {
     &:focus {
       outline: none;
       border-color: $primaryColor;
-      box-shadow: 0 0 0 3px rgba(144, 174, 140, 0.35);
+      box-shadow: 0 0 0 3px rgba($accent, 0.35);
     }
 
     &[aria-invalid="true"] {
@@ -613,7 +605,7 @@ h3 {
 .notice {
   padding: 16px 20px;
   background: $card;
-  border-left: 2px solid $sageDeep;
+  border-left: 2px solid $accentDeep;
 }
 
 // Flash message ("Takk for henvendelsen!") under the nav
@@ -632,7 +624,7 @@ h3 {
 .draft-notice {
   position: relative;
   z-index: 40;
-  background: #8A6A2E;
+  background: $accentDeep;
   color: #fff;
   text-align: center;
   padding: 10px 20px;
@@ -669,47 +661,22 @@ h3 {
     margin-top: 64px;
   }
 
-  // The photo fills most of the first screen; the title steps up out of it on cream,
-  // and the lead sits on a cream panel below
   .page-header {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    min-height: 72vh;
-    min-height: 72svh;
-    padding-top: 64px;
-
-    .page-header-photo {
-      position: absolute;
-      inset: 0;
-    }
+    min-height: 62vh;
+    min-height: 62svh;
+    padding: 112px 20px 40px;
 
     .page-header-text {
-      position: relative;
-      z-index: 2;
+      max-width: none;
     }
 
     h1 {
-      font-size: clamp(36px, 10.4vw, 80px);
-      // 1.25 em = DM Serif Display's full glyph box, so the cream line backgrounds
-      // touch without covering the descenders of the line above
-      line-height: 1.25;
-      // Long words ("Personvernerklæring") break instead of running off the screen
-      overflow-wrap: anywhere;
-      hyphens: auto;
-
-      span {
-        padding: 0 16px 0 20px;
-      }
-    }
-
-    .page-header-sub {
-      background: $background;
-      padding: 6px 20px 34px;
+      font-size: clamp(34px, 9vw, 56px);
+      line-height: 1.08;
     }
 
     .meta {
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .copper-rule {
@@ -717,22 +684,12 @@ h3 {
     }
 
     .lead {
-      font-size: 18px;
+      font-size: 17px;
       line-height: 1.5;
     }
 
-    // No photo: a band of the brand green
     &.is-plain {
       min-height: 0;
-      padding-top: 112px;
-
-      // Small enough that one long word ("Personvernerklæring") fits on a phone
-      h1 { font-size: clamp(30px, 8.4vw, 64px); }
-
-      .page-header-sub {
-        background: none;
-        padding-bottom: 44px;
-      }
     }
   }
 
@@ -824,74 +781,35 @@ h3 {
     }
   }
 
-  // The text stays in normal flow, so a long (three-line) title makes the header taller
-  // instead of spilling into the next section; the photo fills whatever height that gives.
+  // The text stays in normal flow, so a long title makes the header taller instead of
+  // spilling into the next section; the photo fills whatever height that gives
   .page-header {
-    min-height: max(470px, u(640));
-    padding: u(220) 0 u(90);
-
-    .page-header-photo {
-      position: absolute;
-    }
-
-    .page-header-photo {
-      left: u(495);
-      top: 0;
-      right: 0;
-      bottom: 0;
-    }
-
-    // A cream step under the heading, so the lead text has room beside the photo
-    &::after {
-      content: '';
-      position: absolute;
-      left: u(495);
-      top: u(400);
-      width: u(210);
-      bottom: 0;
-      background: $background;
-    }
-
-
-    .page-header-text {
-      position: relative;
-      margin-left: u(116);
-      width: u(820);
-      z-index: 2;
-    }
+    min-height: max(520px, u(720));
+    padding: u(200) u(116) u(90);
 
     h1 {
-      font-size: u(112);
-      line-height: 1.25;
-
-      span {
-        padding: 0 u(26) 0 0;
-      }
+      font-size: clamp(48px, u(88), 96px);
+      line-height: 1.06;
     }
 
     .meta {
-      margin-top: u(26);
-      font-size: u(18);
+      margin-top: u(22);
+      font-size: max(15px, u(18));
     }
 
     .copper-rule {
       width: u(58);
-      margin: u(30) 0 u(22);
+      margin: u(26) 0 u(20);
     }
 
     .lead {
-      width: u(560);
-      font-size: u(21);
+      font-size: max(17px, u(20));
       line-height: 1.5;
     }
 
     &.is-plain {
       min-height: 0;
-      padding: u(230) 0 u(90);
-
-      &::after {
-        display: none;
-      }
+      padding-top: u(230);
     }
   }
 
@@ -968,7 +886,7 @@ h3 {
       font-family: $fontDisplay;
       font-size: 44px;
       line-height: 1;
-      color: $sageDeep;
+      color: $accentDeep;
       margin-bottom: 18px;
     }
   }
@@ -985,7 +903,7 @@ h3 {
 
   a {
     color: $primaryColor;
-    text-decoration-color: $sage;
+    text-decoration-color: $accent;
     text-underline-offset: 3px;
   }
 }
@@ -1014,7 +932,7 @@ h3 {
     small {
       font-family: $fontBody;
       font-size: 0.32em;
-      color: $sageDeep;
+      color: $accentDeep;
       letter-spacing: 0;
     }
   }
@@ -1086,7 +1004,7 @@ h3 {
   }
 
   .is-here .stop {
-    color: $sageDeep;
+    color: $accentDeep;
   }
 }
 
@@ -1139,8 +1057,8 @@ h3 {
       }
 
       &.is-here::before {
-        background: $sageDeep;
-        border-color: $sageDeep;
+        background: $accentDeep;
+        border-color: $accentDeep;
       }
     }
   }
@@ -1159,21 +1077,14 @@ h3 {
   }
 
   .page-header {
-    h1 span {
-      padding-left: 40px;
-    }
+    padding: 140px 40px 56px;
 
-    .page-header-sub {
-      width: min(100%, 620px);
-      padding: 10px 40px 44px;
+    .page-header-text {
+      max-width: 620px;
     }
 
     .lead {
-      font-size: 20px;
-    }
-
-    &.is-plain .page-header-sub {
-      width: auto;
+      font-size: 19px;
     }
   }
 
@@ -1214,5 +1125,28 @@ h3 {
 
   .flash-messages .flash {
     padding: 16px 40px;
+  }
+}
+
+// ------------------------------------------------------------
+// Photos glide up into place as they come into view (reveal.js adds .reveal-ready to <html>
+// first, so without JavaScript nothing is ever hidden)
+// ------------------------------------------------------------
+.reveal-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(48px);
+  transition: opacity 1.1s ease, transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  &.is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-ready [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }

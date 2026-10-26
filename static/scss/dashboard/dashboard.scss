@@ -1,27 +1,24 @@
 // Dashboard in the public site's design: the brand green for the sidebar (with the logo
-// block from the site's nav), the cream page, square corners, DM Serif Display for headings
+// block from the site's nav), the cool light page, square corners, DM Serif Display for headings
 // and big numbers, Newsreader for everything else. The one strong element is the sales
 // map – the site plan with every plot coloured by status. Status colours always come with
 // a text label, never colour alone.
 @use '../global/variables' as *;
 
 // Work surfaces a step lighter than the page, so long tables stay easy to read
-$paper: #FBF8F1;
-$line: rgba(20, 22, 22, 0.12);
-$lineStrong: rgba(20, 22, 22, 0.22);
+$paper: $surface;
+$line: rgba(17, 26, 29, 0.12);
+$lineStrong: rgba(17, 26, 29, 0.22);
 $sidebarWidth: 264px;
 
-// Sales status – the brick red is the "sold" colour of the site plan itself
-$available: #5E7D5A;
-$availableBg: #E4EBDF;
-$reserved: #8A6420;
-$reservedBg: #F3E7CD;
-$reservedFill: #C9A45C;
-$sold: #8C4045;
-$soldBg: #F2E0DE;
-// On the map: free plots a darker green than the sage, sold plots a soft red (as on the website)
-$availableFill: #6E9268;
-$soldFill: #DDB8B2;
+// Sales status as text and badges. The map fills ($availableFill, $reserved, $soldFill)
+// come from the shared variables, so the dashboard map matches the website's.
+$availableInk: #0E4F52;
+$availableBg: #DDEBEC;
+$reservedInk: $reservedText;
+$reservedBg: #FBE8D4;
+$soldInk: $soldText;
+$soldBg: #F6E0DE;
 $danger: #A23B2A;
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -51,7 +48,7 @@ img { max-width: 100%; }
 a { color: $primaryColor; text-decoration-color: rgba(0, 34, 35, 0.35); text-underline-offset: 3px; }
 a:hover { text-decoration-color: currentColor; }
 
-:focus-visible { outline: 2px solid $sageDeep; outline-offset: 2px; }
+:focus-visible { outline: 2px solid $accentDeep; outline-offset: 2px; }
 
 .visually-hidden {
   position: absolute !important;
@@ -101,7 +98,7 @@ svg { flex-shrink: 0; }
   img { width: 46px; height: auto; }
   > span { display: flex; flex-direction: column; line-height: 1; }
   .brand-name { font-family: $fontDisplay; font-size: 23px; }
-  .brand-sub { margin-top: 7px; font-size: 14px; color: $sage; }
+  .brand-sub { margin-top: 7px; font-size: 14px; color: $accent; }
 }
 
 .side-nav {
@@ -116,7 +113,7 @@ svg { flex-shrink: 0; }
     gap: 13px;
     padding: 11px 12px;
     font-size: 17px;
-    color: rgba(246, 243, 233, 0.78);
+    color: rgba($white, 0.78);
     transition: background 0.15s ease, color 0.15s ease;
 
     svg {
@@ -126,20 +123,20 @@ svg { flex-shrink: 0; }
       opacity: 0.85;
     }
 
-    &:hover { color: $white; background: rgba(246, 243, 233, 0.06); }
+    &:hover { color: $white; background: rgba($white, 0.06); }
 
     &[aria-current="page"] {
       color: $white;
-      background: rgba(246, 243, 233, 0.09);
+      background: rgba($white, 0.09);
 
       &::before {
         content: '';
         position: absolute;
         left: -14px; top: 8px; bottom: 8px;
         width: 3px;
-        background: $sage;
+        background: $accent;
       }
-      svg { opacity: 1; color: $sage; }
+      svg { opacity: 1; color: $accent; }
     }
   }
 
@@ -147,7 +144,7 @@ svg { flex-shrink: 0; }
     margin-left: auto;
     min-width: 24px;
     padding: 1px 8px;
-    background: $sage;
+    background: $accent;
     color: $primaryColor;
     font-size: 13px;
     font-weight: 600;
@@ -168,7 +165,7 @@ svg { flex-shrink: 0; }
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  color: rgba(246, 243, 233, 0.78);
+  color: rgba($white, 0.78);
   &:hover { color: $white; }
   svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.5; }
 }
@@ -184,7 +181,7 @@ svg { flex-shrink: 0; }
     grid-row: span 2;
     width: 36px; height: 36px;
     display: grid; place-items: center;
-    background: $sage;
+    background: $accent;
     color: $primaryColor;
     font-family: $fontDisplay;
     font-size: 18px;
@@ -199,7 +196,7 @@ svg { flex-shrink: 0; }
   border: 0;
   font: inherit;
   font-size: 14px;
-  color: $sage;
+  color: $accent;
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -272,7 +269,7 @@ h2 {
   font-size: 15px;
   color: $primaryColor;
   text-decoration: underline;
-  text-decoration-color: $sage;
+  text-decoration-color: $accent;
   text-underline-offset: 4px;
 }
 
@@ -344,7 +341,7 @@ details.panel {
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 
-  &:hover { background: $sageDeep; border-color: $sageDeep; }
+  &:hover { background: $accentDeep; border-color: $accentDeep; }
 
   &.secondary {
     background: transparent;
@@ -407,7 +404,7 @@ input[type="search"], input[type="password"], select, textarea {
   &:focus {
     outline: none;
     border-color: $primaryColor;
-    box-shadow: 0 0 0 3px rgba(144, 174, 140, 0.35);
+    box-shadow: 0 0 0 3px rgba($accent, 0.35);
   }
   &::placeholder { color: #9A958C; }
 }
@@ -456,11 +453,11 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
   margin: 0 0 10px;
   padding: 13px 16px;
   background: $availableBg;
-  border-left: 3px solid $available;
+  border-left: 3px solid $availableInk;
   font-size: 16px;
 
   &.error { background: #F6E3DF; border-left-color: $danger; color: #7A2A1D; }
-  &.warning { background: $reservedBg; border-left-color: $reserved; }
+  &.warning { background: $reservedBg; border-left-color: $reservedInk; }
 }
 
 .toast {
@@ -472,7 +469,7 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
   padding: 14px 18px 14px 16px;
   background: $primaryColor;
   color: $white;
-  border-left: 3px solid $sage;
+  border-left: 3px solid $accent;
   box-shadow: 0 14px 40px rgba(0, 24, 25, 0.25);
   font-size: 16px;
   animation: toast-in 0.2s ease-out;
@@ -497,12 +494,12 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
   background: $card;
   color: $black;
 
-  &.status-new { background: $reservedBg; color: #6B4C14; }
+  &.status-new { background: $reservedBg; color: $reservedInk; }
   &.status-contacted, &.status-viewing { background: #DFE9EA; color: #1D4547; }
   &.status-prospectus_sent { background: #E8E2EE; color: #4A3B5C; }
   &.status-won, &.status-available { background: $availableBg; color: #3D5A3A; }
-  &.status-lost, &.status-sold { background: $soldBg; color: $sold; }
-  &.status-reserved { background: $reservedBg; color: $reserved; }
+  &.status-lost, &.status-sold { background: $soldBg; color: $soldInk; }
+  &.status-reserved { background: $reservedBg; color: $reservedInk; }
 }
 
 .status-pill { padding: 6px 14px; font-size: 16px; }
@@ -512,7 +509,7 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
   width: 8px; height: 8px;
   margin-right: 8px;
   border-radius: 50%;
-  background: $sageDeep;
+  background: $accentDeep;
   vertical-align: 2px;
 }
 
@@ -554,9 +551,9 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
 
 .figure-label { font-size: 15px; color: $mutedText; }
 
-.figure-available .figure-number { color: $available; }
-.figure-reserved .figure-number { color: $reserved; }
-.figure-sold .figure-number { color: $sold; }
+.figure-available .figure-number { color: $availableInk; }
+.figure-reserved .figure-number { color: $reservedInk; }
+.figure-sold .figure-number { color: $soldInk; }
 .figure-alert .figure-number { color: $primaryColor; }
 .figure-alert .figure-label { color: $black; font-weight: 600; }
 
@@ -572,7 +569,7 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
 
   span { flex-basis: 0; transition: flex-grow 0.3s ease; }
   .share-available { background: $availableFill; }
-  .share-reserved { background: $reservedFill; }
+  .share-reserved { background: $reserved; }
   .share-sold { background: $soldFill; }
 }
 
@@ -582,7 +579,7 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
 .sales-map-frame {
   position: relative;
   border: 1px solid $line;
-  background: #E7E2D2;
+  background: $mapGround;
   overflow: hidden;
 
   // The plan stands (720 × 1000); in a wide panel it is capped and centred instead of growing tall
@@ -593,7 +590,7 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
   cursor: pointer;
   outline: none;
 
-  path { stroke: #FBF8F1; stroke-width: 1.6; stroke-linejoin: round; transition: fill 0.2s ease; }
+  path { stroke: $surface; stroke-width: 1.6; stroke-linejoin: round; transition: fill 0.2s ease; }
   text {
     font-family: $fontBody;
     font-size: 13px;
@@ -606,10 +603,10 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
 
   &.status-available path { fill: $availableFill; }
   &.status-available text { fill: #fff; }
-  &.status-reserved path { fill: $reservedFill; }
-  &.status-reserved text { fill: #3E2C0B; }
+  &.status-reserved path { fill: $reserved; }
+  &.status-reserved text { fill: #fff; }
   &.status-sold path { fill: $soldFill; }
-  &.status-sold text { fill: $sold; }
+  &.status-sold text { fill: #fff; }
 
   &:hover path, &:focus-visible path, &.is-hover path { stroke: $primaryColor; stroke-width: 3; }
 }
@@ -626,7 +623,7 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
   line-height: 1.35;
 
   strong { display: block; font-weight: 600; }
-  span { color: rgba(246, 243, 233, 0.8); }
+  span { color: rgba($white, 0.8); }
 }
 
 .map-key {
@@ -642,7 +639,7 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
   li { display: inline-flex; align-items: center; gap: 8px; }
   .swatch { width: 14px; height: 14px; }
   .swatch.status-available { background: $availableFill; }
-  .swatch.status-reserved { background: $reservedFill; }
+  .swatch.status-reserved { background: $reserved; }
   .swatch.status-sold { background: $soldFill; }
 }
 
@@ -716,7 +713,7 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
     &[aria-current="page"] {
       background: $primaryColor;
       color: $white;
-      span { color: $sage; }
+      span { color: $accent; }
     }
   }
 
@@ -790,9 +787,9 @@ input[type="file"] { font: inherit; font-size: 15px; max-width: 100%; }
   .col-state { width: 92px; padding-left: 0; }
 
   tbody tr { transition: background 0.15s ease; box-shadow: inset 3px 0 0 transparent; }
-  tbody tr.status-available { box-shadow: inset 3px 0 0 $sage; }
-  tbody tr.status-reserved { box-shadow: inset 3px 0 0 $reservedFill; }
-  tbody tr.status-sold { box-shadow: inset 3px 0 0 $sold; }
+  tbody tr.status-available { box-shadow: inset 3px 0 0 $accent; }
+  tbody tr.status-reserved { box-shadow: inset 3px 0 0 $reserved; }
+  tbody tr.status-sold { box-shadow: inset 3px 0 0 $soldInk; }
   tbody tr.status-sold .cell-input { color: $mutedText; }
   tbody tr.is-hover, tbody tr.is-checked { background: #fff; }
   tbody tr.is-checked { background: #F4F0E4; }
@@ -882,11 +879,11 @@ select.cell-input.input { min-width: 150px; padding-right: 30px; background-posi
     &:hover { background: $background; color: $black; }
   }
 
-  input:focus-visible + label { outline: 2px solid $sageDeep; outline-offset: -2px; }
+  input:focus-visible + label { outline: 2px solid $accentDeep; outline-offset: -2px; }
 
-  input:checked + .opt-available { background: $available; color: #fff; }
-  input:checked + .opt-reserved { background: $reservedFill; color: #2E2108; }
-  input:checked + .opt-sold { background: $sold; color: #fff; }
+  input:checked + .opt-available { background: $availableInk; color: #fff; }
+  input:checked + .opt-reserved { background: $reserved; color: #fff; }
+  input:checked + .opt-sold { background: $soldInk; color: #fff; }
 
   &.large label { min-width: 120px; padding: 12px 16px; font-size: 17px; }
 }
@@ -899,7 +896,7 @@ select.cell-input.input { min-width: 150px; padding-right: 30px; background-posi
   color: $mutedText;
   white-space: nowrap;
 
-  &.is-saved { color: $available; }
+  &.is-saved { color: $availableInk; }
   &.is-saved::before { content: '✓ '; }
   &.is-error { color: $danger; }
 }
@@ -928,8 +925,8 @@ select.cell-input.input { min-width: 150px; padding-right: 30px; background-posi
     box-shadow: 0 16px 40px rgba(0, 24, 25, 0.28);
 
     .bulk-count { color: $white; font-weight: 600; }
-    .bulk-label { color: $sage; }
-    .button.secondary { color: $white; border-color: $borderOnDark; &:hover { background: rgba(246, 243, 233, 0.1); } }
+    .bulk-label { color: $accent; }
+    .button.secondary { color: $white; border-color: $borderOnDark; &:hover { background: rgba($white, 0.1); } }
     .input { border-color: transparent; }
   }
 
@@ -940,9 +937,9 @@ select.cell-input.input { min-width: 150px; padding-right: 30px; background-posi
 .bulk-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .bulk-label { font-size: 14px; color: $mutedText; margin-right: 2px; }
 
-.button.bulk-available { background: $available; border-color: $available; }
-.button.bulk-reserved { background: $reservedFill; border-color: $reservedFill; color: #2E2108; }
-.button.bulk-sold { background: $sold; border-color: $sold; }
+.button.bulk-available { background: $availableInk; border-color: $availableInk; }
+.button.bulk-reserved { background: $reserved; border-color: $reserved; color: #fff; }
+.button.bulk-sold { background: $soldInk; border-color: $soldInk; }
 .button.bulk-available:hover, .button.bulk-reserved:hover, .button.bulk-sold:hover { filter: brightness(1.1); }
 
 // Categories
@@ -988,18 +985,18 @@ select.cell-input.input { min-width: 150px; padding-right: 30px; background-posi
 .placer-map {
   border: 1px solid $line;
   cursor: crosshair;
-  background: #E7E2D2;
+  background: $mapGround;
 
   svg { display: block; width: 100%; height: auto; }
 }
 
 .plot-placer {
-  .placer-other path { fill: #CFC9B6; stroke: #FBF8F1; stroke-width: 1.4; }
+  .placer-other path { fill: #CFC9B6; stroke: $surface; stroke-width: 1.4; }
   .placer-other text { font-family: $fontBody; font-size: 11px; fill: #8C8577; text-anchor: middle; dominant-baseline: middle; }
   .placer-current path { fill: $primaryColor; stroke: #fff; stroke-width: 2.5; }
   .placer-current text { font-family: $fontBody; font-size: 13px; font-weight: 700; fill: #fff; text-anchor: middle; dominant-baseline: middle; }
 
-  .placer-status { margin: 12px 0; font-size: 15px; color: $sageDeep; }
+  .placer-status { margin: 12px 0; font-size: 15px; color: $accentDeep; }
 
   .placer-controls {
     display: flex;
@@ -1031,7 +1028,7 @@ select.cell-input.input { min-width: 150px; padding-right: 30px; background-posi
 
 .timeline li { display: block; small { display: block; margin-top: 2px; } }
 
-.ranked { counter-reset: rank; li::before { counter-increment: rank; content: counter(rank); font-family: $fontDisplay; font-size: 20px; color: $sageDeep; width: 22px; } }
+.ranked { counter-reset: rank; li::before { counter-increment: rank; content: counter(rank); font-family: $fontDisplay; font-size: 20px; color: $accentDeep; width: 22px; } }
 
 .danger-zone {
   display: flex;
@@ -1096,7 +1093,7 @@ select.cell-input.input { min-width: 150px; padding-right: 30px; background-posi
 
   .bar { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; }
   .count { font-size: 13px; color: $mutedText; min-height: 18px; }
-  .fill { width: 100%; min-height: 2px; background: $sage; }
+  .fill { width: 100%; min-height: 2px; background: $accent; }
   .current .fill { background: $primaryColor; }
   .label { font-size: 12px; color: $mutedText; }
 }
@@ -1118,10 +1115,10 @@ select.cell-input.input { min-width: 150px; padding-right: 30px; background-posi
     &:hover .status-name { text-decoration: underline; }
   }
   .track { height: 10px; background: $card; }
-  .fill { display: block; height: 100%; background: $sageDeep; }
-  .fill.status-new { background: #C9A45C; }
-  .fill.status-won { background: $available; }
-  .fill.status-lost { background: $sold; }
+  .fill { display: block; height: 100%; background: $accentDeep; }
+  .fill.status-new { background: $reserved; }
+  .fill.status-won { background: $availableInk; }
+  .fill.status-lost { background: $soldInk; }
   .status-count { text-align: right; font-variant-numeric: tabular-nums; }
 }
 
@@ -1187,8 +1184,8 @@ select.cell-input.input { min-width: 150px; padding-right: 30px; background-posi
   }
 
   input:checked + label { background: $primaryColor; color: $white; }
-  input:checked + label::before { background: $sage; border-color: $sage; color: $primaryColor; }
-  input:focus-visible + label { outline: 2px solid $sageDeep; outline-offset: -2px; }
+  input:checked + label::before { background: $accent; border-color: $accent; color: $primaryColor; }
+  input:focus-visible + label { outline: 2px solid $accentDeep; outline-offset: -2px; }
 }
 
 .pipeline-form fieldset { border: 0; margin: 0; padding: 0; }

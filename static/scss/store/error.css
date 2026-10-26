@@ -9,13 +9,15 @@
 .error-page .error-links a {
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
   font-size: clamp(26px, 2.2vw, 36px);
-  color: #0D1716;
+  color: #0B1619;
   text-decoration: none;
-  border-bottom: 1px solid #90AE8C;
+  border-bottom: 1px solid #9CC3D0;
 }
 .error-page p a {
   color: #002223;
 }
 .error-page .section-head {
   margin-top: 80px;
-}/*# sourceMappingURL=error.css.map */
+}
+
+/*# sourceMappingURL=error.css.map */

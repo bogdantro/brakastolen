@@ -3,32 +3,30 @@
 }
 
 .activity {
-  border-top: 1px solid rgba(20, 22, 22, 0.16);
+  border-top: 1px solid rgba(17, 26, 29, 0.16);
 }
 .activity:nth-of-type(odd) {
-  background: #E7DFCE;
-}
-.activity:nth-of-type(odd) .photo-fact {
-  background: #E7DFCE;
+  background: #E6ECEF;
 }
 .activity .activity-photo {
   position: relative;
   margin: 0;
+  overflow: hidden;
 }
 .activity .activity-photo img {
   width: 100%;
   aspect-ratio: 5/4;
-  -o-object-fit: cover;
-     object-fit: cover;
-  background: #DDD2BD;
+  object-fit: cover;
+  background: #D3DDE2;
 }
 .activity .photo-fact {
   position: absolute;
   left: 0;
+  right: 0;
   bottom: 0;
-  background: #F1EBDF;
-  padding: 18px 24px 0 0;
-  color: #5C5956;
+  padding: 90px 24px 22px;
+  background: linear-gradient(0deg, rgba(4, 14, 17, 0.72) 0%, rgba(4, 14, 17, 0.4) 55%, rgba(4, 14, 17, 0) 100%);
+  color: rgba(245, 248, 249, 0.85);
   font-size: 16px;
 }
 .activity .photo-fact strong {
@@ -37,14 +35,14 @@
   font-weight: 400;
   font-size: clamp(40px, 4vw, 68px);
   line-height: 1;
-  color: #002223;
+  color: #F5F8F9;
   letter-spacing: -0.02em;
 }
 .activity .photo-fact.is-word strong {
   font-size: clamp(28px, 2.4vw, 40px);
 }
 .activity .season {
-  color: #5E7D5A;
+  color: #2C6278;
   font-weight: 500;
   margin-bottom: 8px;
 }
@@ -55,7 +53,7 @@
   margin: 24px 0 22px;
 }
 .activity .activity-text > p:not(.season) {
-  color: #5C5956;
+  color: #4B5A61;
   max-width: 32em;
 }
 .activity .activity-text > p:not(.season) + p {
@@ -65,13 +63,13 @@
   list-style: none;
   margin: 28px 0 0;
   padding: 0;
-  border-top: 1px solid rgba(20, 22, 22, 0.16);
+  border-top: 1px solid rgba(17, 26, 29, 0.16);
 }
 .activity .fact-list li {
   position: relative;
   padding: 12px 0 12px 26px;
-  border-bottom: 1px solid rgba(20, 22, 22, 0.16);
-  color: #0D1716;
+  border-bottom: 1px solid rgba(17, 26, 29, 0.16);
+  color: #0B1619;
 }
 .activity .fact-list li::before {
   content: "";
@@ -80,17 +78,17 @@
   top: 1.25em;
   width: 12px;
   height: 2px;
-  background: #90AE8C;
+  background: #9CC3D0;
 }
 
 .live-here {
-  border-top: 1px solid rgba(20, 22, 22, 0.16);
+  border-top: 1px solid rgba(17, 26, 29, 0.16);
 }
 .live-here .live-lead {
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
   font-size: clamp(24px, 2.2vw, 36px);
   line-height: 1.3;
-  color: #0D1716;
+  color: #0B1619;
   max-width: 22em;
 }
 .live-here .circle-link {
@@ -135,4 +133,6 @@
   .activity.is-flipped .activity-photo {
     order: 2;
   }
-}/*# sourceMappingURL=aktiviteter.css.map */
+}
+
+/*# sourceMappingURL=aktiviteter.css.map */

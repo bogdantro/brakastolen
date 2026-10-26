@@ -11,8 +11,9 @@
 <link rel="stylesheet" href="{% static 'scss/store/home.css' %}">
 
 {% comment %}
-  Hero – 1:1 after docs/design-reference-hero.png. On desktop every element is placed on the
-  reference's 1672×941 grid (see home.scss, --u), so it scales with the window and keeps the layout.
+  Hero: the photo fills the whole first screen and the text stands straight on it – no
+  background behind the text, all of it in one colour, and never wider than half the screen
+  (the client's wishes, 26.10.2026). A soft dark wash on the left keeps it readable on any photo.
 {% endcomment %}
 <section class="hero" data-slideshow>
   <div class="hero-photo">
@@ -22,46 +23,22 @@
     {% endfor %}
   </div>
 
-  {% comment %} Cream block under the heading, so the place name and text have room beside the photo.
-  The heading lines carry their own cream background, so the steps fit any wording. {% endcomment %}
-  <span class="step step-1" aria-hidden="true"></span>
-
   <div class="hero-text">
-    <h1><span class="line">Stort utvalg</span> <span class="line line-2 green">av fantastiske</span> <span class="line line-3"><span class="green">tomter</span>.</span></h1>
-    <div class="hero-sub">
-      <p class="place">Brakastølen, Vaset · Valdres</p>
-      <span class="copper-rule" aria-hidden="true"></span>
-      <p class="lead">Storslått natur. Egen hyttedrøm.<br>Noen steder føles bare riktige.</p>
-      <a href="{% url 'tomter' %}" class="circle-link">
-        <span class="circle" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 12h17M14 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></span>
-        Se ledige tomter
-      </a>
-    </div>
+    <h1><span class="hero-line">Stort utvalg</span> <span class="hero-line">av fantastiske tomter.</span></h1>
+    <p class="place">Brakastølen, Vaset · Valdres</p>
+    <span class="hero-rule" aria-hidden="true"></span>
+    <p class="lead">Storslått natur. Egen hyttedrøm.<br>Noen steder føles bare riktige.</p>
+    <a href="{% url 'tomter' %}" class="circle-link">
+      <span class="circle" aria-hidden="true">{% include 'core/arrow.svg' %}</span>
+      Se ledige tomter
+    </a>
   </div>
-
-  {% comment %}
-  Switched off at the client's request (20.10.2026). Styles are kept in home.scss –
-  remove this comment wrapper to bring them back.
-
-  <span class="side-column" aria-hidden="true"></span>
-
-  <aside class="price-card" aria-label="Pris">
-    <span class="copper-rule" aria-hidden="true"></span>
-    <p class="label">Tomter fra</p>
-    <p class="price">{{ business.price_from_display }}</p>
-    <p class="costs">+ omk.*</p>
-  </aside>
-
-  <div class="side-text">
-    <p class="script">Mer<br>enn et<br>sted.</p>
-  </div>
-  {% endcomment %}
-
-  <img class="winter" src="{% static 'images/misc/vaset-vinter-svarthvit.jpg' %}" alt="Vinterfjellet ved Vaset med preparerte skiløyper" loading="lazy">
 </section>
 
 {% include 'core/plot-picker.html' %}
 
+{% comment %} «Høyt og fritt»: plain text beside the photo – no coloured boxes; the Jotunheimen line
+lies on the photo itself, on a see-through dark wash (client, 26.10.2026) {% endcomment %}
 <section class="intro" aria-labelledby="intro-title">
   <div class="intro-grid">
     <div class="intro-text">
@@ -72,30 +49,22 @@
       <a href="{% url 'om_vaset' %}" class="circle-link"><span class="circle" aria-hidden="true">{% include 'core/arrow.svg' %}</span>Mer om Vaset</a>
     </div>
 
-    <figure class="intro-photo">
+    <figure class="intro-photo" data-reveal>
       <img src="{% static 'images/projects/leve-hytte-utsikt-til-syndin.jpg' %}" alt="Utsikt fra hyttevinduet mot Syndin og fjellene rundt Vaset" loading="lazy">
       <figcaption class="intro-quote">Her er det åpent og vilt landskap med flott utsyn mot den ville Jotunheimen.</figcaption>
     </figure>
   </div>
 
-  <div class="facts-band">
-    <dl class="content facts">
-      <div><dt>Høyde</dt><dd>900–1050 <span>moh.</span></dd></div>
-      <div><dt>Utsikt</dt><dd>180°</dd></div>
-      <div><dt>Sol</dt><dd>Morgen til kveld</dd></div>
-      <div><dt>Byggeklausul</dt><dd>Ingen</dd></div>
-    </dl>
-    {% comment %} A mountain ridge with the 900–1050 moh. band the plots sit in – decorative {% endcomment %}
-    <svg class="ridge" viewBox="0 0 1600 150" preserveAspectRatio="none" aria-hidden="true">
-      <path class="ridge-fill" d="M0 150V96L90 80 170 92 260 58 330 74 420 30 470 44 540 12 610 40 690 34 760 62 850 40 930 66 1010 22 1080 48 1160 38 1240 70 1330 46 1410 64 1500 50 1600 72V150Z"/>
-      <path class="ridge-line" d="M0 96L90 80 170 92 260 58 330 74 420 30 470 44 540 12 610 40 690 34 760 62 850 40 930 66 1010 22 1080 48 1160 38 1240 70 1330 46 1410 64 1500 50 1600 72"/>
-      <path class="ridge-band" d="M0 52H1600M0 86H1600"/>
-    </svg>
-  </div>
+  <dl class="content facts">
+    <div><dt>Høyde</dt><dd>900–1050 <span>moh.</span></dd></div>
+    <div><dt>Utsikt</dt><dd>180°</dd></div>
+    <div><dt>Sol</dt><dd>Morgen til kveld</dd></div>
+    <div><dt>Byggeklausul</dt><dd>Ingen</dd></div>
+  </dl>
 </section>
 
 <section class="feature cabins-feature">
-  <div class="cabins-photo">
+  <div class="cabins-photo" data-reveal>
     <img src="{% static 'images/projects/tinde-vaset-4030.jpg' %}" alt="Soverom med fjellutsikt i Tinde-hytte på Vaset" loading="lazy">
   </div>
   <div class="cabins-card">
@@ -117,7 +86,7 @@
     <ul class="supplier-cards">
       {% for name, tagline, text, url, photo, anchor in featured_suppliers %}
       <li class="supplier-card">
-        <a href="{% url 'hytter' %}#{{ anchor }}" class="supplier-photo" tabindex="-1" aria-hidden="true">
+        <a href="{% url 'hytter' %}#{{ anchor }}" class="supplier-photo" tabindex="-1" aria-hidden="true" data-reveal>
           <img src="{% static photo %}" alt="" loading="lazy">
         </a>
         <p class="supplier-kicker">Hytteleverandør</p>
@@ -147,51 +116,43 @@
   </div>
 </section>
 
-<section class="activities" aria-labelledby="activities-title">
-  <div class="content">
-    <div class="activities-head">
-      <h2 id="activities-title">Aktiviteter hele året</h2>
-      <div>
-        <p>Vaset er et av de mest attraktive hytteområdene i Valdres – med spennende aktiviteter både sommer og vinter, rett utenfor hytteveggen.</p>
-        <a href="{% url 'aktiviteter' %}" class="text-link">Mer om aktivitetene</a>
-      </div>
+{% comment %} Aktiviteter: one row of equally large photos you can swipe or click through both ways,
+with the text lying on each photo (client, 26.10.2026). The slides are in core/views.py, HOME_ACTIVITIES. {% endcomment %}
+<section class="activities" aria-labelledby="activities-title" data-carousel>
+  <div class="content activities-head">
+    <h2 id="activities-title">Aktiviteter hele året</h2>
+    <div>
+      <p>Vaset er et av de mest attraktive hytteområdene i Valdres – med spennende aktiviteter både sommer og vinter, rett utenfor hytteveggen.</p>
+      <a href="{% url 'aktiviteter' %}" class="text-link">Mer om aktivitetene</a>
     </div>
+  </div>
 
-    <ul class="activity-cards">
-      <li>
-        <a href="{% url 'aktiviteter' %}#alpint" class="activity-card">
-          <span class="activity-photo">
-            <img src="{% static 'images/misc/kiting-pa-vaset.jpg' %}" alt="Snøkiting på fjellet ved Vaset" loading="lazy">
-            <span class="activity-fact"><strong>9</strong> nedfarter</span>
-          </span>
-          <span class="season">Vinter</span>
-          <h3>Alpint</h3>
-          <p>Vaset skiheiser har nedfarter i ulike vanskelighetsgrader – et flott alternativ for barnefamilier og de som vil øve på rails eller hopp.</p>
-        </a>
-      </li>
-      <li>
-        <a href="{% url 'aktiviteter' %}#langrenn" class="activity-card">
-          <span class="activity-photo">
-            <img src="{% static 'images/misc/langrenn-vaset.jpg' %}" alt="Preparerte langrennsløyper over snaufjellet ved Vaset" loading="lazy">
-            <span class="activity-fact"><strong>120</strong> km løyper</span>
-          </span>
-          <span class="season">Vinter</span>
-          <h3>Langrenn</h3>
-          <p>Preparerte løyper fra lysløype i granskog til snaufjellet innenfor Gomobu – og helt opp på «Syni», 1137 moh.</p>
-        </a>
-      </li>
-      <li>
-        <a href="{% url 'aktiviteter' %}#sykkel" class="activity-card">
-          <span class="activity-photo">
-            <img src="{% static 'images/projects/tinde-hytte-04-12031241.jpg' %}" alt="Hytte med torvtak i sommerfjellet ved Vaset" loading="lazy">
-            <span class="activity-fact is-word"><strong>Mjølkevegen</strong> nasjonal sykkelrute</span>
-          </span>
-          <span class="season">Sommer</span>
-          <h3>Sykkel</h3>
-          <p>Flere titalls merkede sykkelløyper fra Gomobu for hele familien, og den nasjonale sykkelruta «Mjølkevegen».</p>
-        </a>
-      </li>
-    </ul>
+  <ul class="activity-track" tabindex="0" aria-label="Aktiviteter – bla sidelengs" data-carousel-track data-reveal>
+    {% for activity in activities %}
+    <li class="activity-slide">
+      <a href="{% url 'aktiviteter' %}#{{ activity.anchor }}" class="activity-card">
+        <img src="{% static activity.photo %}" alt="{{ activity.alt }}" loading="lazy">
+        <span class="activity-body">
+          <span class="activity-fact{% if activity.fact_is_word %} is-word{% endif %}"><strong>{{ activity.fact }}</strong> {{ activity.fact_label }}</span>
+          <span class="season">{{ activity.season }}</span>
+          <h3>{{ activity.title }}</h3>
+          <span class="activity-text">{{ activity.text }}</span>
+        </span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <div class="content carousel-controls">
+    <p class="carousel-count" aria-live="polite"><span data-carousel-current>1</span> / {{ activities|length }}</p>
+    <div class="carousel-buttons">
+      <button type="button" class="carousel-btn" data-carousel-prev aria-label="Forrige aktivitet">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M21 12H4M10 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+      </button>
+      <button type="button" class="carousel-btn" data-carousel-next aria-label="Neste aktivitet">
+        {% include 'core/arrow.svg' %}
+      </button>
+    </div>
   </div>
 </section>
 

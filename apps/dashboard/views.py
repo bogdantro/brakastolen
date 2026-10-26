@@ -18,7 +18,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from apps.blog.models import Blog
-from apps.core.models import CostItem, FieldDocument, FinnAd, Inquiry, InquiryNote, Plot, PlotCategory
+from apps.core.models import PLOT_STREETS, CostItem, FieldDocument, FinnAd, Inquiry, InquiryNote, Plot, PlotCategory
 from apps.core.seo import BUSINESS
 from apps.core.views import wants_json
 
@@ -609,6 +609,12 @@ def dashboard_plot_categories(request):
     return redirect(target)
 
 
+def street_names():
+    """The streets offered in the plot form: the field's own, plus any typed in by hand."""
+    typed = Plot.objects.exclude(street='').values_list('street', flat=True)
+    return sorted(set(street for _, _, street in PLOT_STREETS) | set(typed))
+
+
 def other_plots_on_map(plot=None):
     """The other plots, drawn faintly in the plot form's map so a new one can be placed beside them."""
     plots = Plot.objects.filter(map_x__isnull=False, map_y__isnull=False)
@@ -628,7 +634,8 @@ def dashboard_plot_create(request):
         log_activity(request, 'La til tomt', str(plot), reverse('dashboard_plot_edit', args=[plot.pk]))
         messages.success(request, f'Tomt {plot.number} ble lagt til.')
         return redirect(reverse('dashboard_plots'))
-    return render(request, 'dashboard/plot_form.html', {'form': form, 'plot': None, 'map_plots': other_plots_on_map()})
+    return render(request, 'dashboard/plot_form.html', {'form': form, 'plot': None, 'map_plots': other_plots_on_map(),
+                                                        'plot_streets': street_names()})
 
 
 @staff_required
@@ -645,6 +652,7 @@ def dashboard_plot_edit(request, pk):
         'form': form,
         'plot': plot,
         'map_plots': other_plots_on_map(plot),
+        'plot_streets': street_names(),
         'inquiries': Inquiry.objects.filter(plot=plot, is_spam=False)[:10],
         'history': ActivityLog.objects.select_related('user').filter(url=edit_url)[:8],
     })

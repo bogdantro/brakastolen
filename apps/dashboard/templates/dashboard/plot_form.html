@@ -41,6 +41,10 @@
           {% include 'dashboard/_field.html' with field=form.number %}
           {% include 'dashboard/_field.html' with field=form.category %}
         </div>
+        {% include 'dashboard/_field.html' with field=form.street %}
+        <datalist id="plot-streets">
+          {% for street in plot_streets %}<option value="{{ street }}">{% endfor %}
+        </datalist>
         {% include 'dashboard/_field.html' with field=form.note %}
       </section>
 

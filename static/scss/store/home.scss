@@ -1,19 +1,23 @@
-// Homepage. The hero is a 1:1 build of docs/design-reference-hero.png: on desktop every
-// element sits at its x/y on the 1672×941 reference, scaled with u().
+// Homepage: a full-screen photo hero, the plot picker, and the sections below.
 @use '../global/variables' as *;
 
 // ------------------------------------------------------------
-// Hero – shared
+// Hero – the photo fills the screen; the text stands on it in one colour, no boxes behind it,
+// and never takes more than half the screen's width (client, 26.10.2026)
 // ------------------------------------------------------------
 .hero {
   position: relative;
+  display: flex;
+  align-items: flex-end;
   overflow: hidden;
-  background: $background;
+  min-height: 100vh;
+  min-height: 100svh;
+  background: #24323A;
+  color: $white;
 
   .hero-photo {
     position: absolute;
-    overflow: hidden;
-    background: #2b2f2c;
+    inset: 0;
 
     .slide {
       position: absolute;
@@ -29,148 +33,87 @@
       }
     }
 
-    // A soft dark wash at the top keeps the glass nav readable over a bright sky
+    // A dark wash at the top for the nav and from the left/bottom for the text, so white
+    // text reads on a bright sky or snow without a box behind it
     &::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(18, 20, 22, 0.42) 0%, rgba(18, 20, 22, 0.12) 22%, rgba(18, 20, 22, 0) 40%,
-                  rgba(18, 20, 22, 0) 70%, rgba(18, 20, 22, 0.28) 100%);
+      background:
+        linear-gradient(180deg, rgba(4, 14, 17, 0.5) 0%, rgba(4, 14, 17, 0) 24%),
+        linear-gradient(90deg, rgba(4, 14, 17, 0.62) 0%, rgba(4, 14, 17, 0.3) 45%, rgba(4, 14, 17, 0) 70%),
+        linear-gradient(0deg, rgba(4, 14, 17, 0.5) 0%, rgba(4, 14, 17, 0) 45%);
       pointer-events: none;
     }
   }
 
+  .hero-text {
+    position: relative;
+    z-index: 2;
+    max-width: 50%;
+  }
+
   h1 {
-    color: $heroText;
-    letter-spacing: -0.015em;
-
-    // Each line sits on its own cream block, stepping out over the photo. Earlier lines are
-    // stacked above later ones, so a descender (the "p" or "j") is never covered by the next line.
-    .line {
-      display: block;
-      width: fit-content;
-      position: relative;
-      background: $background;
-      white-space: nowrap;
-    }
-
-    .line:nth-child(1) { z-index: 3; }
-    .line:nth-child(2) { z-index: 2; }
-    .line:nth-child(3) { z-index: 1; }
-
-    // "i fantastiske tomter" in the light brand green
-    .green {
-      color: $sageDeep;
-    }
+    color: inherit;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    text-shadow: 0 2px 30px rgba(4, 14, 17, 0.35);
   }
 
   .place {
+    margin: 0;
     font-family: $fontBody;
-    color: $black;
   }
 
-  .copper-rule {
+  .hero-rule {
     display: block;
+    width: 48px;
     height: 2px;
-    background: $sageDeep;
+    background: currentColor;
   }
 
   .lead {
-    color: $mutedText;
+    margin: 0;
+    color: inherit;
   }
 
-  .price-card {
-    background: $background;
+  // Same colour as the rest of the text; the circle is outlined so it doesn't add a colour
+  .circle-link {
+    color: inherit;
 
-    .label {
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: $black;
+    .circle {
+      background: transparent;
+      border: 1px solid rgba($white, 0.7);
     }
 
-    .price {
-      font-family: $fontDisplay;
-      color: $heroText;
-      line-height: 1;
-      letter-spacing: -0.035em;
-      white-space: nowrap;
+    &:hover .circle {
+      background: $white;
+      color: $primaryColor;
     }
-
-    .costs {
-      text-align: right;
-      color: $black;
-    }
-  }
-
-  .script {
-    font-family: $fontScript;
-    color: $scriptColor;
-    line-height: 1.05;
-    transform: rotate(-8deg);
-    transform-origin: left top;
-  }
-
-
-
-
-
-  .winter {
-    object-fit: cover;
   }
 }
 
-// ------------------------------------------------------------
-// Mobile and tablet: the photo fills the first screen; the heading steps up out of it on
-// cream blocks, and a cream panel below carries the place, the text and the button – all
-// within the first screen. On tablets the panel is narrower, so the photo shows beside it.
-// ------------------------------------------------------------
+// Mobile and tablet: the text at the bottom of the photo, full width on phones
 @media (max-width: 1139px) {
   .hero {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    min-height: 100vh;
-    min-height: 100svh;
-    padding-top: 64px;
-
-    .hero-photo {
-      position: absolute;
-      inset: 0;
-    }
-
-    .step, .side-column, .side-text, .winter, .price-card {
-      display: none;
-    }
+    padding: 96px 20px 48px;
 
     .hero-text {
-      position: relative;
-      z-index: 2;
+      max-width: 560px;
     }
 
     h1 {
-      font-size: clamp(44px, 11.6vw, 96px);
-      line-height: 1.04;
-
-      // The lines step out from the left edge, each on its own cream block
-      .line {
-        padding: 6px 18px 0 20px;
-      }
-    }
-
-    .hero-sub {
-      background: $background;
-      padding: 14px 20px 32px;
+      font-size: clamp(36px, 9.6vw, 60px);
+      line-height: 1.06;
     }
 
     .place {
-      font-size: 22px;
-      // Room for the descender of the "g" in "utvalg" above
-      padding-top: 0.1em;
+      margin-top: 18px;
+      font-size: 20px;
     }
 
-    .copper-rule {
-      width: 48px;
-      margin: 14px 0 14px;
+    .hero-rule {
+      margin: 14px 0;
     }
 
     .lead {
@@ -183,143 +126,62 @@
       gap: 16px;
       font-size: 18px;
 
-      .circle { width: 56px; height: 56px; }
+      .circle { width: 54px; height: 54px; }
     }
   }
 }
 
 @media (min-width: 700px) and (max-width: 1139px) {
   .hero {
-    h1 .line {
-      padding-left: 40px;
-    }
+    padding: 120px 40px 64px;
 
-    .hero-sub {
-      width: min(100%, 600px);
-      padding: 20px 40px 44px;
-    }
-
-    .place { font-size: 28px; }
+    .place { font-size: 24px; }
     .lead { font-size: 19px; }
   }
 }
 
-// ------------------------------------------------------------
-// Desktop: positions straight from the reference (x, y in px of the 1672×941 canvas)
-// ------------------------------------------------------------
+// Desktop: the text sits on the left, lower half – heading in at most half the width
 @media only screen and (min-width: 1140px) {
   .hero {
-    height: u(941);
-    min-height: 620px;
+    align-items: center;
+    max-height: 1100px;
+    padding: u(140) u(116) u(60);
 
-    > * {
-      position: absolute;
-      margin: 0;
-    }
-
-    .hero-photo {
-      left: u(495);
-      top: 0;
-      right: 0;
-      bottom: 0;
-    }
-
-    // Cream steps cutting into the photo behind "plass" and "i fjellet."
-    .step {
-      background: $background;
-    }
-    .step-1 { left: u(495); top: u(330); width: u(150); height: u(440); }
-
-    // Right-hand cream column under the price card
-    .side-column {
-      left: u(1488);
-      top: u(326);
-      right: 0;
-      bottom: 0;
-      background: $background;
-    }
-
-
-
-    .hero-text {
-      left: u(114);
-      top: u(182);
-      width: max-content;
-    }
-
+    // Always two lines on desktop: «Stort utvalg» / «av fantastiske tomter.» – sized so
+    // the longer line takes about half the screen
     h1 {
-      font-size: u(150);
-      line-height: u(132);
-      letter-spacing: -0.035em;
+      font-size: clamp(53px, u(79), 96px);
+      line-height: 1.08;
 
-      .line { padding-right: u(30); }
+      .hero-line {
+        display: block;
+        white-space: nowrap;
+      }
     }
 
     .place {
-      font-size: u(34);
-      line-height: 1;
-      // Room for the descender of the "j" in "fjellet" above
-      margin-top: u(52);
-      margin-left: u(4);
+      margin-top: u(36);
+      font-size: max(20px, u(28));
     }
 
-    .copper-rule {
-      width: u(58);
-      margin: u(18) 0 0 u(5);
+    .hero-rule {
+      margin: u(20) 0 u(18);
     }
 
     .lead {
-      font-size: u(19.5);
-      line-height: 1.4;
-      margin: u(14) 0 0 u(5);
+      font-size: max(17px, u(20));
+      line-height: 1.45;
     }
 
     .circle-link {
-      margin: u(18) 0 0 u(5);
-      gap: u(30);
-      font-size: u(19);
+      margin-top: u(30);
+      gap: u(24);
+      font-size: max(17px, u(19));
 
       .circle {
-        width: u(70);
-        height: u(70);
-
-        svg { width: u(26); height: u(26); }
+        width: max(56px, u(68));
+        height: max(56px, u(68));
       }
-    }
-
-    .price-card {
-      left: u(1268);
-      top: u(130);
-      right: 0;
-      height: u(197);
-      padding: u(36) u(65) 0 u(37);
-
-      .copper-rule { width: u(40); margin: 0 0 u(23); }
-      .label { font-size: u(13.5); line-height: 1; }
-      .price { font-size: u(75); margin-top: u(10); }
-      .costs { font-size: u(16); margin-top: u(4); }
-    }
-
-    .side-text {
-      left: u(1524);
-      top: u(388);
-      width: u(140);
-
-      .script {
-        font-size: u(43);
-        margin-left: u(4);
-      }
-
-
-    }
-
-
-    .winter {
-      left: u(1372);
-      top: u(717);
-      width: u(256);
-      height: u(224);
-      max-width: none;
     }
   }
 }
@@ -334,16 +196,11 @@
 // Sections below the hero
 // ------------------------------------------------------------
 
-// "Høyt og fritt": text beside a tall photo that bleeds to the right edge; a cream block with
-// the Jotunheimen line steps into the photo, and the photo overlaps a green band of facts
-// that ends in a mountain ridge marking the 900–1050 moh. the plots sit at.
+// "Høyt og fritt": plain text beside a tall photo that bleeds to the right edge. The Jotunheimen
+// line lies on the photo on a see-through dark wash, and the facts stand on the page in a row –
+// no beige or green boxes behind text (client, 26.10.2026).
 .intro {
   position: relative;
-
-  .intro-grid {
-    position: relative;
-    z-index: 2;
-  }
 
   h2 {
     letter-spacing: -0.025em;
@@ -371,6 +228,7 @@
   .intro-photo {
     position: relative;
     margin: 0;
+    overflow: hidden;
 
     img {
       width: 100%;
@@ -380,9 +238,13 @@
   }
 
   .intro-quote {
-    background: $background;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(0deg, rgba(4, 14, 17, 0.72) 0%, rgba(4, 14, 17, 0.4) 55%, rgba(4, 14, 17, 0) 100%);
     font-family: $fontDisplay;
-    color: $heroText;
+    color: $white;
     line-height: 1.25;
 
     &::before {
@@ -390,25 +252,18 @@
       display: block;
       width: 48px;
       height: 2px;
-      background: $sageDeep;
-      margin-bottom: 20px;
+      background: currentColor;
+      margin-bottom: 18px;
     }
-  }
-
-  .facts-band {
-    position: relative;
-    background: $primaryColor;
-    color: $white;
-    overflow: hidden;
   }
 
   .facts {
     display: grid;
-    margin-top: 0;
     margin-bottom: 0;
+    border-top: 1px solid $border;
 
     dt {
-      color: $sage;
+      color: $accentDeep;
       font-size: 15px;
       letter-spacing: 0.04em;
     }
@@ -417,29 +272,21 @@
       margin: 10px 0 0;
       font-family: $fontDisplay;
       line-height: 1;
-      color: $white;
+      color: $heroText;
       letter-spacing: -0.02em;
 
       span {
         font-family: $fontBody;
         font-size: 0.36em;
-        color: $sage;
+        color: $mutedText;
         letter-spacing: 0;
       }
     }
   }
-
-  .ridge {
-    display: block;
-    width: 100%;
-
-    .ridge-fill { fill: #0A3031; }
-    .ridge-line { fill: none; stroke: $sage; stroke-width: 1.5; vector-effect: non-scaling-stroke; opacity: 0.7; }
-    .ridge-band { fill: none; stroke: $sage; stroke-width: 1; stroke-dasharray: 4 7; vector-effect: non-scaling-stroke; opacity: 0.45; }
-  }
 }
 
-// Hytter: a full-width photo with a cream card stepping into its lower-left corner
+// Hytter: a full-width photo; on larger screens the text lies on it over a see-through dark
+// wash, on phones it stands plainly under it – never in a box (client, 26.10.2026)
 .cabins-feature {
   position: relative;
 
@@ -450,11 +297,46 @@
   }
 
   .cabins-card {
-    background: $background;
-
     .copper-rule { margin: 26px 0 22px; }
     p { color: $mutedText; }
     .circle-link { margin-top: 30px; }
+  }
+}
+
+@media (min-width: 700px) {
+  .cabins-feature {
+    .cabins-photo {
+      position: relative;
+    }
+
+    .cabins-photo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(4, 14, 17, 0.7) 0%, rgba(4, 14, 17, 0.35) 50%, rgba(4, 14, 17, 0) 75%);
+      pointer-events: none;
+    }
+
+    .cabins-card {
+      color: $white;
+
+      h2, p { color: inherit; }
+      .copper-rule { background: currentColor; }
+
+      .circle-link {
+        color: inherit;
+
+        .circle {
+          background: transparent;
+          border: 1px solid rgba($white, 0.7);
+        }
+
+        &:hover .circle {
+          background: $white;
+          color: $primaryColor;
+        }
+      }
+    }
   }
 }
 
@@ -462,9 +344,11 @@
   border-top: 1px solid $border;
 }
 
-// Aktiviteter: three tall photo cards in a staggered row; each photo has a cream block
-// stepping out of its corner with the activity's key number.
+// Aktiviteter: one row of equally large photos that runs to both edges of the screen. Swipe,
+// scroll sideways or use the arrows (home.js); the text lies on each photo on a dark wash.
 .activities {
+  border-top: 1px solid $border;
+
   .activities-head {
     display: grid;
     align-items: end;
@@ -479,33 +363,41 @@
     }
   }
 
-  .activity-cards {
+  .activity-track {
+    display: flex;
     list-style: none;
     margin: 0;
-    padding: 0;
-    display: grid;
+    overflow-x: auto;
+    // A sideways scroller can otherwise also scroll up and down (e.g. while a photo glides
+    // into place), which traps the mouse wheel inside the row
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $accentDeep;
+      outline-offset: 4px;
+    }
+  }
+
+  .activity-slide {
+    flex: none;
+    scroll-snap-align: start;
   }
 
   .activity-card {
-    display: block;
-    color: inherit;
-    text-decoration: none;
-
-    &:hover img {
-      transform: scale(1.04);
-    }
-
-    &:hover h3 {
-      color: $sageDeep;
-    }
-  }
-
-  .activity-photo {
     position: relative;
     display: block;
+    height: 100%;
     overflow: hidden;
-    aspect-ratio: 4 / 5;
     background: $sand;
+    color: $white;
+    text-decoration: none;
 
     img {
       width: 100%;
@@ -513,94 +405,116 @@
       object-fit: cover;
       transition: transform 1.4s ease;
     }
+
+    &:hover img {
+      transform: scale(1.03);
+    }
+
+    &:focus-visible {
+      outline: 3px solid $accentDeep;
+      outline-offset: -3px;
+    }
+  }
+
+  .activity-body {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: linear-gradient(0deg, rgba(4, 14, 17, 0.78) 0%, rgba(4, 14, 17, 0.45) 55%, rgba(4, 14, 17, 0) 100%);
   }
 
   .activity-fact {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    background: $background;
-    padding: 16px 22px 0 0;
-    color: $mutedText;
     font-size: 16px;
+    color: rgba($white, 0.85);
 
     strong {
       display: block;
       font-family: $fontDisplay;
       font-weight: 400;
-      font-size: clamp(34px, 3.4vw, 56px);
+      font-size: clamp(40px, 4vw, 68px);
       line-height: 1;
-      color: $primaryColor;
+      color: $white;
       letter-spacing: -0.02em;
     }
   }
 
   // A word instead of a number ("Mjølkevegen") gets a calmer size
   .activity-fact.is-word strong {
-    font-size: clamp(26px, 2.2vw, 36px);
+    font-size: clamp(30px, 2.6vw, 44px);
   }
 
   .season {
-    display: block;
     margin-top: 22px;
-    color: $sageDeep;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba($white, 0.85);
   }
 
   h3 {
-    margin-top: 6px;
-    font-size: clamp(28px, 2.2vw, 36px);
-    transition: color 0.25s ease;
+    margin: 4px 0 0;
+    font-size: clamp(28px, 2.4vw, 40px);
+    color: $white;
   }
 
-  p {
-    margin-top: 10px;
-    color: $mutedText;
+  .activity-text {
+    margin-top: 8px;
+    max-width: 34em;
     font-size: 17px;
+    line-height: 1.5;
+    color: rgba($white, 0.9);
+  }
+
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .carousel-count {
+    margin: 0;
+    font-family: $fontDisplay;
+    font-size: 22px;
+    color: $heroText;
+  }
+
+  .carousel-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .carousel-btn {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border: 1px solid $primaryColor;
+    border-radius: 50%;
+    background: transparent;
+    color: $primaryColor;
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease, opacity 0.25s ease;
+
+    &:hover:not(:disabled) {
+      background: $primaryColor;
+      color: $white;
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
   }
 }
 
 .news-section {
   background: $card;
-}
-
-@media (max-width: 1139px) {
-
-  .cabins-feature {
-    .cabins-photo { height: 58vh; min-height: 320px; max-height: 560px; }
-
-    .cabins-card {
-      position: relative;
-      margin: -70px 20px 0 0;
-      padding: 32px 20px 56px;
-    }
-  }
-}
-
-@media only screen and (min-width: 1140px) {
-  // Photo from the hero's photo line to the right edge; the card is cream from the left edge
-  .cabins-feature {
-    height: u(780);
-
-    .cabins-photo {
-      position: absolute;
-      left: u(495);
-      top: 0;
-      right: 0;
-      bottom: 0;
-    }
-
-    .cabins-card {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: u(760);
-      padding: u(80) u(90) u(90) u(116);
-
-      p { max-width: u(500); }
-    }
-  }
 }
 
 @media (max-width: 1139px) {
@@ -616,33 +530,67 @@
       margin-bottom: 18px;
     }
 
-    .intro-photo img {
+    .intro-photo {
       height: 64vh;
       min-height: 340px;
       max-height: 560px;
     }
 
     .intro-quote {
-      position: relative;
-      margin: -72px 20px 0 0;
-      padding: 26px 20px 28px;
-      font-size: 24px;
-    }
-
-    .facts-band {
-      padding-top: 48px;
+      padding: 120px 20px 26px;
+      font-size: 23px;
     }
 
     .facts {
       grid-template-columns: 1fr 1fr;
       gap: 28px 16px;
+      margin-top: 44px;
+      padding-top: 32px;
+      padding-bottom: 72px;
 
       dd { font-size: 34px; }
     }
+  }
 
-    .ridge {
-      height: 90px;
-      margin-top: 40px;
+  .cabins-feature {
+    .cabins-photo { height: 58vh; min-height: 320px; max-height: 560px; }
+
+    .cabins-card {
+      position: relative;
+      padding: 36px 20px 64px;
+    }
+  }
+
+  .activities {
+    padding: 72px 0;
+
+    .activities-head {
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+
+    .activity-track {
+      gap: 12px;
+      padding: 0 20px;
+      scroll-padding: 0 20px;
+    }
+
+    .activity-slide {
+      width: 86%;
+      aspect-ratio: 4 / 5;
+      max-height: 78vh;
+    }
+
+    .activity-body {
+      padding: 110px 20px 22px;
+    }
+
+    .activity-text {
+      font-size: 16px;
+    }
+
+    .carousel-controls {
+      margin-top: 22px;
     }
   }
 }
@@ -659,10 +607,8 @@
       align-items: start;
     }
 
-    // Bottom padding keeps the text clear of the green band, which only the photo overlaps
     .intro-text {
       padding-top: u(40);
-      padding-bottom: u(200);
     }
 
     h2 {
@@ -682,83 +628,82 @@
       height: u(760);
     }
 
-    // Steps out of the photo's lower-left corner, over the gap and into the text column
     .intro-quote {
-      position: absolute;
-      left: u(-120);
-      bottom: 0;
-      width: u(500);
-      padding: u(40) u(48) u(44) u(44);
+      padding: u(160) u(56) u(48);
       font-size: u(31);
-    }
 
-    // The photo overlaps the top of the green band
-    .facts-band {
-      margin-top: u(-150);
-      padding-top: u(150 + 80);
+      &::before {
+        margin-bottom: u(22);
+      }
     }
 
     .facts {
       grid-template-columns: 1fr 0.8fr 1.4fr 0.9fr;
+      margin-top: u(110);
+      padding-top: u(56);
+      padding-bottom: u(130);
 
       > div + div {
-        border-left: 1px solid $borderOnDark;
+        border-left: 1px solid $border;
         padding-left: u(36);
       }
 
       dd { font-size: u(50); }
     }
+  }
 
-    .ridge {
-      height: u(150);
-      margin-top: u(80);
+  // Photo edge to edge, the text on its lower left at most half the width
+  .cabins-feature {
+    height: u(780);
+
+    .cabins-photo {
+      position: absolute;
+      inset: 0;
+    }
+
+    .cabins-card {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 50%;
+      padding: u(80) u(90) u(90) u(116);
+
+      p { max-width: u(500); }
     }
   }
-}
 
-@media (max-width: 1139px) {
   .activities {
-    padding: 72px 0;
-    border-top: 1px solid $border;
-
-    .activities-head {
-      gap: 14px;
-      margin-bottom: 36px;
-    }
-
-    .activity-cards {
-      gap: 48px;
-    }
-  }
-}
-
-@media only screen and (min-width: 1140px) {
-  .activities {
-    padding: u(150) 0 u(170);
+    padding: u(150) 0 u(130);
 
     .activities-head {
       grid-template-columns: 7fr 5fr;
       gap: u(80);
-      margin-bottom: u(72);
+      margin-bottom: u(64);
 
       h2 { font-size: u(76); }
     }
 
-    .activity-cards {
-      grid-template-columns: repeat(3, 1fr);
-      gap: u(44);
-
-      // Staggered: the middle card sits lower, like the steps in the hero
-      li:nth-child(2) {
-        margin-top: u(110);
-      }
+    // The first slide lines up with the heading; the next one shows at the right edge,
+    // so it's clear there is more to scroll to
+    .activity-track {
+      gap: u(28);
+      padding: 0 u(116);
+      scroll-padding: 0 u(116);
     }
-  }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .activities .activity-photo img {
-    transition: none;
+    .activity-slide {
+      width: min(76vw, 1500px);
+      height: min(u(780), 80vh);
+      min-height: 480px;
+    }
+
+    .activity-body {
+      padding: u(200) u(60) u(52);
+    }
+
+    .carousel-controls {
+      margin-top: u(36);
+    }
   }
 }
 
@@ -768,9 +713,8 @@
 @media (min-width: 700px) and (max-width: 1139px) {
   .intro {
     .intro-text { padding: 0 40px 56px; }
-    .intro-quote { margin-right: 40px; max-width: 560px; padding: 30px 36px 32px; font-size: 28px; }
+    .intro-quote { padding: 140px 40px 32px; font-size: 28px; }
     .facts { grid-template-columns: repeat(4, 1fr); }
-    .facts-band { padding-top: 64px; }
   }
 
   .activities {
@@ -778,19 +722,36 @@
 
     .activities-head { grid-template-columns: 1fr 1fr; align-items: end; gap: 32px; }
 
-    .activity-cards {
-      grid-template-columns: repeat(3, 1fr);
+    .activity-track {
       gap: 20px;
-
-      li:nth-child(2) { margin-top: 56px; }
+      padding: 0 40px;
+      scroll-padding: 0 40px;
     }
 
-    .activity-fact { padding: 12px 16px 0 0; }
+    .activity-slide {
+      width: 82%;
+      aspect-ratio: 4 / 3;
+    }
+
+    .activity-body { padding: 140px 36px 32px; }
   }
 
   .cabins-feature {
     .cabins-photo { height: 64vh; max-height: 640px; }
-    .cabins-card { margin-right: 40px; max-width: 600px; padding: 40px; }
+
+    .cabins-card {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      max-width: 600px;
+      padding: 40px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activities .activity-card img {
+    transition: none;
   }
 }
 
@@ -827,7 +788,7 @@
   .supplier-kicker {
     margin: 0 0 6px;
     font-size: 15px;
-    color: $sageDeep;
+    color: $accentDeep;
   }
 
   h3 {
@@ -853,7 +814,7 @@
     margin: 8px 0 14px;
     font-family: $fontDisplay;
     font-size: 21px;
-    color: $sageDeep;
+    color: $accentDeep;
   }
 
   .supplier-card > p:not([class]) {
@@ -924,7 +885,7 @@
 
   .tile-kicker {
     font-size: 14px;
-    color: $sageDeep;
+    color: $accentDeep;
   }
 
   .tile-name {
@@ -948,7 +909,7 @@
     font-size: 15px;
     color: $primaryColor;
     text-decoration: underline;
-    text-decoration-color: $sage;
+    text-decoration-color: $accent;
     text-underline-offset: 4px;
   }
 

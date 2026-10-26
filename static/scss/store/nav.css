@@ -7,7 +7,7 @@
 .nav {
   display: flex;
   align-items: center;
-  color: #F6F3E9;
+  color: #F5F8F9;
 }
 .nav a {
   text-decoration: none;
@@ -31,7 +31,7 @@
 }
 .nav .logo-place {
   letter-spacing: 0.14em;
-  color: #90AE8C;
+  color: #9CC3D0;
 }
 .nav .links {
   list-style: none;
@@ -44,7 +44,7 @@
   transition: color 0.25s ease;
 }
 .nav .links a:hover {
-  color: #90AE8C;
+  color: #9CC3D0;
 }
 .nav .links a[aria-current=page]::after {
   content: "";
@@ -53,21 +53,21 @@
   right: 0;
   bottom: -7px;
   height: 1px;
-  background: #90AE8C;
+  background: #9CC3D0;
 }
 .nav .nav-cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 14px;
-  background: #90AE8C;
+  background: #9CC3D0;
   color: #002223;
   font-weight: 600;
   border-radius: 2px;
   transition: background 0.25s ease, color 0.25s ease;
 }
 .nav .nav-cta:hover {
-  background: #F6F3E9;
+  background: #F5F8F9;
 }
 .nav .nav-cta svg {
   transform: translateY(1px);
@@ -109,7 +109,7 @@
     z-index: 2;
     background: none;
     border: 0;
-    color: #F6F3E9;
+    color: #F5F8F9;
     font: inherit;
     font-size: 17px;
     padding: 12px 14px;
@@ -162,10 +162,10 @@
   }
   .nav .links {
     flex-direction: column;
-    border-top: 1px solid rgba(246, 243, 233, 0.24);
+    border-top: 1px solid rgba(245, 248, 249, 0.24);
   }
   .nav .links li {
-    border-bottom: 1px solid rgba(246, 243, 233, 0.24);
+    border-bottom: 1px solid rgba(245, 248, 249, 0.24);
   }
   .nav .links a {
     display: block;
@@ -222,8 +222,8 @@
   }
   .nav .nav-cta {
     background: #002223;
-    color: #F6F3E9;
-    border: 1px solid rgba(246, 243, 233, 0.4);
+    color: #F5F8F9;
+    border: 1px solid rgba(245, 248, 249, 0.4);
     margin-left: calc(var(--u) * 48);
     height: calc(var(--u) * 52);
     padding: 0 calc(var(--u) * 26);
@@ -234,7 +234,7 @@
     height: calc(var(--u) * 20);
   }
   .nav .nav-cta:hover {
-    background: #90AE8C;
+    background: #9CC3D0;
     color: #002223;
   }
 }
@@ -280,6 +280,12 @@
   }
   .site-header.is-sticky .nav .nav-cta {
     height: calc(var(--u) * 46);
+  }
+}
+@media only screen and (min-width: 1140px) {
+  .site-header:not(.is-sticky) .nav .logo {
+    background: transparent;
+    text-shadow: 0 1px 14px rgba(0, 0, 0, 0.45);
   }
 }
 @media (prefers-reduced-motion: reduce) {

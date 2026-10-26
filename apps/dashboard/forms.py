@@ -51,10 +51,13 @@ class PlotForm(forms.ModelForm):
 
     class Meta:
         model = Plot
-        fields = ['number', 'category', 'status', 'area_m2', 'price', 'altitude', 'view_direction', 'finn_url', 'note',
+        fields = ['number', 'street', 'category', 'status', 'area_m2', 'price', 'altitude', 'view_direction', 'finn_url', 'note',
                   'map_x', 'map_y', 'map_rotation', 'map_shape']
         widgets = {
             'number': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. 67'}),
+            # The streets in the field are offered by a <datalist>, but anything can be typed
+            'street': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Brakastøllie',
+                                             'list': 'plot-streets', 'autocomplete': 'off'}),
             'category': forms.Select(attrs={'class': 'input'}),
             'status': forms.RadioSelect,
             'area_m2': forms.NumberInput(attrs={'class': 'input', 'placeholder': 'F.eks. 1400', 'min': 0}),

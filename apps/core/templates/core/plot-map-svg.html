@@ -1,13 +1,14 @@
 {% load static %}{% comment %}
     The plot map: Brakastølen's site plan, standing as on the old website's plot map – east (Ø)
-    up, west (V) down – recoloured to the site palette (static/images/map/brakastolen-plan.svg).
+    up, west (V) down – recoloured after the client's map sketch (static/images/map/brakastolen-plan.svg): green
+    ground, darker green terrain, white roads, blue water and ski trails – high contrast (26.10.2026).
     Plots are drawn into <g data-plot-layer> by JavaScript: each plot's real outline (map_shape),
     or a standard parcel at map_x / map_y / map_rotation – all in units of this 720 × 1000 drawing.
     Used by the plot picker (plot-picker.js) and in the dashboard (dashboard.js).
     Parameter: map_id – id for the <svg> element.
 {% endcomment %}
 <svg id="{{ map_id }}" class="site-map" viewBox="0 0 720 1000" role="img" aria-label="Kart over tomtene på Brakastølen">
-  <rect width="720" height="1000" fill="#E7E2D2"/>
+  <rect width="720" height="1000" fill="#6C8A60"/>
   <image href="{% static 'images/map/brakastolen-plan.svg' %}" width="720" height="1000" preserveAspectRatio="xMidYMid meet"/>
   <g data-plot-layer></g>
 </svg>

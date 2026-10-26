@@ -23,8 +23,8 @@ html {
 
 body {
   margin: 0;
-  background: #F1EBDF;
-  color: #141616;
+  background: #F3F6F7;
+  color: #111A1D;
   font-family: "Newsreader", Georgia, serif;
   font-size: 19px;
   line-height: 1.65;
@@ -47,7 +47,7 @@ h1, h2, h3, h4 {
   font-weight: 400;
   line-height: 1.05;
   margin: 0;
-  color: #0D1716;
+  color: #0B1619;
 }
 
 p {
@@ -71,7 +71,7 @@ a {
   left: 16px;
   top: 16px;
   z-index: 1000;
-  background: #F6F3E9;
+  background: #F5F8F9;
   padding: 8px 16px;
 }
 
@@ -100,4 +100,6 @@ a {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
-}/*# sourceMappingURL=global.css.map */
+}
+
+/*# sourceMappingURL=global.css.map */

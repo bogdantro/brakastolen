@@ -1,14 +1,22 @@
-{% load static %}
+{% load static %}{% comment %}
+    Footer after the client's sketch (26.10.2026): the logo alone on the top row, with the
+    company facts under it; «Kontakt utbygger» and «Nettsiden» as columns to the right.
+{% endcomment %}
 <footer class="site-footer">
   <div class="content footer-grid">
-    <div class="footer-brand">
-      <a href="/" class="footer-logo">
-        <img src="{% static 'images/logo/tranberg-hjort-hvit.png' %}" alt="" width="62" height="67" loading="lazy">
+    <a href="/" class="footer-logo">
+      <img src="{% static 'images/logo/tranberg-hjort-hvit.png' %}" alt="" width="62" height="67" loading="lazy">
+      <span class="logo-text">
         <span class="logo-name">{{ business.name }}</span>
         <span class="logo-place">Vaset · Valdres</span>
-        <span class="visually-hidden"> – til forsiden</span>
-      </a>
-      <p>Hyttetomter 900–1050 meter over havet, med utsikt mot Jotunheimen og sol fra morgen til kveld.</p>
+      </span>
+      <span class="visually-hidden"> – til forsiden</span>
+    </a>
+
+    <div class="footer-company">
+      <h2>Selskapsinfo</h2>
+      <p>{{ business.company }}<br>{{ business.street }}<br>{{ business.postal_code }} {{ business.city }}</p>
+      <p>Org.nr. {{ business.org_number_display }}</p>
     </div>
 
     <div class="footer-contact">
@@ -16,7 +24,6 @@
       <p class="footer-person">{{ business.contact_title }} {{ business.contact_name }}</p>
       <p><a href="tel:{{ business.phone }}" class="big-link">{{ business.phone_display }}</a></p>
       <p><a href="mailto:{{ business.email }}" class="big-link">{{ business.email }}</a></p>
-      <p class="company">{{ business.company }}<br>{{ business.street }}, {{ business.postal_code }} {{ business.city }}<br>Org.nr. {{ business.org_number_display }}</p>
     </div>
 
     <nav class="footer-links" aria-label="Bunnmeny">

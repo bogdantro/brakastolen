@@ -24,7 +24,7 @@
   }
 
   .supplier-kicker {
-    color: $sageDeep;
+    color: $accentDeep;
     font-size: 15px;
     margin-bottom: 8px;
   }
@@ -37,7 +37,7 @@
     margin-top: 10px;
     font-family: $fontDisplay;
     font-size: clamp(20px, 1.6vw, 26px);
-    color: $sageDeep;
+    color: $accentDeep;
   }
 
   .copper-rule {
@@ -91,7 +91,7 @@
 
   .role {
     font-size: 14px;
-    color: $sageDeep;
+    color: $accentDeep;
   }
 
   .name {
@@ -103,7 +103,7 @@
 
   a.name {
     text-decoration: underline;
-    text-decoration-color: $sage;
+    text-decoration-color: $accent;
     text-underline-offset: 5px;
   }
 }

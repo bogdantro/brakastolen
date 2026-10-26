@@ -1,27 +1,27 @@
 // ------------------------------------------------------------
 // Brakastølen palette, fonts and the design grid – one place, @use'd by every file.
-// Sampled from the design reference (docs/design-reference-hero.png) and
-// the current website's theme CSS (brakastølen.no).
+// Cold and fresh at the client's request (26.10.2026): no beige, olive or brown. The main
+// colour is still the deep fjord green of the Tranberg logo; around it, cool greys and frost blue.
 // ------------------------------------------------------------
 
-// Main palette (same names as every project). The main colour is the deep fjord green
-// of the current website (brakastølen.no: page background #002223, sage #90AE8C for buttons).
-$primaryColor: #002223;   // main brand green: logo block, buttons, links, dark sections
+// Main palette (same names as every project)
+$primaryColor: #002223;   // main brand green (the Tranberg logo): buttons, links, dark sections
 $secondColor: #001819;    // a shade deeper: footer
-$black: #141616;          // text and headings
-$white: #F6F3E9;          // text on green, light surfaces
-$background: #F1EBDF;     // page background: warm cream (design reference)
+$black: #111A1D;          // text and headings
+$white: #F5F8F9;          // text on green, light surfaces
+$background: #F3F6F7;     // page background: cool, almost white
 
 // Supporting colours
-$sage: #90AE8C;           // the current site's accent green: active links, the "Avtal visning" button
-$sageDeep: #5E7D5A;       // sage dark enough to read on cream: short rules, small labels
-$heroText: #0D1716;       // the big headings – near-black with a touch of the brand green
-$mutedText: #5C5956;      // body text and lead paragraphs
-$card: #E7DFCE;           // panels and sand sections – a clear step darker than the cream page
-$sand: #DDD2BD;           // deeper still: hover on sand, image placeholders
-$scriptColor: #5E7D5A;    // the handwritten "Mer enn et sted."
-$border: rgba(20, 22, 22, 0.16);
-$borderOnDark: rgba(246, 243, 233, 0.24);
+$accent: #9CC3D0;         // frost blue: details on dark sections, the "Avtal visning" button
+$accentDeep: #2C6278;     // deep fjord blue that reads on the light page: short rules, small labels
+$surface: #FBFCFD;        // panels that sit on the page: form fields, map buttons, cards
+$heroText: #0B1619;       // the big headings – near-black with a touch of the brand green
+$mutedText: #4B5A61;      // body text and lead paragraphs – cool grey, dark enough to read
+$card: #E6ECEF;           // light grey-blue sections – a clear step darker than the page
+$sand: #D3DDE2;           // deeper still: hover, image placeholders (name kept from the first palette)
+$scriptColor: #2C6278;    // the handwritten "Mer enn et sted." (switched off)
+$border: rgba(17, 26, 29, 0.16);
+$borderOnDark: rgba(245, 248, 249, 0.24);
 
 // Fonts – matched to the design reference
 $fontDisplay: 'DM Serif Display', Georgia, 'Times New Roman', serif;  // headings, price
@@ -40,3 +40,15 @@ $designWidth: 1672;
 @function u($n) {
   @return calc(var(--u) * #{$n});
 }
+
+// Plot status on the map, in lists and in the dashboard – always shown with a text label too.
+// Taken from the client's own map sketch (svvideoavutkastnr1, 26.10.2026): dark, clear colours,
+// so plots, roads and ground are easy to tell apart.
+$availableFill: #003C2A;  // free: deep forest green, white number
+$availableHover: #00291D;
+$reserved: #D9771A;       // reserved: orange, white number
+$reservedText: #8F4A0C;   // reserved as text on light backgrounds
+$soldFill: #B3302C;       // sold: clear red
+$soldText: #8A2421;       // sold as text on light backgrounds
+$selectedFill: #001129;   // the plot you picked: near-black navy, white outline
+$mapGround: #6C8A60;      // behind the site plan, same as the plan's own ground (images/map/brakastolen-plan.svg)

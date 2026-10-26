@@ -1,9 +1,10 @@
-// Footer on the deep brand green, with sage details.
+// Footer on the deep brand green, with frost-blue details. Laid out after the client's sketch:
+// the logo alone on the top row, company facts under it, Kontakt and Nettsiden to the right.
 @use '../global/variables' as *;
 
 .site-footer {
   background: $secondColor;
-  color: rgba(246, 243, 233, 0.78);
+  color: rgba($white, 0.78);
   font-size: 17px;
 
   a {
@@ -16,21 +17,25 @@
     font-size: 15px;
     font-weight: 500;
     letter-spacing: 0.04em;
-    color: $sage;
+    color: $accent;
     margin-bottom: 18px;
   }
 
-  // The Tranberg deer shield with the name and place under it
+  // The Tranberg deer shield with the name and place beside it – alone on the top row
   .footer-logo {
     display: inline-flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 24px;
+    align-items: center;
+    gap: 18px;
 
     img {
-      width: 62px;
+      width: 56px;
       height: auto;
-      margin-bottom: 12px;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .logo-name {
@@ -39,19 +44,21 @@
     }
 
     .logo-place {
-      color: $sage;
+      color: $accent;
       letter-spacing: 0.14em;
       font-size: 13px;
     }
   }
 
-  .footer-brand p {
-    max-width: 24em;
+  .footer-company p {
+    margin: 0 0 10px;
+    font-size: 16px;
+    line-height: 1.6;
   }
 
   .footer-person {
     margin: 0 0 8px;
-    color: rgba(246, 243, 233, 0.75);
+    color: rgba($white, 0.75);
   }
 
   .big-link {
@@ -62,14 +69,8 @@
     transition: border-color 0.25s ease;
 
     &:hover {
-      border-color: $sage;
+      border-color: $accent;
     }
-  }
-
-  .company {
-    margin-top: 18px;
-    font-size: 15px;
-    line-height: 1.6;
   }
 
   .footer-links ul {
@@ -84,7 +85,7 @@
     }
 
     a:hover {
-      color: $sage;
+      color: $accent;
     }
   }
 
@@ -98,7 +99,7 @@
 
     a,
     .cookie-settings {
-      color: rgba(246, 243, 233, 0.78);
+      color: rgba($white, 0.78);
       text-decoration: underline;
       text-underline-offset: 4px;
     }
@@ -117,9 +118,16 @@
   .site-footer {
     .footer-grid {
       display: grid;
-      gap: 44px;
+      gap: 40px;
       padding-top: 64px;
       padding-bottom: 48px;
+    }
+
+    .footer-company,
+    .footer-contact,
+    .footer-links {
+      padding-top: 28px;
+      border-top: 1px solid $borderOnDark;
     }
 
     .footer-bottom {
@@ -132,13 +140,40 @@
 
 @media only screen and (min-width: 1140px) {
   .site-footer {
+    // Column 1 is the logo with the company facts under it; columns 2 and 3 run from the
+    // top, each with a thin line on its left
     .footer-grid {
       display: grid;
       grid-template-columns: 5fr 4fr 3fr;
-      gap: u(80);
-      padding-top: u(110);
+      grid-template-rows: auto 1fr;
+      column-gap: u(80);
+      padding-top: u(100);
       padding-bottom: u(90);
     }
+
+    .footer-logo {
+      grid-column: 1;
+      grid-row: 1;
+      align-self: start;
+      padding-bottom: u(44);
+    }
+
+    .footer-company {
+      grid-column: 1;
+      grid-row: 2;
+      padding-top: u(40);
+      border-top: 1px solid $borderOnDark;
+    }
+
+    .footer-contact,
+    .footer-links {
+      grid-row: 1 / span 2;
+      padding-left: u(56);
+      border-left: 1px solid $borderOnDark;
+    }
+
+    .footer-contact { grid-column: 2; }
+    .footer-links { grid-column: 3; }
 
     .footer-bottom {
       padding-top: 26px;
@@ -158,6 +193,7 @@
       gap: 48px 40px;
     }
 
+    .footer-logo { grid-column: 1 / -1; }
     .footer-links { grid-column: 1 / -1; }
     .footer-links ul { columns: 4; }
   }

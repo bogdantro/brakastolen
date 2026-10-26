@@ -1,6 +1,6 @@
 // News: the list page uses the shared news-list; a single post is an editorial article –
-// a green header band, a wide photo stepping out of it, a reading column with a sticky
-// side column (date, reading time, sharing), then photo cards for more news.
+// the post's photo behind the title (or a green band when it has none), a reading column
+// with a sticky side column (date, reading time, sharing), then photo cards for more news.
 @use '../global/variables' as *;
 
 .article-header {
@@ -10,7 +10,7 @@
   .crumb {
     display: inline-flex;
     gap: 8px;
-    color: $sage;
+    color: $accent;
     text-decoration: none;
     font-size: 16px;
 
@@ -27,7 +27,7 @@
   }
 
   .article-meta {
-    color: $sage;
+    color: $accent;
     font-size: 16px;
 
     span {
@@ -36,9 +36,51 @@
   }
 
   .article-lead {
-    color: rgba(246, 243, 233, 0.86);
+    color: rgba($white, 0.86);
     max-width: 34em;
     line-height: 1.5;
+  }
+}
+
+// With a wide photo: the photo fills the header and the text lies on it, in one colour and
+// at most half the width, like the page headers (client, 26.10.2026)
+.has-wide-image .article-header {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+
+  .article-header-photo {
+    position: absolute;
+    inset: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(4, 14, 17, 0.5) 0%, rgba(4, 14, 17, 0) 30%),
+        linear-gradient(90deg, rgba(4, 14, 17, 0.6) 0%, rgba(4, 14, 17, 0.28) 45%, rgba(4, 14, 17, 0) 70%),
+        linear-gradient(0deg, rgba(4, 14, 17, 0.5) 0%, rgba(4, 14, 17, 0) 50%);
+    }
+  }
+
+  .content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+  }
+
+  .article-meta,
+  .article-lead,
+  .crumb {
+    color: $white;
   }
 }
 
@@ -86,7 +128,7 @@
 
   dt {
     font-size: 14px;
-    color: $sageDeep;
+    color: $accentDeep;
   }
 
   dd {
@@ -103,7 +145,7 @@
     > p:first-child {
       flex-basis: 100%;
       font-size: 14px;
-      color: $sageDeep;
+      color: $accentDeep;
       margin-bottom: 2px;
     }
   }
@@ -125,7 +167,7 @@
 
     &:hover {
       border-color: $primaryColor;
-      background: #FBF8F1;
+      background: $surface;
     }
   }
 
@@ -133,13 +175,13 @@
     flex-basis: 100%;
     min-height: 1.5em;
     font-size: 14px;
-    color: $sageDeep;
+    color: $accentDeep;
   }
 }
 
 .article-text {
   max-width: 40rem;
-  color: #3E3C38;
+  color: #33434A;
 
   > :first-child {
     margin-top: 0;
@@ -161,7 +203,7 @@
         top: 0.8em;
         width: 12px;
         height: 2px;
-        background: $sage;
+        background: $accent;
       }
     }
   }
@@ -184,7 +226,7 @@
     text-decoration: none;
 
     &:hover h3 {
-      color: $sageDeep;
+      color: $accentDeep;
     }
 
     &:hover img {
@@ -210,7 +252,7 @@
     display: block;
     margin-top: 16px;
     font-size: 15px;
-    color: $sageDeep;
+    color: $accentDeep;
   }
 
   h3 {
@@ -242,11 +284,8 @@
   }
 
   .has-wide-image .article-header {
-    padding-bottom: 110px;
-  }
-
-  .article-figure.is-wide {
-    margin: -80px 20px 0;
+    min-height: 70vh;
+    min-height: 70svh;
   }
 
   .article-body {
@@ -288,16 +327,12 @@
     .article-lead { margin-top: u(26); font-size: u(23); }
   }
 
-  // The photo overlaps the bottom of the green band
   .has-wide-image .article-header {
-    padding-bottom: u(250);
-  }
+    min-height: max(560px, u(820));
 
-  .article-figure.is-wide {
-    margin: u(-180) u(89) 0 u(116);
-
-    img {
-      max-height: u(720);
+    h1,
+    .article-lead {
+      max-width: 50%;
     }
   }
 
@@ -347,13 +382,6 @@
     padding: 128px 0 56px;
   }
 
-  .has-wide-image .article-header {
-    padding-bottom: 140px;
-  }
-
-  .article-figure.is-wide {
-    margin: -100px 40px 0;
-  }
 
   .article-body {
     grid-template-columns: minmax(0, 1fr) 260px;

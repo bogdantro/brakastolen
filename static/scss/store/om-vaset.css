@@ -1,25 +1,30 @@
 .route-section {
-  background: #E7DFCE;
+  background: #E6ECEF;
 }
 .route-section .route-text {
   margin-top: 48px;
-  color: #5C5956;
+  color: #4B5A61;
   max-width: 40em;
 }
 
 .quote-photo {
   position: relative;
   margin: 0;
+  overflow: hidden;
 }
 .quote-photo img {
+  display: block;
   width: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 .quote-photo figcaption {
-  background: #F1EBDF;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(0deg, rgba(4, 14, 17, 0.72) 0%, rgba(4, 14, 17, 0.4) 55%, rgba(4, 14, 17, 0) 100%);
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
-  color: #0D1716;
+  color: #F5F8F9;
   line-height: 1.22;
 }
 .quote-photo figcaption::before {
@@ -27,7 +32,7 @@
   display: block;
   width: 48px;
   height: 2px;
-  background: #5E7D5A;
+  background: currentColor;
   margin-bottom: 20px;
 }
 
@@ -43,14 +48,13 @@
   text-decoration: none;
 }
 .area-grid a:hover h3 {
-  color: #5E7D5A;
+  color: #2C6278;
 }
 .area-grid img {
   width: 100%;
   aspect-ratio: 4/3;
-  -o-object-fit: cover;
-     object-fit: cover;
-  background: #DDD2BD;
+  object-fit: cover;
+  background: #D3DDE2;
 }
 .area-grid h3 {
   margin-top: 18px;
@@ -58,25 +62,25 @@
 }
 .area-grid p {
   margin-top: 8px;
-  color: #5C5956;
+  color: #4B5A61;
   font-size: 17px;
 }
 
 .facts-section {
-  background: #E7DFCE;
+  background: #E6ECEF;
 }
 .facts-section .rows dt {
   font-family: "Newsreader", Georgia, serif;
   font-size: 16px;
   font-weight: 500;
-  color: #5E7D5A;
+  color: #2C6278;
   padding-top: 6px;
 }
 .facts-section .rows dd {
   font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
   font-size: clamp(22px, 1.6vw, 27px);
   line-height: 1.25;
-  color: #0D1716;
+  color: #0B1619;
 }
 
 @media (max-width: 1139px) {
@@ -86,10 +90,8 @@
     max-height: 520px;
   }
   .quote-photo figcaption {
-    position: relative;
-    margin: -64px 20px 0 0;
-    padding: 26px 20px 28px;
-    font-size: 24px;
+    padding: 110px 20px 26px;
+    font-size: 23px;
   }
   .area-grid {
     gap: 40px;
@@ -100,20 +102,13 @@
     margin-bottom: calc(var(--u) * 80);
   }
   .quote-photo {
-    height: calc(var(--u) * 720);
+    height: calc(var(--u) * 760);
   }
   .quote-photo img {
-    position: absolute;
-    inset: 0 0 0 calc(var(--u) * 495);
-    width: auto;
     height: 100%;
   }
   .quote-photo figcaption {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: calc(var(--u) * 780);
-    padding: calc(var(--u) * 60) calc(var(--u) * 80) calc(var(--u) * 64) calc(var(--u) * 116);
+    padding: calc(var(--u) * 200) 50% calc(var(--u) * 64) calc(var(--u) * 116);
     font-size: calc(var(--u) * 42);
   }
   .area-grid {
@@ -123,13 +118,13 @@
 }
 @media (min-width: 700px) and (max-width: 1139px) {
   .quote-photo figcaption {
-    margin-right: 40px;
-    max-width: 600px;
-    padding: 32px 40px 36px;
+    padding: 140px 40px 36px;
     font-size: 30px;
   }
   .area-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
   }
-}/*# sourceMappingURL=om-vaset.css.map */
+}
+
+/*# sourceMappingURL=om-vaset.css.map */

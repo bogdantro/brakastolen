@@ -1,6 +1,6 @@
 {% load static %}{% comment %}
-    Page header in the hero's language: cream on the left, a photo from the same line as the
-    hero photo, and the heading's lines stepping out over the photo on cream.
+    Page header in the homepage hero's look: the photo across the full width and the text
+    straight on it, in one colour, with no box behind it (client, 26.10.2026).
     Parameters:
     - title: the page's H1
     - lead: optional short paragraph under the heading
@@ -16,7 +16,7 @@
   {% endif %}
 
   <div class="page-header-text">
-    <h1><span>{{ title }}</span></h1>
+    <h1>{{ title }}</h1>
     <div class="page-header-sub">
       {% if meta %}<p class="meta">{{ meta }}</p>{% endif %}
       <span class="copper-rule" aria-hidden="true"></span>

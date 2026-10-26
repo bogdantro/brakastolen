@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', function(){
     if (!root || !dataScript) return;
 
     const PRICE_STEP = 50000;
-    const ZOOM_MIN = 0.85;
+    // Never smaller than the frame: zoomed out, the map would float with empty edges around it
+    const ZOOM_MIN = 1;
     const ZOOM_MAX = 2.4;
     const ZOOM_STEP = 0.25;
     const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -163,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
             const meta = [];
             if (plot.area) meta.push(formatArea(plot.area));
-            meta.push(plot.group || 'Brakastølen');
+            meta.push(plot.street || 'Brakastølen');
             pick.appendChild(el('span', 'lot-meta', meta.join(' · ')));
 
             let priceText = 'Ta kontakt for pris';
@@ -318,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function(){
             ['Størrelse', plot.area ? formatArea(plot.area) : ''],
             ['Høyde over havet', plot.altitude ? 'ca. ' + numberFormat.format(plot.altitude) + ' moh.' : ''],
             ['Utsikt', plot.view],
-            ['Område', plot.group],
+            ['Adresse', plot.street],
         ].forEach(function(row){
             if (!row[1]) return;
             const item = el('div');
@@ -397,10 +398,23 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     // ------------------------------------------------------------
-    // Zoom and drag the map
+    // Zoom and drag the map. At normal size the map stays put; zoomed in, it can be
+    // dragged around, but never further than its own edges – no empty space beside it.
     // ------------------------------------------------------------
+    function clampPan(){
+        // The map scales from its centre, so at zoom z it reaches (z - 1) / 2 of the
+        // frame's size past each edge – that is how far it may move each way
+        const box = viewport.getBoundingClientRect();
+        const maxX = (zoom - 1) * box.width / 2;
+        const maxY = (zoom - 1) * box.height / 2;
+        panX = Math.min(maxX, Math.max(-maxX, panX));
+        panY = Math.min(maxY, Math.max(-maxY, panY));
+    }
+
     function applyTransform(){
+        clampPan();
         svg.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + zoom + ')';
+        viewport.classList.toggle('is-zoomed', zoom > ZOOM_MIN);
     }
 
     // The whole drawing, as the map's SVG declares it (720 × 1000, standing). Below desktop
@@ -463,7 +477,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     let drag = null;
     viewport.addEventListener('pointerdown', function(e){
-        if (e.button !== 0 || e.target.closest('.plot')) return;
+        if (e.button !== 0 || e.target.closest('.plot') || zoom <= ZOOM_MIN) return;
         drag = {x: e.clientX, y: e.clientY, panX: panX, panY: panY};
         viewport.classList.add('is-dragging');
         viewport.setPointerCapture(e.pointerId);
@@ -553,7 +567,7 @@ document.addEventListener('DOMContentLoaded', function(){
         const facts = root.querySelector('[data-dialog-facts]');
         facts.replaceChildren();
         const rows = [];
-        if (plot.group) rows.push(['Område', plot.group]);
+        if (plot.street) rows.push(['Adresse', plot.street]);
         if (plot.area) rows.push(['Størrelse', formatArea(plot.area)]);
         if (plot.altitude) rows.push(['Høyde', 'ca. ' + numberFormat.format(plot.altitude) + ' moh.']);
         if (plot.view) rows.push(['Utsikt', plot.view]);

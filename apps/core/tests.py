@@ -3,8 +3,10 @@ import json
 import re
 import shutil
 import tempfile
+from pathlib import Path
 from unittest import mock
 
+from django.conf import settings
 from django.core import mail
 from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -15,7 +17,7 @@ from PIL import Image
 
 from apps.blog.models import Blog
 
-from .models import Inquiry, Plot, PlotCategory
+from .models import Inquiry, Plot, PlotCategory, street_for_plot
 from .richtext import sanitize_html
 from .seo import BUSINESS
 from .sitemaps import PUBLIC_PAGES
@@ -101,7 +103,6 @@ class PageTests(MediaTestCase):
 
     def test_homepage_shows_hero_text_and_price(self):
         response = self.client.get('/')
-        # The heading is split into spans for the stepped layout; compare its visible text
         h1 = re.search(r'<h1>(.*?)</h1>', response.content.decode(), re.S).group(1)
         self.assertEqual(' '.join(re.sub(r'<[^>]+>', '', h1).split()), 'Stort utvalg av fantastiske tomter.')
         self.assertContains(response, '900 000 kr')
@@ -430,6 +431,18 @@ class HelperTests(MediaTestCase):
         self.assertEqual(Plot(number='1', category=PlotCategory(name='Byggetrinn 1')).group_name, 'Byggetrinn 1')
         self.assertEqual(Plot(number='2').group_name, '')
 
+    def test_plot_street_follows_the_clients_number_ranges(self):
+        self.assertEqual(street_for_plot('11'), 'Brakastølvegen')
+        self.assertEqual(street_for_plot('13'), 'Brakastøllie')
+        self.assertEqual(street_for_plot('28'), 'Brakastøllie')
+        self.assertEqual(street_for_plot('29'), 'Nye Øyevegen')
+        self.assertEqual(street_for_plot('63'), 'Øyebakkin')
+        self.assertEqual(street_for_plot('66'), 'Nye Øyevegen')
+
+    def test_plot_outside_the_ranges_gets_no_street(self):
+        self.assertEqual(street_for_plot('67'), '')
+        self.assertEqual(street_for_plot('T10'), '')
+
 
 # ------------------------------------------------------------------
 # Error pages
@@ -490,6 +503,20 @@ class PlotPickerTests(MediaTestCase):
         self.assertEqual((data['altitude'], data['view']), (980, 'Sørvest mot Jotunheimen'))
         self.assertEqual(data['finnUrl'], 'https://www.finn.no/realestate/plots/ad.html?finnkode=1')
 
+    def test_new_plot_gets_its_street_and_the_picker_shows_it(self):
+        Plot.objects.create(number='40')
+        self.assertEqual(self.picker_data()[0]['street'], 'Øyebakkin')
+
+    def test_street_set_by_hand_is_kept(self):
+        Plot.objects.create(number='40', street='Brakastølvegen')
+        self.assertEqual(Plot.objects.get().street, 'Brakastølvegen')
+
+    def test_map_can_only_be_dragged_when_zoomed_in(self):
+        # plot-picker.js: zooming out below the frame and dragging at normal size are both off
+        script = (Path(settings.BASE_DIR) / 'static' / 'js' / 'plot-picker.js').read_text(encoding='utf-8')
+        self.assertIn('const ZOOM_MIN = 1;', script)
+        self.assertIn('zoom <= ZOOM_MIN) return;', script)
+
     def test_plot_without_position_is_still_listed(self):
         Plot.objects.create(number='5')
         self.assertIsNone(self.picker_data()[0]['x'])
@@ -548,6 +575,37 @@ class HomepageContentTests(MediaTestCase):
         self.assertNotIn('Tranberg-gruppen', html)
         self.assertIn('images/logo/tranberg-hjort-hvit', html)
         self.assertIn('Vaset · Valdres', html)
+
+    def test_hero_text_has_no_boxes_and_one_colour(self):
+        html = self.client.get('/').content.decode()
+        hero = html[html.index('<section class="hero"'):html.index('</section>')]
+        self.assertNotIn('class="line', hero)
+        # The heading's two lines are plain spans – no colour class on any of them
+        self.assertEqual(re.findall(r'<span class="([^"]+)"', hero[hero.index('<h1'):hero.index('</h1>')]),
+                         ['hero-line', 'hero-line'])
+        self.assertNotIn('class="step', hero)
+
+    def test_jotunheimen_line_lies_on_the_photo(self):
+        html = self.client.get('/').content.decode()
+        photo = html[html.index('<figure class="intro-photo"'):html.index('</figure>', html.index('<figure class="intro-photo"'))]
+        self.assertIn('Her er det åpent og vilt landskap', photo)
+
+    def test_every_activity_is_a_slide_in_the_carousel(self):
+        from .views import HOME_ACTIVITIES
+        response = self.client.get('/')
+        self.assertContains(response, '<li class="activity-slide">', count=len(HOME_ACTIVITIES))
+        self.assertContains(response, 'data-carousel-prev')
+        self.assertContains(response, 'data-carousel-next')
+
+    def test_footer_columns_are_company_contact_and_site(self):
+        html = self.client.get('/').content.decode()
+        footer = html[html.index('<footer'):]
+        for text in ['Selskapsinfo', BUSINESS['company'], BUSINESS['street'], f"{BUSINESS['postal_code']} {BUSINESS['city']}",
+                     BUSINESS['org_number_display'], 'Kontakt utbygger', 'Nettsiden']:
+            with self.subTest(text=text):
+                self.assertIn(text, footer)
+        # The old line of text under the logo is gone
+        self.assertNotIn('Hyttetomter 900–1050 meter over havet', footer)
 
     def test_prices_carry_the_omk_star(self):
         self.assertContains(self.client.get('/'), 'omk.*</a>')

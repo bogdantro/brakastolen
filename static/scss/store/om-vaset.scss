@@ -1,5 +1,6 @@
-// Om Vaset: intro, the route from Oslo (a road with stops), a wide photo with the
-// Jotunheimen line on a cream step, the area as photo cards, and short facts.
+// Om Vaset: intro, the route from Oslo (a road with stops), a full-width photo with the
+// Jotunheimen line lying on it (no box behind the text – client, 26.10.2026), the area as
+// photo cards, and short facts.
 @use '../global/variables' as *;
 
 .route-section {
@@ -15,16 +16,22 @@
 .quote-photo {
   position: relative;
   margin: 0;
+  overflow: hidden;
 
   img {
+    display: block;
     width: 100%;
     object-fit: cover;
   }
 
   figcaption {
-    background: $background;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(0deg, rgba(4, 14, 17, 0.72) 0%, rgba(4, 14, 17, 0.4) 55%, rgba(4, 14, 17, 0) 100%);
     font-family: $fontDisplay;
-    color: $heroText;
+    color: $white;
     line-height: 1.22;
 
     &::before {
@@ -32,7 +39,7 @@
       display: block;
       width: 48px;
       height: 2px;
-      background: $sageDeep;
+      background: currentColor;
       margin-bottom: 20px;
     }
   }
@@ -50,7 +57,7 @@
     text-decoration: none;
 
     &:hover h3 {
-      color: $sageDeep;
+      color: $accentDeep;
     }
   }
 
@@ -80,7 +87,7 @@
     font-family: $fontBody;
     font-size: 16px;
     font-weight: 500;
-    color: $sageDeep;
+    color: $accentDeep;
     padding-top: 6px;
   }
 
@@ -101,10 +108,8 @@
     }
 
     figcaption {
-      position: relative;
-      margin: -64px 20px 0 0;
-      padding: 26px 20px 28px;
-      font-size: 24px;
+      padding: 110px 20px 26px;
+      font-size: 23px;
     }
   }
 
@@ -118,23 +123,17 @@
     margin-bottom: u(80);
   }
 
-  // The photo runs from the photo line to the right edge; the quote steps in from the left
+  // The photo runs edge to edge; the quote lies on its lower left
   .quote-photo {
-    height: u(720);
+    height: u(760);
 
     img {
-      position: absolute;
-      inset: 0 0 0 u(495);
-      width: auto;
       height: 100%;
     }
 
     figcaption {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: u(780);
-      padding: u(60) u(80) u(64) u(116);
+      // The right padding keeps the quote to half the width, like the text on the hero
+      padding: u(200) 50% u(64) u(116);
       font-size: u(42);
     }
   }
@@ -150,9 +149,7 @@
 // ------------------------------------------------------------
 @media (min-width: 700px) and (max-width: 1139px) {
   .quote-photo figcaption {
-    margin-right: 40px;
-    max-width: 600px;
-    padding: 32px 40px 36px;
+    padding: 140px 40px 36px;
     font-size: 30px;
   }
 
