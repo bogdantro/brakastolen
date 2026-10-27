@@ -16,7 +16,8 @@
 .activity .activity-photo img {
   width: 100%;
   aspect-ratio: 5/4;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   background: #D3DDE2;
 }
 .activity .photo-fact {
@@ -133,6 +134,4 @@
   .activity.is-flipped .activity-photo {
     order: 2;
   }
-}
-
-/*# sourceMappingURL=aktiviteter.css.map */
+}/*# sourceMappingURL=aktiviteter.css.map */

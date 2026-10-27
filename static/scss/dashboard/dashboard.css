@@ -203,7 +203,8 @@ svg {
   display: grid;
   grid-template-columns: 36px 1fr;
   grid-template-rows: auto auto;
-  column-gap: 12px;
+  -moz-column-gap: 12px;
+       column-gap: 12px;
   align-items: center;
 }
 .account-user .avatar {
@@ -514,6 +515,9 @@ input[type=search]:focus, input[type=password]:focus, select:focus, textarea:foc
   border-color: #002223;
   box-shadow: 0 0 0 3px rgba(156, 195, 208, 0.35);
 }
+.input::-moz-placeholder, input[type=text]::-moz-placeholder, input[type=email]::-moz-placeholder, input[type=number]::-moz-placeholder, input[type=url]::-moz-placeholder, input[type=search]::-moz-placeholder, input[type=password]::-moz-placeholder, select::-moz-placeholder, textarea::-moz-placeholder {
+  color: #9A958C;
+}
 .input::placeholder,
 input[type=text]::placeholder, input[type=email]::placeholder, input[type=number]::placeholder, input[type=url]::placeholder,
 input[type=search]::placeholder, input[type=password]::placeholder, select::placeholder, textarea::placeholder {
@@ -521,7 +525,9 @@ input[type=search]::placeholder, input[type=password]::placeholder, select::plac
 }
 
 select, select.input {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
   padding-right: 36px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23002223' stroke-width='1.5'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -645,7 +651,8 @@ input[type=file] {
   display: block;
   width: 100%;
   aspect-ratio: 3/2;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   margin-bottom: 16px;
 }
 
@@ -1244,11 +1251,14 @@ select.cell-input.input {
 }
 .unit-input input[type=number] {
   width: 84px;
-  appearance: textfield;
+  -webkit-appearance: textfield;
+     -moz-appearance: textfield;
+          appearance: textfield;
 }
 .unit-input input[type=number]::-webkit-inner-spin-button,
 .unit-input input[type=number]::-webkit-outer-spin-button {
-  appearance: none;
+  -webkit-appearance: none;
+          appearance: none;
   margin: 0;
 }
 .unit-input input[data-price] {
@@ -1278,7 +1288,9 @@ select.cell-input.input {
   cursor: pointer;
   border-right: 1px solid rgba(17, 26, 29, 0.12);
   transition: background 0.15s ease, color 0.15s ease;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 .status-switch label:last-of-type {
   border-right: 0;
@@ -1872,7 +1884,8 @@ select.cell-input.input {
   display: block;
   width: 112px;
   height: 76px;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   background: #E6ECEF;
 }
 .card-list form {
@@ -2329,6 +2342,4 @@ a.card-title:hover {
     transition: none !important;
     animation: none !important;
   }
-}
-
-/*# sourceMappingURL=dashboard.css.map */
+}/*# sourceMappingURL=dashboard.css.map */

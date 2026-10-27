@@ -86,7 +86,9 @@
   box-shadow: 0 0 0 3px rgba(156, 195, 208, 0.35);
 }
 .plot-picker select.input {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
   padding-right: 34px;
   background-image: linear-gradient(45deg, transparent 50%, #002223 50%), linear-gradient(135deg, #002223 50%, transparent 50%);
   background-position: calc(100% - 20px) 52%, calc(100% - 14px) 52%;
@@ -130,7 +132,8 @@
   background: none;
   pointer-events: none;
   -webkit-appearance: none;
-  appearance: none;
+  -moz-appearance: none;
+       appearance: none;
 }
 .plot-picker .dual-range input::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -613,9 +616,12 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
+  width: 100%;
   min-height: 50px;
   margin-top: 10px;
   padding: 0 16px;
+  font: inherit;
+  cursor: pointer;
   background: #DCEBF0;
   border: 1px solid #A9C8D3;
   border-radius: 2px;
@@ -638,12 +644,166 @@
   stroke: #C8901E;
 }
 .plot-picker .selected-card .card-sun::after {
-  content: "↗";
-  font-weight: 400;
-  color: #2C6278;
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-right: 1.6px solid #2C6278;
+  border-bottom: 1.6px solid #2C6278;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.2s ease;
+}
+.plot-picker .selected-card .card-sun[aria-expanded=true]::after {
+  transform: translateY(2px) rotate(-135deg);
 }
 .plot-picker .selected-card .card-sun:hover {
   background: #C9E0E8;
+}
+.plot-picker .selected-card .sun-panel {
+  container-type: inline-size;
+  margin-top: 10px;
+  padding: 14px 14px 12px;
+  background: #F2F7F9;
+  border: 1px solid #A9C8D3;
+  border-top: 0;
+  font-size: 14px;
+  color: #4B5A61;
+}
+.plot-picker .selected-card .sun-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.plot-picker .selected-card .sun-chart .sun-horizon {
+  stroke: #0B1619;
+  stroke-width: 1;
+}
+.plot-picker .selected-card .sun-chart .sun-tick {
+  stroke: #0B1619;
+  stroke-width: 1;
+}
+.plot-picker .selected-card .sun-chart .sun-compass {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 11px;
+  text-anchor: middle;
+  fill: #4B5A61;
+}
+.plot-picker .selected-card .sun-chart .sun-path {
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.plot-picker .selected-card .sun-path.is-summer {
+  stroke: #E39A12;
+}
+.plot-picker .selected-card .sun-path.is-equinox {
+  stroke: #4E9A6B;
+}
+.plot-picker .selected-card .sun-path.is-winter {
+  stroke: #3F7FB5;
+}
+.plot-picker .selected-card .sun-path.is-today {
+  stroke: #002223;
+  stroke-dasharray: 5 4;
+}
+.plot-picker .selected-card .sun-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 8px 0 10px;
+  font-size: 13px;
+}
+.plot-picker .selected-card .sun-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.plot-picker .selected-card .sun-key i {
+  display: block;
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+}
+.plot-picker .selected-card .sun-key.is-summer i {
+  background: #E39A12;
+}
+.plot-picker .selected-card .sun-key.is-equinox i {
+  background: #4E9A6B;
+}
+.plot-picker .selected-card .sun-key.is-winter i {
+  background: #3F7FB5;
+}
+.plot-picker .selected-card .sun-key.is-today i {
+  background: repeating-linear-gradient(90deg, #002223 0 5px, transparent 5px 8px);
+}
+.plot-picker .selected-card .sun-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.plot-picker .selected-card .sun-table th, .plot-picker .selected-card .sun-table td {
+  padding: 6px 2px;
+  border-top: 1px solid rgba(17, 26, 29, 0.16);
+  text-align: right;
+  white-space: nowrap;
+}
+.plot-picker .selected-card .sun-table tr:first-child th {
+  border-top: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4B5A61;
+}
+.plot-picker .selected-card .sun-table th:first-child {
+  text-align: left;
+  font-weight: 500;
+  color: #0B1619;
+}
+.plot-picker .selected-card .sun-table tr[class] th:first-child::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 12px;
+  margin-right: 7px;
+  border-radius: 1px;
+  vertical-align: -1px;
+}
+.plot-picker .selected-card .sun-table tr.is-summer th:first-child::before {
+  background: #E39A12;
+}
+.plot-picker .selected-card .sun-table tr.is-equinox th:first-child::before {
+  background: #4E9A6B;
+}
+.plot-picker .selected-card .sun-table tr.is-winter th:first-child::before {
+  background: #3F7FB5;
+}
+.plot-picker .selected-card .sun-table tr.is-today th:first-child::before {
+  background: #002223;
+}
+.plot-picker .selected-card .sun-table td {
+  color: #0B1619;
+}
+@container (max-width: 240px) {
+  .plot-picker .selected-card .sun-table {
+    font-size: 12.5px;
+  }
+  .plot-picker .selected-card .sun-table tr[class] th:first-child::before {
+    display: none;
+  }
+}
+.plot-picker .selected-card .sun-note {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.plot-picker .selected-card .sun-more {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #002223;
+  text-decoration: underline;
+  text-decoration-color: #9CC3D0;
+  text-underline-offset: 3px;
 }
 .plot-picker .selected-card .card-link {
   display: inline-block;
@@ -1442,6 +1602,4 @@ html.dialog-open {
     right: auto;
     max-width: none;
   }
-}
-
-/*# sourceMappingURL=plot-picker.css.map */
+}/*# sourceMappingURL=plot-picker.css.map */

@@ -517,6 +517,21 @@ class PlotPickerTests(MediaTestCase):
         self.assertIn('const ZOOM_MIN = 1;', script)
         self.assertIn('zoom <= ZOOM_MIN) return;', script)
 
+    def test_plot_on_the_map_has_coordinates_for_the_sun_panel(self):
+        Plot.objects.create(number='11', map_x=51.4, map_y=410.7)
+        Plot.objects.create(number='99')
+        on_map, off_map = sorted(self.picker_data(), key=lambda plot: plot['number'])
+        self.assertEqual((on_map['lat'], on_map['lon']), (61.02056, 8.94288))
+        self.assertEqual((off_map['lat'], off_map['lon']), (None, None))
+
+    def test_map_road_names_follow_the_clients_street_list(self):
+        """Brakastøllie was drawn on the road through plots 38–63, which is Øyebakkin."""
+        plan = (Path(settings.BASE_DIR) / 'static' / 'images' / 'map' / 'brakastolen-plan.svg').read_text(encoding='utf-8')
+        self.assertEqual(plan.count('>BRAKASTØLLIE</text>'), 1)
+        self.assertEqual(plan.count('>ØYEBAKKIN</text>'), 2)
+        self.assertIn('>BRAKASTØLVEGEN</text>', plan)
+        self.assertIn('>NYE ØYEVEGEN</text>', plan)
+
     def test_plot_without_position_is_still_listed(self):
         Plot.objects.create(number='5')
         self.assertIsNone(self.picker_data()[0]['x'])
@@ -640,6 +655,16 @@ class FieldInfoTests(MediaTestCase):
         self.assertIn('https://www.google.com/maps/search/', html)
         self.assertIn('finnkode=371502243', html)
 
+    def test_every_tranberg_tinde_and_leve_ad_is_listed(self):
+        """The client asked for all their FINN ads at Brakastølen, the cabin makers' included."""
+        html = self.client.get('/').content.decode()
+        for code in ['471023190', '470544998', '400288938', '280027233', '374061108', '339408992',
+                     '426219618', '422876484', '276521226', '276520828', '284633576']:
+            with self.subTest(finnkode=code):
+                self.assertIn(f'finnkode={code}', html)
+        self.assertIn('Tinde Hytter', html)
+        self.assertIn('Leve Hytter', html)
+
     def test_only_available_plots_with_a_finn_link_join_the_ad_list(self):
         Plot.objects.create(number='77', finn_url='https://www.finn.no/ad.html?finnkode=77')
         Plot.objects.create(number='78', status='sold', finn_url='https://www.finn.no/ad.html?finnkode=78')
@@ -650,7 +675,7 @@ class FieldInfoTests(MediaTestCase):
     def test_seeding_twice_adds_nothing(self):
         from .models import CostItem, FieldDocument, FinnAd
         call_command('seed_field_info', stdout=io.StringIO())
-        self.assertEqual((CostItem.objects.count(), FinnAd.objects.count(), FieldDocument.objects.count()), (6, 1, 2))
+        self.assertEqual((CostItem.objects.count(), FinnAd.objects.count(), FieldDocument.objects.count()), (6, 12, 2))
 
     def test_the_old_png_of_the_plan_is_replaced_by_the_pdf(self):
         from django.core.files.base import ContentFile
@@ -673,7 +698,7 @@ class SeedSiteTests(MediaTestCase):
         call_command('seed_site', stdout=io.StringIO())
         self.assertEqual(Plot.objects.count(), 54)
         self.assertEqual(Plot.objects.get(number='11').altitude, 985)
-        self.assertEqual((CostItem.objects.count(), FinnAd.objects.count(), FieldDocument.objects.count()), (6, 1, 2))
+        self.assertEqual((CostItem.objects.count(), FinnAd.objects.count(), FieldDocument.objects.count()), (6, 12, 2))
         self.assertEqual(Blog.objects.count(), 6)
 
 
@@ -683,17 +708,60 @@ class StaticFilesTests(TestCase):
         for 'images/og/og-default.jpg'» – collectstatic had not been run."""
         from .storage import ForgivingManifestStorage
         storage = ForgivingManifestStorage(location=tempfile.mkdtemp())
-        self.assertEqual(storage.url('images/og/og-default.jpg'), '/static/images/og/og-default.jpg')
+        self.assertRegex(storage.url('images/og/og-default.jpg'), r'^/static/images/og/og-default\.jpg\?v=[0-9a-f]{12}$')
+
+    def collect(self, css):
+        """A static/ folder with one stylesheet, collected into a staticfiles/ folder.
+        Returns (source file, storage reading that staticfiles/ folder)."""
+        from .storage import ForgivingManifestStorage
+        source_dir, root = tempfile.mkdtemp(), tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, source_dir)
+        self.addCleanup(shutil.rmtree, root)
+        source = Path(source_dir) / 'site.css'
+        source.write_text(css, encoding='utf-8')
+        overrides = override_settings(STATIC_ROOT=root, STATICFILES_DIRS=[source_dir], STORAGES={
+            'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+            'staticfiles': {'BACKEND': 'apps.core.storage.ForgivingManifestStorage'},
+        })
+        overrides.enable()
+        self.addCleanup(overrides.disable)
+        call_command('collectstatic', interactive=False, verbosity=0)
+        return source, ForgivingManifestStorage(location=root)
+
+    def test_collected_file_gets_its_hashed_name(self):
+        _, storage = self.collect('body { color: red; }')
+        self.assertRegex(storage.url('site.css'), r'^/static/site\.[0-9a-f]{12}\.css$')
+
+    def test_file_changed_after_collectstatic_is_never_served_stale(self):
+        """An update without collectstatic used to keep every visitor on the old, year-cached CSS."""
+        source, storage = self.collect('body { color: red; }')
+        old_url = storage.url('site.css')
+        source.write_text('body { color: blue; }', encoding='utf-8')
+        with self.assertLogs('apps.core.storage', level='WARNING'):
+            new_url = storage.url('site.css')
+        self.assertRegex(new_url, r'^/static/site\.css\?v=[0-9a-f]{12}$')
+        self.assertNotEqual(old_url, new_url)
 
 
 class GeoTests(TestCase):
     def test_plan_point_becomes_coordinates_at_brakastolen(self):
         from .geo import plan_to_latlon
-        self.assertEqual(plan_to_latlon(51.4, 410.7), (61.02016, 8.94607))
+        self.assertEqual(plan_to_latlon(51.4, 410.7), (61.02056, 8.94288))
+
+    def test_plots_13_to_28_lie_at_the_brakastollie_addresses(self):
+        """The first fit put every plot ~175 m off. Kartverket's 16 addresses on Brakastøllie
+        (one per plot 13–28) average 61.01774 N, 8.94588 E."""
+        import math
+        from .geo import plan_to_latlon
+        data = json.loads((Path(__file__).parent / 'data' / 'brakastolen-plots.json').read_text(encoding='utf-8'))
+        plots = [p for p in data['plots'] if 13 <= int(p['number']) <= 28]
+        lat, lon = plan_to_latlon(sum(p['map_x'] for p in plots) / len(plots), sum(p['map_y'] for p in plots) / len(plots))
+        metres = math.hypot((lat - 61.01774) * 111195, (lon - 8.94588) * 111195 * math.cos(math.radians(61.0177)))
+        self.assertLess(metres, 50)
 
     def test_plot_on_the_map_gets_a_sun_link(self):
         plot = Plot(number='11', map_x=51.4, map_y=410.7)
-        self.assertEqual(plot.sun_url, 'https://www.suncalc.org/#/61.02016,8.94607,17')
+        self.assertEqual(plot.sun_url, 'https://www.suncalc.org/#/61.02056,8.94288,17')
         self.assertEqual(Plot(number='99').sun_url, '')
 
     def test_business_coordinates_are_at_the_field_not_vaset_centre(self):

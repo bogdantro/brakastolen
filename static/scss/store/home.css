@@ -17,7 +17,8 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   opacity: 0;
   transition: opacity 1.4s ease;
 }
@@ -180,7 +181,8 @@
 .intro .intro-photo img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 .intro .intro-quote {
   position: absolute;
@@ -230,7 +232,8 @@
 .cabins-feature .cabins-photo img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 .cabins-feature .cabins-card .copper-rule {
   margin: 26px 0 22px;
@@ -325,7 +328,8 @@
 .activities .activity-card img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   transition: transform 1.4s ease;
 }
 .activities .activity-card:hover img {
@@ -495,7 +499,8 @@
   .intro .intro-grid {
     display: grid;
     grid-template-columns: calc(var(--u) * 640) 1fr;
-    column-gap: calc(var(--u) * 110);
+    -moz-column-gap: calc(var(--u) * 110);
+         column-gap: calc(var(--u) * 110);
     padding-left: calc(var(--u) * 116);
     align-items: start;
   }
@@ -644,7 +649,8 @@
 .suppliers .supplier-photo img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   transition: transform 1.2s ease;
 }
 .suppliers .supplier-photo:hover img {
@@ -729,7 +735,8 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   transition: transform 1.2s ease;
 }
 .suppliers .tile-kicker {
@@ -810,6 +817,4 @@
   .suppliers .tile-photo img {
     transition: none;
   }
-}
-
-/*# sourceMappingURL=home.css.map */
+}/*# sourceMappingURL=home.css.map */

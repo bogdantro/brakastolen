@@ -447,7 +447,7 @@ class FieldInfoDashboardTests(DashboardTestCase):
         self.assertContains(response, 'Lim inn lenken til annonsen på finn.no')
         self.client.post(self.url, {'action': 'ad_add', 'ad-new-title': 'Hytte', 'ad-new-url': 'https://www.finn.no/ad?finnkode=1',
                                     'ad-new-price': '5 350 000', 'ad-new-is_active': 'on'})
-        self.assertEqual(FinnAd.objects.get().price, 5350000)
+        self.assertEqual(FinnAd.objects.get(url='https://www.finn.no/ad?finnkode=1').price, 5350000)
 
     def test_upload_a_pdf_and_delete_it_with_its_file(self):
         pdf = SimpleUploadedFile('regulering.pdf', b'%PDF-1.7 test', content_type='application/pdf')

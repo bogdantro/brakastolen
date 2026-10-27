@@ -162,7 +162,8 @@ h3 {
 .page-header .page-header-photo img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 .page-header .page-header-photo::after {
   content: "";
@@ -453,7 +454,9 @@ h3 {
   border-color: #A23B2A;
 }
 .form select.input {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
   background-image: linear-gradient(45deg, transparent 50%, #002223 50%), linear-gradient(135deg, #002223 50%, transparent 50%);
   background-position: calc(100% - 22px) 52%, calc(100% - 16px) 52%;
   background-size: 6px 6px;
@@ -681,7 +684,8 @@ h3 {
   }
   .news-list a {
     grid-template-columns: calc(var(--u) * 240) 1fr;
-    column-gap: calc(var(--u) * 40);
+    -moz-column-gap: calc(var(--u) * 40);
+         column-gap: calc(var(--u) * 40);
     padding: calc(var(--u) * 32) 0;
   }
   .news-list a time {
@@ -779,7 +783,8 @@ h3 {
   width: 100%;
   height: 100%;
   aspect-ratio: 4/3;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   background: #D3DDE2;
 }
 .mosaic .is-tall {
@@ -908,7 +913,8 @@ h3 {
   }
   .news-list a {
     grid-template-columns: 180px 1fr;
-    column-gap: 28px;
+    -moz-column-gap: 28px;
+         column-gap: 28px;
   }
   .news-list a time {
     grid-row: span 2;
@@ -933,6 +939,4 @@ h3 {
     transform: none;
     transition: none;
   }
-}
-
-/*# sourceMappingURL=base.css.map */
+}/*# sourceMappingURL=base.css.map */

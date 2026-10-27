@@ -341,12 +341,13 @@ document.addEventListener('DOMContentLoaded', function(){
         }
         selectedCard.appendChild(action);
 
-        // The sun's path over the plot through the day – a button of its own, it sells the plot
-        if (plot.sunUrl) {
-            const sun = el('a', 'card-sun');
-            sun.href = plot.sunUrl;
-            sun.target = '_blank';
-            sun.rel = 'noopener';
+        // Solforhold: sunrise, sunset and the sun's path, opened right here in the card (sun.js)
+        // – simpler than suncalc.org, which the client found hard to use. suncalc stays as a
+        // link inside the panel for those who want the details.
+        if (plot.lat !== null && typeof window.sunPanel === 'function') {
+            const sun = el('button', 'card-sun');
+            sun.type = 'button';
+            sun.setAttribute('aria-expanded', 'false');
             const icon = document.createElementNS(SVG_NS, 'svg');
             icon.setAttribute('viewBox', '0 0 24 24');
             icon.setAttribute('aria-hidden', 'true');
@@ -359,9 +360,30 @@ document.addEventListener('DOMContentLoaded', function(){
             icon.appendChild(rays);
             icon.appendChild(disc);
             sun.appendChild(icon);
-            sun.appendChild(el('span', '', 'Se solforhold på tomten'));
-            sun.appendChild(el('span', 'visually-hidden', ' (åpnes i ny fane)'));
+            sun.appendChild(el('span', '', 'Solforhold på tomten'));
             selectedCard.appendChild(sun);
+
+            let panel = null;
+            sun.addEventListener('click', function(){
+                const open = sun.getAttribute('aria-expanded') !== 'true';
+                sun.setAttribute('aria-expanded', open ? 'true' : 'false');
+                if (open && !panel) {
+                    // Worked out on first open only – a few thousand sun positions
+                    panel = window.sunPanel(plot.lat, plot.lon);
+                    panel.id = 'sun-panel-' + plot.id;
+                    sun.setAttribute('aria-controls', panel.id);
+                    if (plot.sunUrl) {
+                        const more = el('a', 'sun-more', 'Mer detaljert på suncalc.org');
+                        more.href = plot.sunUrl;
+                        more.target = '_blank';
+                        more.rel = 'noopener';
+                        more.appendChild(el('span', 'visually-hidden', ' (åpnes i ny fane)'));
+                        panel.appendChild(more);
+                    }
+                    sun.after(panel);
+                }
+                panel.hidden = !open;
+            });
         }
 
         if (plot.finnUrl) {

@@ -192,11 +192,14 @@ class Plot(models.Model):
         return self.map_x is not None and self.map_y is not None
 
     @property
+    def latlon(self):
+        """Where the plot lies (from its place on the plan): (61.02056, 8.94288), or None."""
+        return plan_to_latlon(self.map_x, self.map_y) if self.is_on_map else None
+
+    @property
     def sun_url(self):
-        """suncalc.org at the plot (from its place on the plan), or '' for a plot not on the map."""
-        if not self.is_on_map:
-            return ''
-        return sun_url(*plan_to_latlon(self.map_x, self.map_y))
+        """suncalc.org at the plot, or '' for a plot not on the map."""
+        return sun_url(*self.latlon) if self.is_on_map else ''
 
     def as_picker_data(self):
         """What the plot picker on the homepage needs, as plain JSON-friendly values."""
@@ -214,6 +217,9 @@ class Plot(models.Model):
             # A sold plot's ad is gone or misleading – only plots still for sale link to FINN
             'finnUrl': self.finn_url if self.status != 'sold' else '',
             'sunUrl': self.sun_url,
+            # For the sun panel (static/js/sun.js), which works the sun's path out in the browser
+            'lat': self.latlon[0] if self.is_on_map else None,
+            'lon': self.latlon[1] if self.is_on_map else None,
             'note': self.note,
             'x': self.map_x,
             'y': self.map_y,

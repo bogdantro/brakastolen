@@ -707,9 +707,12 @@ $mapRatio: #{720 / 1000};
       align-items: center;
       justify-content: center;
       gap: 10px;
+      width: 100%;
       min-height: 50px;
       margin-top: 10px;
       padding: 0 16px;
+      font: inherit;
+      cursor: pointer;
       background: #DCEBF0;
       border: 1px solid #A9C8D3;
       border-radius: 2px;
@@ -730,13 +733,166 @@ $mapRatio: #{720 / 1000};
 
       circle { fill: #F2B632; stroke: #C8901E; }
 
+      // A chevron that turns when the panel is open
       &::after {
-        content: '↗';
-        font-weight: 400;
-        color: $accentDeep;
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-right: 1.6px solid $accentDeep;
+        border-bottom: 1.6px solid $accentDeep;
+        transform: translateY(-2px) rotate(45deg);
+        transition: transform 0.2s ease;
+      }
+
+      &[aria-expanded="true"]::after {
+        transform: translateY(2px) rotate(-135deg);
       }
 
       &:hover { background: #C9E0E8; }
+    }
+
+    // ------------------------------------------------------------
+    // Solforhold panel (sun.js): the sun's path as a picture, then the times in a table
+    // ------------------------------------------------------------
+    .sun-panel {
+      // Lets the table shrink its text when the plot card's column is narrow (below)
+      container-type: inline-size;
+      margin-top: 10px;
+      padding: 14px 14px 12px;
+      background: #F2F7F9;
+      border: 1px solid #A9C8D3;
+      border-top: 0;
+      font-size: 14px;
+      color: $mutedText;
+    }
+
+    .sun-chart {
+      display: block;
+      width: 100%;
+      height: auto;
+      overflow: visible;
+
+      .sun-horizon { stroke: $heroText; stroke-width: 1; }
+      .sun-tick { stroke: $heroText; stroke-width: 1; }
+
+      .sun-compass {
+        font-family: $fontBody;
+        font-size: 11px;
+        text-anchor: middle;
+        fill: $mutedText;
+      }
+
+      .sun-path {
+        fill: none;
+        stroke-width: 2.4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    }
+
+    // One colour per season, the same in the picture, the legend and the table
+    $sunSummer: #E39A12;
+    $sunEquinox: #4E9A6B;
+    $sunWinter: #3F7FB5;
+    $sunToday: $primaryColor;
+
+    .sun-path.is-summer { stroke: $sunSummer; }
+    .sun-path.is-equinox { stroke: $sunEquinox; }
+    .sun-path.is-winter { stroke: $sunWinter; }
+    .sun-path.is-today { stroke: $sunToday; stroke-dasharray: 5 4; }
+
+    .sun-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 14px;
+      margin: 8px 0 10px;
+      font-size: 13px;
+    }
+
+    .sun-key {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      i {
+        display: block;
+        width: 16px;
+        height: 3px;
+        border-radius: 2px;
+      }
+
+      &.is-summer i { background: $sunSummer; }
+      &.is-equinox i { background: $sunEquinox; }
+      &.is-winter i { background: $sunWinter; }
+      &.is-today i { background: repeating-linear-gradient(90deg, $sunToday 0 5px, transparent 5px 8px); }
+    }
+
+    .sun-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-variant-numeric: tabular-nums;
+
+      th, td {
+        padding: 6px 2px;
+        border-top: 1px solid $border;
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      tr:first-child th {
+        border-top: 0;
+        font-size: 12px;
+        font-weight: 500;
+        color: $mutedText;
+      }
+
+      th:first-child {
+        text-align: left;
+        font-weight: 500;
+        color: $heroText;
+      }
+
+      // The season's colour as a small bar before its name, matching the lines in the picture
+      tr[class] th:first-child::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 12px;
+        margin-right: 7px;
+        border-radius: 1px;
+        vertical-align: -1px;
+      }
+
+      tr.is-summer th:first-child::before { background: $sunSummer; }
+      tr.is-equinox th:first-child::before { background: $sunEquinox; }
+      tr.is-winter th:first-child::before { background: $sunWinter; }
+      tr.is-today th:first-child::before { background: $sunToday; }
+
+      td { color: $heroText; }
+
+      // The narrowest desktop column (~220 px): smaller text, no colour bars – the row names
+      // still match the legend above
+      @container (max-width: 240px) {
+        font-size: 12.5px;
+
+        tr[class] th:first-child::before { display: none; }
+      }
+    }
+
+    .sun-note {
+      margin: 10px 0 0;
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+
+    .sun-more {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 13px;
+      color: $primaryColor;
+      text-decoration: underline;
+      text-decoration-color: $accent;
+      text-underline-offset: 3px;
     }
 
     .card-link {

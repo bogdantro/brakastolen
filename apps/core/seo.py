@@ -44,14 +44,14 @@ BUSINESS = {
     'place_postal_code': '2960',
     'place_city': 'Røn',
     'municipality': 'Vestre Slidre',
-    # The middle of the plots, from the site plan laid over Kartverket's map (22.10.2026).
-    # The old value (60.9955, 8.9879) was Vaset centre, about 3 km away.
-    'latitude': 61.0171,
-    'longitude': 8.9465,
-    'maps_url': 'https://www.google.com/maps/search/?api=1&query=61.0171%2C8.9465',
+    # The middle of the plots: geo.plan_to_latlon of the plots' average position on the site plan,
+    # checked against Kartverket's addresses on Brakastøllie and Øyebakkin (27.10.2026).
+    'latitude': 61.01754,
+    'longitude': 8.94333,
+    'maps_url': 'https://www.google.com/maps/search/?api=1&query=61.01754%2C8.94333',
     # Norgeskart (Kartverket) uses UTM zone 33 – the same point, converted with Kartverket's own service
-    'norgeskart_url': 'https://norgeskart.no/#!?project=norgeskart&layers=1002&zoom=14&lat=6779824&lon=173092'
-                      '&markerLat=6779824&markerLon=173092&p=searchOptionsPanel',
+    'norgeskart_url': 'https://norgeskart.no/#!?project=norgeskart&layers=1002&zoom=14&lat=6779884&lon=172925'
+                      '&markerLat=6779884&markerLon=172925&p=searchOptionsPanel',
     'area_served': ['Vaset', 'Vestre Slidre', 'Valdres', 'Innlandet'],
     'services': [
         'Hyttetomter', 'Nøkkelferdige hytter', 'Hytteprosjekter', 'Tomteutvikling',

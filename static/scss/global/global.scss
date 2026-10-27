@@ -29,6 +29,14 @@ html {
   scroll-behavior: smooth;
 }
 
+// The page never pans sideways on a phone, even if something sticks out a pixel or two
+// (the client could drag the page left and right, 27.10.2026). `clip` instead of `hidden`,
+// because hidden would turn these into scroll boxes and break position: sticky.
+html,
+body {
+  overflow-x: clip;
+}
+
 body {
   margin: 0;
   background: $background;
