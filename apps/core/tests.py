@@ -525,12 +525,15 @@ class PlotPickerTests(MediaTestCase):
         self.assertEqual((off_map['lat'], off_map['lon']), (None, None))
 
     def test_map_road_names_follow_the_clients_street_list(self):
-        """Brakastøllie was drawn on the road through plots 38–63, which is Øyebakkin."""
+        """As the client drew them on the map (28.10.2026): Brakastøllie on the two roads between
+        plots 13–28, Øyebakkin through 38–63 and by 45 and 63, Nye Øyevegen on the diagonal and by
+        29 and 64, Brakastølvegen beside 30–31."""
         plan = (Path(settings.BASE_DIR) / 'static' / 'images' / 'map' / 'brakastolen-plan.svg').read_text(encoding='utf-8')
-        self.assertEqual(plan.count('>BRAKASTØLLIE</text>'), 1)
-        self.assertEqual(plan.count('>ØYEBAKKIN</text>'), 2)
-        self.assertIn('>BRAKASTØLVEGEN</text>', plan)
-        self.assertIn('>NYE ØYEVEGEN</text>', plan)
+        self.assertEqual(plan.count('>BRAKASTØLLIE</text>'), 2)
+        self.assertEqual(plan.count('>ØYEBAKKIN</text>'), 4)
+        self.assertEqual(plan.count('>BRAKASTØLVEGEN</text>'), 1)
+        self.assertIn('id="NYE_OYEVEGEN_MIDT"', plan)
+        self.assertIn('id="NYE_OYEVEGEN_29"', plan)
 
     def test_plot_without_position_is_still_listed(self):
         Plot.objects.create(number='5')
