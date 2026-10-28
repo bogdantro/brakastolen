@@ -215,7 +215,9 @@ def kontakt(request):
             thanks = 'Takk for henvendelsen! Vi tar kontakt med deg så snart som mulig.'
             if wants_json(request):
                 return JsonResponse({'ok': True, 'message': thanks})
-            messages.success(request, thanks)
+            # Shown as the thank-you popup (core/thanks-dialog.html), headed «Takk, Kari!»
+            first_name = inquiry.name.split()[0] if inquiry.name.split() else ''
+            messages.success(request, f'Takk, {first_name}!' if first_name else 'Takk!', extra_tags='inquiry-sent')
             return redirect(reverse('kontakt'))
     else:
         # "Avtal visning" links to /kontakt/?interesse=viewing so the right choice is ready

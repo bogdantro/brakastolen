@@ -1077,10 +1077,7 @@ $mapRatio: #{720 / 1000};
 // Viewing request dialog: the chosen plot on the brand green (a zoomed cut of the site plan,
 // its facts and what happens next), the form beside it, and a thank-you in its place once sent
 // ------------------------------------------------------------
-html.dialog-open {
-  overflow: hidden;
-}
-
+// (html.dialog-open, which stops the page scrolling behind it, is in base.scss)
 .picker-dialog {
   width: min(960px, calc(100vw - 48px));
   max-width: none;

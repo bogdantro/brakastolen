@@ -1,6 +1,6 @@
 // Shared building blocks for every public page: sections and the content grid, page headers,
 // headings, text, links and buttons, fact lists, FAQ, the green call to action,
-// tables, forms and flash messages. Page files only add what is unique to that page.
+// tables, forms, short notices and the thank-you popup. Page files only add what is unique to that page.
 @use '../global/variables' as *;
 
 // ------------------------------------------------------------
@@ -608,16 +608,170 @@ h3 {
   border-left: 2px solid $accentDeep;
 }
 
-// Flash message ("Takk for henvendelsen!") under the nav
+// A short notice (any message but the contact form's thank-you, which is a popup): it floats at
+// the bottom of the screen instead of sitting in the flow, so it never pushes the header photo
+// down from under the white menu
 .flash-messages {
-  position: relative;
-  z-index: 40;
+  position: fixed;
+  z-index: 60;
+  left: 50%;
+  bottom: 24px;
+  width: min(560px, calc(100% - 32px));
+  transform: translateX(-50%);
   background: $primaryColor;
   color: $white;
+  box-shadow: 0 16px 40px rgba(0, 24, 25, 0.28);
+  animation: flash-in 0.35s ease-out;
 
   .flash {
+    margin: 0;
+    padding: 16px 20px;
+  }
+}
+
+@keyframes flash-in {
+  from { opacity: 0; transform: translate(-50%, 12px); }
+}
+
+// ------------------------------------------------------------
+// Thank-you popup after the contact form (core/thanks-dialog.html, thanks.js)
+// ------------------------------------------------------------
+html.dialog-open {
+  overflow: hidden;
+}
+
+.thanks-dialog {
+  width: min(520px, calc(100% - 32px));
+  max-width: none;
+  padding: 0;
+  border: 0;
+  background: $surface;
+  color: $black;
+  text-align: center;
+  box-shadow: 0 40px 120px rgba(0, 20, 20, 0.45);
+
+  // Without JavaScript the dialog is simply open in the page – centred on top of it
+  &[open]:not(:modal) {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    margin: auto;
+    height: fit-content;
+  }
+
+  &::backdrop {
+    background: rgba(0, 24, 25, 0.62);
+  }
+
+  &[open] {
+    animation: thanks-in 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .thanks-box {
+    padding: 40px 32px 32px;
+  }
+
+  // A green circle that draws itself, then the tick
+  .thanks-mark svg {
+    display: block;
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 20px;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    circle {
+      stroke: $primaryColor;
+      stroke-width: 2;
+      stroke-dasharray: 151;
+      stroke-dashoffset: 151;
+      animation: thanks-draw 0.6s 0.15s ease-out forwards;
+    }
+
+    path {
+      stroke: $primaryColor;
+      stroke-width: 3;
+      stroke-dasharray: 36;
+      stroke-dashoffset: 36;
+      animation: thanks-draw 0.35s 0.65s ease-out forwards;
+    }
+  }
+
+  .thanks-kicker {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $accentDeep;
+  }
+
+  // Focused when the popup opens, so screen readers start with «Takk, Kari!» – no frame needed
+  h2 {
+    margin: 0 0 14px;
+    font-size: clamp(34px, 5vw, 44px);
+    line-height: 1.1;
+    color: $heroText;
+    outline: none;
+  }
+
+  p {
     margin: 0 auto;
-    padding: 18px 20px;
+    max-width: 26em;
+    color: $mutedText;
+  }
+
+  .thanks-call {
+    margin-top: 14px;
+    font-size: 16px;
+
+    a {
+      color: $primaryColor;
+      white-space: nowrap;
+    }
+  }
+
+  .thanks-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 14px 28px;
+    margin-top: 28px;
+
+    form {
+      margin: 0;
+    }
+  }
+
+  .thanks-close {
+    padding: 8px 4px;
+    background: none;
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+  }
+}
+
+@keyframes thanks-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+}
+
+@keyframes thanks-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flash-messages,
+  .thanks-dialog[open] {
+    animation: none;
+  }
+
+  .thanks-dialog .thanks-mark svg circle,
+  .thanks-dialog .thanks-mark svg path {
+    animation: none;
+    stroke-dashoffset: 0;
   }
 }
 
@@ -655,10 +809,6 @@ h3 {
 
   .section-head {
     margin-bottom: 32px;
-  }
-
-  .flash-messages {
-    margin-top: 64px;
   }
 
   .page-header {
@@ -738,9 +888,6 @@ h3 {
     }
   }
 
-  .flash-messages .flash {
-    padding: 16px 20px;
-  }
 }
 
 // ------------------------------------------------------------
@@ -771,14 +918,6 @@ h3 {
 
   .section-head {
     margin-bottom: u(56);
-  }
-
-  .flash-messages {
-    margin-top: u(110);
-
-    .flash {
-      padding: 18px u(89) 18px u(116);
-    }
   }
 
   // The text stays in normal flow, so a long title makes the header taller instead of

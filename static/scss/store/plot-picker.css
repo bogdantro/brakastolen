@@ -998,10 +998,6 @@
     transform: translateY(0);
   }
 }
-html.dialog-open {
-  overflow: hidden;
-}
-
 .picker-dialog {
   width: min(960px, 100vw - 48px);
   max-width: none;

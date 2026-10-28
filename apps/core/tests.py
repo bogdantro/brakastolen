@@ -272,11 +272,21 @@ class ContactFormTests(MediaTestCase):
     def test_valid_inquiry_is_saved_and_redirects_with_thank_you(self):
         response = self.client.post(self.url, form_data(), follow=True)
         self.assertRedirects(response, self.url)
-        self.assertContains(response, 'Takk for henvendelsen')
+        # The thank-you popup, by first name
+        self.assertContains(response, 'data-thanks-dialog')
+        self.assertContains(response, 'Takk, Kari!')
+        self.assertContains(response, 'Henvendelsen er sendt')
         inquiry = Inquiry.objects.get()
         self.assertEqual(inquiry.name, 'Kari Nordmann')
         self.assertTrue(inquiry.consent)
         self.assertFalse(inquiry.is_spam)
+
+    def test_thank_you_popup_shows_once_and_never_pushes_the_header(self):
+        self.client.post(self.url, form_data())
+        html = self.client.get(self.url).content.decode()
+        self.assertEqual(html.count('data-thanks-dialog'), 1)
+        self.assertNotIn('class="flash-messages"', html)  # the old bar that hid the white menu
+        self.assertNotIn('data-thanks-dialog', self.client.get(self.url).content.decode())
 
     def test_phone_is_optional(self):
         self.client.post(self.url, form_data(phone=''))
@@ -311,7 +321,7 @@ class ContactFormTests(MediaTestCase):
 
     def test_honeypot_marks_spam_but_looks_successful(self):
         response = self.client.post(self.url, form_data(hp_check='spam'), follow=True)
-        self.assertContains(response, 'Takk for henvendelsen')
+        self.assertContains(response, 'Henvendelsen er sendt')  # the bot sees the same popup
         inquiry = Inquiry.objects.get()
         self.assertTrue(inquiry.is_spam)
         self.assertEqual(inquiry.spam_reason, 'honeypot')

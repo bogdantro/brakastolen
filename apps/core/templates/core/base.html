@@ -55,11 +55,15 @@
   {% include 'core/nav.html' %}
 
   {% if messages %}
-  <div class="flash-messages" role="status">
-    {% for message in messages %}
-    <p class="flash {{ message.tags }}">{{ message }}</p>
-    {% endfor %}
-  </div>
+  {% comment %} The contact form's thank-you is a popup; anything else a small notice that floats
+  above the page, so it never pushes the header photo down from under the white menu. {% endcomment %}
+  {% for message in messages %}
+  {% if 'inquiry-sent' in message.tags %}
+  {% include 'core/thanks-dialog.html' with title=message.message %}
+  {% else %}
+  <div class="flash-messages" role="status"><p class="flash {{ message.tags }}">{{ message }}</p></div>
+  {% endif %}
+  {% endfor %}
   {% endif %}
 
   <main id="main">
@@ -71,6 +75,7 @@
 
   <script src="{% static 'js/nav.js' %}" defer></script>
   <script src="{% static 'js/reveal.js' %}" defer></script>
+  <script src="{% static 'js/confetti.js' %}" defer></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

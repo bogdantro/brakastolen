@@ -662,6 +662,8 @@ document.addEventListener('DOMContentLoaded', function(){
         form.hidden = true;
         doneView.hidden = false;
         doneView.focus();
+        // The same short burst as after the contact form (confetti.js), inside the dialog
+        if (typeof window.confetti === 'function') window.confetti(dialog);
     }
 
     form.addEventListener('submit', function(e){

@@ -500,16 +500,150 @@ h3 {
 }
 
 .flash-messages {
-  position: relative;
-  z-index: 40;
+  position: fixed;
+  z-index: 60;
+  left: 50%;
+  bottom: 24px;
+  width: min(560px, 100% - 32px);
+  transform: translateX(-50%);
   background: #002223;
   color: #F5F8F9;
+  box-shadow: 0 16px 40px rgba(0, 24, 25, 0.28);
+  animation: flash-in 0.35s ease-out;
 }
 .flash-messages .flash {
-  margin: 0 auto;
-  padding: 18px 20px;
+  margin: 0;
+  padding: 16px 20px;
 }
 
+@keyframes flash-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+}
+html.dialog-open {
+  overflow: hidden;
+}
+
+.thanks-dialog {
+  width: min(520px, 100% - 32px);
+  max-width: none;
+  padding: 0;
+  border: 0;
+  background: #FBFCFD;
+  color: #111A1D;
+  text-align: center;
+  box-shadow: 0 40px 120px rgba(0, 20, 20, 0.45);
+}
+.thanks-dialog[open]:not(:modal) {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  margin: auto;
+  height: fit-content;
+}
+.thanks-dialog::backdrop {
+  background: rgba(0, 24, 25, 0.62);
+}
+.thanks-dialog[open] {
+  animation: thanks-in 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.thanks-dialog .thanks-box {
+  padding: 40px 32px 32px;
+}
+.thanks-dialog .thanks-mark svg {
+  display: block;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 20px;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.thanks-dialog .thanks-mark svg circle {
+  stroke: #002223;
+  stroke-width: 2;
+  stroke-dasharray: 151;
+  stroke-dashoffset: 151;
+  animation: thanks-draw 0.6s 0.15s ease-out forwards;
+}
+.thanks-dialog .thanks-mark svg path {
+  stroke: #002223;
+  stroke-width: 3;
+  stroke-dasharray: 36;
+  stroke-dashoffset: 36;
+  animation: thanks-draw 0.35s 0.65s ease-out forwards;
+}
+.thanks-dialog .thanks-kicker {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #2C6278;
+}
+.thanks-dialog h2 {
+  margin: 0 0 14px;
+  font-size: clamp(34px, 5vw, 44px);
+  line-height: 1.1;
+  color: #0B1619;
+  outline: none;
+}
+.thanks-dialog p {
+  margin: 0 auto;
+  max-width: 26em;
+  color: #4B5A61;
+}
+.thanks-dialog .thanks-call {
+  margin-top: 14px;
+  font-size: 16px;
+}
+.thanks-dialog .thanks-call a {
+  color: #002223;
+  white-space: nowrap;
+}
+.thanks-dialog .thanks-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 14px 28px;
+  margin-top: 28px;
+}
+.thanks-dialog .thanks-actions form {
+  margin: 0;
+}
+.thanks-dialog .thanks-close {
+  padding: 8px 4px;
+  background: none;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+@keyframes thanks-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+}
+@keyframes thanks-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flash-messages,
+  .thanks-dialog[open] {
+    animation: none;
+  }
+  .thanks-dialog .thanks-mark svg circle,
+  .thanks-dialog .thanks-mark svg path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
 .draft-notice {
   position: relative;
   z-index: 40;
@@ -545,9 +679,6 @@ h3 {
   }
   .section-head {
     margin-bottom: 32px;
-  }
-  .flash-messages {
-    margin-top: 64px;
   }
   .page-header {
     min-height: 62vh;
@@ -607,9 +738,6 @@ h3 {
     content: attr(data-label) ": ";
     color: #4B5A61;
   }
-  .flash-messages .flash {
-    padding: 16px 20px;
-  }
 }
 @media only screen and (min-width: 1140px) {
   .content {
@@ -632,12 +760,6 @@ h3 {
   }
   .section-head {
     margin-bottom: calc(var(--u) * 56);
-  }
-  .flash-messages {
-    margin-top: calc(var(--u) * 110);
-  }
-  .flash-messages .flash {
-    padding: 18px calc(var(--u) * 89) 18px calc(var(--u) * 116);
   }
   .page-header {
     min-height: max(520px, var(--u) * 720);

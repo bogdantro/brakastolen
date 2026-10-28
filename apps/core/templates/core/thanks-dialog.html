@@ -1,0 +1,22 @@
+{% load static %}{% comment %}
+    The thank-you after the contact form is sent: a popup with a check mark and a short burst of
+    confetti (thanks.js, confetti.js), so nobody wonders whether it went through. Rendered open,
+    so it still shows without JavaScript; thanks.js turns it into a proper modal.
+    Parameter: title – «Takk, Kari!» (the message from the contact view).
+{% endcomment %}
+<dialog class="thanks-dialog" open aria-labelledby="thanks-title" aria-describedby="thanks-text" data-thanks-dialog>
+  <div class="thanks-box">
+    <span class="thanks-mark" aria-hidden="true">
+      <svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="M15 27l7.5 7.5L38 19"/></svg>
+    </span>
+    <p class="thanks-kicker">Henvendelsen er sendt</p>
+    <h2 id="thanks-title" tabindex="-1" autofocus>{{ title }}</h2>
+    <p id="thanks-text">Vi har fått beskjeden din og tar kontakt med deg så snart som mulig.</p>
+    <p class="thanks-call">Haster det? Ring {{ business.contact_title|lower }} {{ business.contact_name }} på <a href="tel:{{ business.phone }}">{{ business.phone_display }}</a>.</p>
+    <div class="thanks-actions">
+      <a href="{% url 'tomter' %}" class="button">Se ledige tomter {% include 'core/arrow.svg' %}</a>
+      <form method="dialog"><button type="submit" class="text-link thanks-close">Lukk</button></form>
+    </div>
+  </div>
+</dialog>
+<script src="{% static 'js/thanks.js' %}" defer></script>
