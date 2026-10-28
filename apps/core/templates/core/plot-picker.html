@@ -128,7 +128,7 @@
           <li>
             <a href="{{ ad.url }}" target="_blank" rel="noopener">
               <span class="finn-title">{{ ad.title }}</span>
-              <span class="finn-meta">{% if ad.kind %}{{ ad.kind }}{% endif %}{% if ad.kind and ad.price %} · {% endif %}{% if ad.price %}{{ ad.price }}{% endif %}</span>
+              <span class="finn-meta">{% if ad.kind %}{{ ad.kind }}{% endif %}{% if ad.kind and ad.price %} · {% endif %}{% if ad.price %}<span class="nowrap">{{ ad.price }}</span>{% endif %}</span>
               <span class="finn-go">Se annonsen<span class="visually-hidden"> på FINN (åpnes i ny fane)</span></span>
             </a>
           </li>

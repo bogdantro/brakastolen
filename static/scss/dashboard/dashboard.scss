@@ -261,7 +261,7 @@ h2 {
   font-size: 15px;
   color: $mutedText;
   text-decoration: none;
-  &::before { content: '←'; }
+  &::before { @include arrow-icon(back, 1em); }
   &:hover { color: $primaryColor; }
 }
 

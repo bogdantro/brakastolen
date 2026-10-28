@@ -339,8 +339,12 @@ FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o755
 
 # ------------------------------------------------------------------
 # E-mail – the site sends none. Every inquiry is saved in the dashboard
-# (/dashboard/henvendelser/); notices will come through a Zapier webhook later.
+# (/dashboard/henvendelser/), and the notice e-mail goes out through Zapier.
 # ------------------------------------------------------------------
+
+# Zapier "Catch Hook" URL – each new inquiry is posted there with a ready-made e-mail body
+# (apps/core/zapier.py). Empty: no notices are sent, everything else works as normal.
+ZAPIER_WEBHOOK_URL = env('ZAPIER_WEBHOOK_URL', '')
 
 # Even a stray send_mail() (e.g. Django's password reset) goes nowhere
 EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'

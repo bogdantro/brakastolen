@@ -11,8 +11,7 @@
 .supplier .supplier-main {
   width: 100%;
   aspect-ratio: 16/10;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 .supplier .mosaic {
   margin-top: 10px;
@@ -133,4 +132,6 @@
   .partner-grid {
     grid-template-columns: 1fr 1fr;
   }
-}/*# sourceMappingURL=hytter.css.map */
+}
+
+/*# sourceMappingURL=hytter.css.map */

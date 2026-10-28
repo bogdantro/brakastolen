@@ -905,7 +905,8 @@ $mapRatio: #{720 / 1000};
       text-underline-offset: 4px;
 
       &::after {
-        content: ' ↗';
+        @include arrow-icon;
+        margin-left: 0.3em;
         color: $accentDeep;
       }
     }
@@ -1014,7 +1015,12 @@ $mapRatio: #{720 / 1000};
       align-self: center;
       font-size: 14px;
       color: $primaryColor;
-      &::after { content: ' ↗'; color: $accentDeep; }
+      &::after { @include arrow-icon; margin-left: 0.3em; color: $accentDeep; }
+    }
+
+    // A price never splits across two lines («8 592 / 000 kr»)
+    .finn-meta .nowrap {
+      white-space: nowrap;
     }
   }
 
@@ -1056,7 +1062,7 @@ $mapRatio: #{720 / 1000};
       text-decoration: none;
       transition: background 0.2s ease, color 0.2s ease;
 
-      &::after { content: ' ↗'; margin-left: 6px; }
+      &::after { @include arrow-icon; margin-left: 8px; }
       &:hover { background: $primaryColor; color: $white; }
     }
   }

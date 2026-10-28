@@ -21,6 +21,7 @@ from .forms import InquiryForm
 from .models import CostItem, FieldDocument, FinnAd, Inquiry, Plot
 from .seo import BUSINESS, FAQ, FEATURED_SUPPLIERS, PARTNERS, SUPPLIERS, site_url
 from .text import format_nok
+from . import zapier
 
 log = logging.getLogger(__name__)
 
@@ -210,6 +211,7 @@ def kontakt(request):
             inquiry.save()
             if reason:
                 log.warning('Inquiry %s marked as spam: %s', inquiry.pk, reason)
+            zapier.send_inquiry(inquiry)  # e-mail notice via Zapier – not for spam, never blocks the visitor
             thanks = 'Takk for henvendelsen! Vi tar kontakt med deg så snart som mulig.'
             if wants_json(request):
                 return JsonResponse({'ok': True, 'message': thanks})

@@ -61,10 +61,8 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  -moz-columns: 2;
-       columns: 2;
-  -moz-column-gap: 32px;
-       column-gap: 32px;
+  columns: 2;
+  column-gap: 32px;
 }
 .site-footer .footer-links ul li {
   margin-bottom: 8px;
@@ -116,8 +114,7 @@
     display: grid;
     grid-template-columns: 5fr 4fr 3fr;
     grid-template-rows: auto 1fr;
-    -moz-column-gap: calc(var(--u) * 80);
-         column-gap: calc(var(--u) * 80);
+    column-gap: calc(var(--u) * 80);
     padding-top: calc(var(--u) * 100);
     padding-bottom: calc(var(--u) * 90);
   }
@@ -162,7 +159,8 @@
     grid-column: 1/-1;
   }
   .site-footer .footer-links ul {
-    -moz-columns: 4;
-         columns: 4;
+    columns: 4;
   }
-}/*# sourceMappingURL=footer.css.map */
+}
+
+/*# sourceMappingURL=footer.css.map */

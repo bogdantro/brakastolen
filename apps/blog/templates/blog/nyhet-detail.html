@@ -24,7 +24,7 @@
     </div>
     {% endif %}
     <div class="content">
-      <a href="{% url 'nyheter' %}" class="crumb"><span aria-hidden="true">←</span> Alle nyheter</a>
+      <a href="{% url 'nyheter' %}" class="crumb">{% include 'core/arrow-back.svg' %} Alle nyheter</a>
       <h1>{{ post.title }}</h1>
       <p class="article-meta">
         <time datetime="{{ post.created_at|date:'Y-m-d' }}">{{ post.created_at|date:'j. F Y' }}</time>

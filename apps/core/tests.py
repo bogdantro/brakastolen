@@ -62,7 +62,8 @@ class MediaTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls._media = override_settings(MEDIA_ROOT=MEDIA_ROOT)
+        # No test may reach the real Zapier hook from a developer's .env
+        cls._media = override_settings(MEDIA_ROOT=MEDIA_ROOT, ZAPIER_WEBHOOK_URL='')
         cls._media.enable()
 
     @classmethod
@@ -442,6 +443,102 @@ class HelperTests(MediaTestCase):
     def test_plot_outside_the_ranges_gets_no_street(self):
         self.assertEqual(street_for_plot('67'), '')
         self.assertEqual(street_for_plot('T10'), '')
+
+
+# ------------------------------------------------------------------
+# Zapier: the e-mail notice for new inquiries
+# ------------------------------------------------------------------
+
+HOOK = 'https://hooks.zapier.com/hooks/catch/1/test/'
+
+
+class ZapierTests(MediaTestCase):
+    url = reverse('kontakt')
+
+    def setUp(self):
+        super().setUp()
+        # Set here, not on the class: MediaTestCase switches the hook off when the class starts
+        hook = override_settings(ZAPIER_WEBHOOK_URL=HOOK, SITE_URL='https://www.xn--brakastlen-6cb.no')
+        hook.enable()
+        self.addCleanup(hook.disable)
+        # The post runs in a background thread – here it runs straight away instead
+        thread = mock.patch('apps.core.zapier.threading.Thread',
+                            side_effect=lambda target, args, daemon: mock.Mock(start=lambda: target(*args)))
+        thread.start()
+        self.addCleanup(thread.stop)
+        self.urlopen = mock.patch('apps.core.zapier.urllib.request.urlopen').start()
+        self.urlopen.return_value.__enter__.return_value.status = 200
+        self.addCleanup(mock.patch.stopall)
+
+    def send(self, **kwargs):
+        with self.captureOnCommitCallbacks(execute=True):
+            self.client.post(self.url, form_data(**kwargs))
+        if not self.urlopen.called:
+            return None
+        request = self.urlopen.call_args.args[0]
+        self.assertEqual(request.full_url, HOOK)
+        return json.loads(request.data.decode('utf-8'))
+
+    def test_inquiry_is_posted_with_readable_fields_and_links(self):
+        data = self.send(phone='+47 48258000')
+        self.assertEqual((data['name'], data['first_name'], data['email']), ('Kari Nordmann', 'Kari', 'kari@example.no'))
+        self.assertEqual(data['phone_display'], '482 58 000')
+        self.assertEqual((data['tel_link'], data['sms_link']), ('tel:+4748258000', 'sms:+4748258000'))
+        self.assertTrue(data['mailto_link'].startswith('mailto:kari@example.no?subject='))
+        self.assertIn('Hei%20Kari', data['mailto_link'])
+        self.assertEqual(data['dashboard_url'],
+                         f'https://www.xn--brakastlen-6cb.no/dashboard/henvendelser/{Inquiry.objects.get().pk}/')
+        self.assertEqual(data['email_subject'], 'Ny henvendelse: Kari Nordmann – tomt')
+        self.assertEqual(data['reply_to'], 'kari@example.no')
+        self.assertIn('Kari Nordmann', data['summary_text'])
+
+    def test_email_html_has_the_logo_the_message_and_reply_buttons(self):
+        html = self.send()['email_html']
+        self.assertIn('src="https://brakastolen.no/static/images/logo/tranberg-hjort-hvit.', html)
+        self.assertIn('Ny henvendelse fra Kari Nordmann', html)
+        self.assertIn('Vi vil gjerne komme på visning.', html)
+        self.assertIn('href="mailto:kari@example.no?subject=', html)
+        self.assertIn('href="tel:+4748258000"', html)
+        self.assertIn('Åpne i dashbordet', html)
+
+    def test_viewing_request_from_the_plot_map_names_the_plot(self):
+        plot = Plot.objects.create(number='21', price=1500000, area_m2=1600, map_x=400, map_y=230)
+        data = self.send(interest='viewing', plot=plot.pk)
+        self.assertEqual(data['email_subject'], 'Ny henvendelse: Kari Nordmann – visning av tomt 21')
+        self.assertEqual((data['plot'], data['plot_street'], data['plot_price']), ('Tomt 21', 'Brakastøllie', '1 500 000 kr'))
+        self.assertEqual(data['source'], 'Tomtevelgeren på forsiden')
+        self.assertIn('google.com/maps', data['plot_map_url'])
+        self.assertIn('Brakastøllie', data['email_html'])
+
+    def test_what_the_visitor_typed_is_escaped_in_the_email(self):
+        html = self.send(name='Kari <script>alert(1)</script>', message='<img src=x onerror=alert(1)>')['email_html']
+        self.assertNotIn('<script>', html)
+        self.assertNotIn('<img src=x', html)
+        self.assertIn('&lt;script&gt;', html)
+
+    def test_spam_is_not_sent(self):
+        self.assertIsNone(self.send(hp_check='http://spam.example'))
+        self.assertTrue(Inquiry.objects.get().is_spam)
+
+    @override_settings(ZAPIER_WEBHOOK_URL='')
+    def test_nothing_is_sent_without_a_webhook_url(self):
+        self.assertIsNone(self.send())
+        self.assertTrue(Inquiry.objects.exists())
+
+    def test_zapier_being_down_never_loses_the_inquiry(self):
+        import urllib.error
+        self.urlopen.side_effect = urllib.error.URLError('down')
+        with self.assertLogs('apps.core.zapier', level='ERROR'):
+            with self.captureOnCommitCallbacks(execute=True):
+                response = self.client.post(self.url, form_data())
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Inquiry.objects.exists())
+
+    def test_norwegian_phone_numbers_are_written_the_norwegian_way(self):
+        from .text import format_phone
+        self.assertEqual(format_phone('91234567'), ('912 34 567', '+4791234567'))
+        self.assertEqual(format_phone('0047 22 33 44 55'), ('22 33 44 55', '+4722334455'))
+        self.assertEqual(format_phone('+46 70 123 45 67'), ('+46 70 123 45 67', '+46701234567'))
 
 
 # ------------------------------------------------------------------

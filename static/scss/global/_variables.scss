@@ -52,3 +52,28 @@ $soldFill: #B3302C;       // sold: clear red
 $soldText: #8A2421;       // sold as text on light backgrounds
 $selectedFill: #001129;   // the plot you picked: near-black navy, white outline
 $mapGround: #6C8A60;      // behind the site plan, same as the plan's own ground (images/map/brakastolen-plan.svg)
+
+// ------------------------------------------------------------
+// Arrows drawn as SVG, never as text: phones (iOS) show the characters ↗ ← → as emoji.
+// The arrow takes the element's text colour (a mask over currentColor).
+//   a::after { @include arrow-icon; }          // ↗ link that leaves the site
+//   a::before { @include arrow-icon(back); }   // ← back
+// ------------------------------------------------------------
+$arrowOut: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.5 17.5L17 7M9 6.5h8.5V15' fill='none' stroke='%23000' stroke-width='1.8'/%3E%3C/svg%3E");
+$arrowBack: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21 12H4M10 6l-6 6 6 6' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3C/svg%3E");
+
+@mixin arrow-icon($kind: out, $size: 0.8em) {
+  $shape: $arrowOut;
+  @if $kind == back {
+    $shape: $arrowBack;
+  }
+  content: '';
+  display: inline-block;
+  flex: none;
+  width: $size;
+  height: $size;
+  vertical-align: -0.05em;
+  background-color: currentColor;
+  -webkit-mask: $shape center / contain no-repeat;
+  mask: $shape center / contain no-repeat;
+}
