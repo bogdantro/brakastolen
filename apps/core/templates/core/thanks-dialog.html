@@ -13,10 +13,7 @@
     <h2 id="thanks-title" tabindex="-1" autofocus>{{ title }}</h2>
     <p id="thanks-text">Vi har fått beskjeden din og tar kontakt med deg så snart som mulig.</p>
     <p class="thanks-call">Haster det? Ring {{ business.contact_title|lower }} {{ business.contact_name }} på <a href="tel:{{ business.phone }}">{{ business.phone_display }}</a>.</p>
-    <div class="thanks-actions">
-      <a href="{% url 'tomter' %}" class="button">Se ledige tomter {% include 'core/arrow.svg' %}</a>
-      <form method="dialog"><button type="submit" class="text-link thanks-close">Lukk</button></form>
-    </div>
+    <form method="dialog" class="thanks-actions"><button type="submit" class="button thanks-close">Lukk</button></form>
   </div>
 </dialog>
 <script src="{% static 'js/thanks.js' %}" defer></script>
