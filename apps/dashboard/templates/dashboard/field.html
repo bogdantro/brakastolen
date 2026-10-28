@@ -58,7 +58,7 @@
 <section class="panel" id="finn">
   <div class="panel-head">
     <h2>Annonser på FINN</h2>
-    <p class="panel-note">Aktive annonser vises under tomtekartet. Ledige tomter med egen Finn-lenke kommer med av seg selv.</p>
+    <p class="panel-note">Aktive annonser vises under tomtekartet, med tomter og hytter hver for seg. Ledige tomter med egen Finn-lenke kommer med av seg selv.</p>
   </div>
 
   <div class="edit-rows">
@@ -68,6 +68,7 @@
       <input type="hidden" name="pk" value="{{ ad.pk }}">
       <label class="row-field grow"><span>Tittel</span>{{ form.title }}</label>
       <label class="row-field grow"><span>Lenke</span>{{ form.url }}</label>
+      <label class="row-field narrow"><span>Tomt eller hytte</span>{{ form.category }}</label>
       <label class="row-field"><span>Hva den gjelder</span>{{ form.kind }}</label>
       <label class="row-field"><span>Pris (kr)</span>{{ form.price }}</label>
       <label class="row-check">{{ form.is_active }} Aktiv</label>
@@ -90,6 +91,7 @@
     {% csrf_token %}
     <label class="row-field grow"><span>Ny annonse – tittel</span>{{ new_ad.title }}</label>
     <label class="row-field grow"><span>Lenke</span>{{ new_ad.url }}</label>
+    <label class="row-field narrow"><span>Tomt eller hytte</span>{{ new_ad.category }}</label>
     <label class="row-field"><span>Hva den gjelder</span>{{ new_ad.kind }}</label>
     <label class="row-field"><span>Pris (kr)</span>{{ new_ad.price }}</label>
     <label class="row-check">{{ new_ad.is_active }} Aktiv</label>

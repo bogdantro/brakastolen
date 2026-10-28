@@ -181,9 +181,10 @@ class FinnAdForm(forms.ModelForm):
 
     class Meta:
         model = FinnAd
-        fields = ['title', 'url', 'kind', 'price', 'is_active']
+        fields = ['title', 'url', 'category', 'kind', 'price', 'is_active']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Ny Leve-hytte klar for innflytting'}),
+            'category': forms.Select(attrs={'class': 'input'}),
             'url': forms.URLInput(attrs={'class': 'input', 'placeholder': 'https://www.finn.no/…'}),
             'kind': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Hytte til salgs, Brakastølvegen 116'}),
         }

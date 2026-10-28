@@ -992,6 +992,20 @@ $mapRatio: #{720 / 1000};
     padding: 0;
   }
 
+  // «Tomter» and «Hytter» – the ads in two groups, plots first
+  .finn-group {
+    margin: 22px 0 0;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $mutedText;
+
+    & + .finn-list { margin-top: 8px; }
+  }
+
+  .finn-list + .finn-group { margin-top: 30px; }
+
   .finn-list {
     margin-top: 18px;
     border-top: 1px solid $border;

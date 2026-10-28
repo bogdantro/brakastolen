@@ -680,7 +680,7 @@ def field_page(request, cost_forms=None, ad_forms=None, doc_forms=None, new_cost
     ad_forms = ad_forms or {}
     doc_forms = doc_forms or {}
     costs = list(CostItem.objects.all())
-    ads = list(FinnAd.objects.all())
+    ads = list(FinnAd.objects.order_by('-category', 'order', '-created_at'))  # plots first, as on the website
     documents = list(FieldDocument.objects.all())
     fixed_total = sum(c.amount or 0 for c in costs if c.percent is None)
     return render(request, 'dashboard/field.html', {

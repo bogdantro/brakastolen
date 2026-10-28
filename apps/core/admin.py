@@ -36,8 +36,8 @@ class CostItemAdmin(admin.ModelAdmin):
 
 @admin.register(FinnAd)
 class FinnAdAdmin(admin.ModelAdmin):
-    list_display = ('title', 'kind', 'price', 'is_active', 'order')
-    list_filter = ('is_active',)
+    list_display = ('title', 'category', 'kind', 'price', 'is_active', 'order')
+    list_filter = ('category', 'is_active')
 
 
 @admin.register(FieldDocument)

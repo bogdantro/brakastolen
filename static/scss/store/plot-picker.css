@@ -888,6 +888,20 @@
   margin: 0;
   padding: 0;
 }
+.plot-picker .finn-group {
+  margin: 22px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #4B5A61;
+}
+.plot-picker .finn-group + .finn-list {
+  margin-top: 8px;
+}
+.plot-picker .finn-list + .finn-group {
+  margin-top: 30px;
+}
 .plot-picker .finn-list {
   margin-top: 18px;
   border-top: 1px solid rgba(17, 26, 29, 0.16);

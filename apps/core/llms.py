@@ -173,12 +173,13 @@ def build_llms_summary():
         lines.append('')
 
     ads = FinnAd.objects.filter(is_active=True)
-    finn_plots = Plot.objects.public().available().exclude(finn_url='')
-    if ads or finn_plots:
-        lines.append('## Annonser på FINN')
-        lines += [f'- [{ad.title}]({ad.url})' for ad in ads]
-        lines += [f'- [Hyttetomt {plot.number}]({plot.finn_url})' for plot in finn_plots]
-        lines.append('')
+    plot_ads = [f'- [{ad.title}]({ad.url})' for ad in ads if ad.category == 'plot']
+    plot_ads += [f'- [Hyttetomt {plot.number}]({plot.finn_url})'
+                 for plot in Plot.objects.public().available().exclude(finn_url='')]
+    cabin_ads = [f'- [{ad.title}]({ad.url})' for ad in ads if ad.category == 'cabin']
+    for heading, items in [('## Tomter på FINN', plot_ads), ('## Hytter på FINN', cabin_ads)]:
+        if items:
+            lines += [heading, *items, '']
 
     lines.append('## Samarbeidspartnere')
     lines += [f'- {role}: {name}' for role, name, _ in PARTNERS]

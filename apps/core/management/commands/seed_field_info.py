@@ -35,12 +35,14 @@ FINN_ADS = [
         'url': 'https://www.finn.no/realestate/leisuresale/ad.html?finnkode=371502243',
         'kind': 'Hytte til salgs, Brakastølvegen 116',
         'price': 5350000,
+        'category': 'cabin',
     },
 ] + [
     # Every ad from Tranberg Utvikling, Tinde Hytter and Leve Hytter in a FINN search for
     # «Brakastølen» (27.10.2026) – the client asked for all of them. Also added to the live
     # database by migration 0010_finn_ads_brakastolen.
-    {'title': title, 'url': f'https://www.finn.no/realestate/{section}/ad.html?finnkode={code}', 'kind': kind, 'price': price}
+    {'title': title, 'url': f'https://www.finn.no/realestate/{section}/ad.html?finnkode={code}', 'kind': kind, 'price': price,
+     'category': 'plot' if section == 'plots' else 'cabin'}
     for title, section, code, kind, price in [
         ('Eksklusiv tomt med panoramautsikt og sol fra morgen til kveld', 'plots', 471023190,
          'Tomt, Brakastølvegen 110 – Tranberg Utvikling', 1850000),

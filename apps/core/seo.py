@@ -29,6 +29,9 @@ BUSINESS = {
     # The person buyers talk to (the client's own wording, 22.10.2026)
     'contact_name': 'Haakon B. Edland',
     'contact_title': 'Tomteselger',
+    # Took many of the photos on the site – credited in the footer (client feedback 28.10.2026)
+    'photographer': 'Pål Harald Uthus',
+    'photographer_company': 'Uthus Photography',
     'founding_date': '2020-06-09',
     'founding_year': '2020',
     'employees': None,  # not registered in brreg.no

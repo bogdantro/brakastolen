@@ -72,20 +72,23 @@ def hero_images():
 
 def field_info():
     """The facts under the plot map: what comes on top of the plot price, the zoning documents,
-    and every FINN ad – the client's own list plus the plots that have a Finn link."""
+    and every FINN ad – the client's own list plus the plots that have a Finn link – with plots
+    and cabins in separate lists."""
     costs = list(CostItem.objects.all())
     fixed = [c for c in costs if c.percent is None]
-    ads = [{'title': ad.title, 'kind': ad.kind, 'price': ad.price_display, 'url': ad.url}
-           for ad in FinnAd.objects.filter(is_active=True)]
+    ads = {'plot': [], 'cabin': []}
+    for ad in FinnAd.objects.filter(is_active=True):
+        ads[ad.category].append({'title': ad.title, 'kind': ad.kind, 'price': ad.price_display, 'url': ad.url})
     for plot in Plot.objects.public().available().exclude(finn_url='').select_related('category'):
-        ads.append({'title': f'Hyttetomt {plot.number}', 'kind': ' – '.join(filter(None, ['Tomt', plot.street])),
-                    'price': plot.price_display, 'url': plot.finn_url})
+        ads['plot'].append({'title': f'Hyttetomt {plot.number}', 'kind': ' – '.join(filter(None, ['Tomt', plot.street])),
+                            'price': plot.price_display, 'url': plot.finn_url})
     return {
         'fixed_costs': fixed,
         'fixed_costs_total': format_nok(sum(c.amount or 0 for c in fixed)),
         'percent_costs': [c for c in costs if c.percent is not None],
         'documents': FieldDocument.objects.filter(is_published=True),
-        'finn_ads': ads,
+        # (heading, ads) – only the groups that have ads
+        'finn_groups': [(heading, ads[key]) for key, heading in [('plot', 'Tomter'), ('cabin', 'Hytter')] if ads[key]],
     }
 
 

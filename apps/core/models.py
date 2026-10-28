@@ -264,8 +264,12 @@ def format_number_decimal(value):
 class FinnAd(models.Model):
     """An ad on finn.no for something at Brakastølen (a cabin, a plot, the field) – listed under
     the plot map. Plots with their own Finn link are listed there automatically as well."""
+    # Plot ads and cabin ads are listed under separate headings (client feedback 28.10.2026)
+    CATEGORY_CHOICES = [('plot', 'Tomt'), ('cabin', 'Hytte')]
+
     title = models.CharField('Tittel', max_length=160)
     url = models.URLField('Lenke til annonsen')
+    category = models.CharField('Tomt eller hytte', max_length=10, choices=CATEGORY_CHOICES, default='plot')
     kind = models.CharField('Hva annonsen gjelder', max_length=60, blank=True)
     price = models.PositiveIntegerField('Pris (kr)', null=True, blank=True)
     is_active = models.BooleanField('Aktiv – vises på nettsiden', default=True)

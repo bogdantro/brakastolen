@@ -122,9 +122,10 @@
 
       <section class="info-block info-finn" id="finn-annonser" aria-labelledby="finn-title">
         <h3 id="finn-title">Annonser på FINN</h3>
-        {% if field.finn_ads %}
+        {% for heading, ads in field.finn_groups %}
+        <h4 class="finn-group">{{ heading }}</h4>
         <ul class="finn-list">
-          {% for ad in field.finn_ads %}
+          {% for ad in ads %}
           <li>
             <a href="{{ ad.url }}" target="_blank" rel="noopener">
               <span class="finn-title">{{ ad.title }}</span>
@@ -134,9 +135,9 @@
           </li>
           {% endfor %}
         </ul>
-        {% else %}
+        {% empty %}
         <p class="info-lead">Ingen aktive annonser akkurat nå. Ta kontakt for prospekt.</p>
-        {% endif %}
+        {% endfor %}
       </section>
 
       <section class="info-block info-docs" id="reguleringsplan" aria-labelledby="docs-title">

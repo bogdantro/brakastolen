@@ -775,6 +775,31 @@ class FieldInfoTests(MediaTestCase):
         self.assertIn('Tinde Hytter', html)
         self.assertIn('Leve Hytter', html)
 
+    def test_plot_ads_and_cabin_ads_are_listed_under_their_own_headings(self):
+        """Client feedback 28.10.2026: plots by themselves, cabins by themselves – plots first."""
+        Plot.objects.create(number='77', finn_url='https://www.finn.no/ad.html?finnkode=77')
+        html = self.client.get('/').content.decode()
+        plots_at = html.index('<h4 class="finn-group">Tomter</h4>')
+        cabins_at = html.index('<h4 class="finn-group">Hytter</h4>')
+        self.assertLess(plots_at, cabins_at)
+        for code in ['471023190', '280027233', '77']:  # plot ads, and a plot's own Finn link
+            with self.subTest(finnkode=code):
+                self.assertTrue(plots_at < html.index(f'finnkode={code}') < cabins_at)
+        for code in ['371502243', '374061108', '284633576']:
+            with self.subTest(finnkode=code):
+                self.assertGreater(html.index(f'finnkode={code}'), cabins_at)
+
+    def test_a_group_without_ads_has_no_heading(self):
+        from .models import FinnAd
+        FinnAd.objects.filter(category='cabin').update(is_active=False)
+        html = self.client.get('/').content.decode()
+        self.assertIn('<h4 class="finn-group">Tomter</h4>', html)
+        self.assertNotIn('<h4 class="finn-group">Hytter</h4>', html)
+
+    def test_photographer_is_credited_in_the_footer(self):
+        html = self.client.get('/').content.decode()
+        self.assertIn('Mange av bildene er tatt av fotograf Pål Harald Uthus, Uthus Photography', html)
+
     def test_only_available_plots_with_a_finn_link_join_the_ad_list(self):
         Plot.objects.create(number='77', finn_url='https://www.finn.no/ad.html?finnkode=77')
         Plot.objects.create(number='78', status='sold', finn_url='https://www.finn.no/ad.html?finnkode=78')
