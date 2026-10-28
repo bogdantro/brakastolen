@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 from django import forms
 
 from apps.blog.models import Blog
-from apps.core.models import CostItem, FieldDocument, FinnAd, Plot, PlotCategory
+from apps.core.models import CostItem, FieldDocument, Plot, PlotCategory
 from apps.core.richtext import sanitize_html
 from apps.core.text import format_number
 
@@ -174,27 +174,6 @@ class CostItemForm(forms.ModelForm):
         if amount is not None and percent is not None:
             raise forms.ValidationError('Fyll inn bare ett av dem: et beløp i kroner, eller en prosent av tomteprisen.')
         return cleaned
-
-
-class FinnAdForm(forms.ModelForm):
-    price = NokField(label='Pris (kr)', required=False, min_value=0)
-
-    class Meta:
-        model = FinnAd
-        fields = ['title', 'url', 'category', 'kind', 'price', 'is_active']
-        widgets = {
-            'title': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Ny Leve-hytte klar for innflytting'}),
-            'category': forms.Select(attrs={'class': 'input'}),
-            'url': forms.URLInput(attrs={'class': 'input', 'placeholder': 'https://www.finn.no/…'}),
-            'kind': forms.TextInput(attrs={'class': 'input', 'placeholder': 'F.eks. Hytte til salgs, Brakastølvegen 116'}),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['price'].widget.attrs.update({'class': 'input', 'placeholder': 'F.eks. 5 350 000'})
-
-    def clean_url(self):
-        return validate_finn_link(self.cleaned_data.get('url', ''))
 
 
 MAX_DOCUMENT_MB = 15

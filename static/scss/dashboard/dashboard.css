@@ -2041,16 +2041,6 @@ a.card-title:hover {
   font-size: 14px;
 }
 
-.plot-ad-list {
-  margin-top: 24px;
-}
-.plot-ad-list h3 {
-  margin: 0 0 6px;
-  font-family: "Newsreader", Georgia, serif;
-  font-size: 15px;
-  font-weight: 600;
-}
-
 @media (max-width: 1719px) {
   .plots-layout {
     grid-template-columns: minmax(0, 1fr);

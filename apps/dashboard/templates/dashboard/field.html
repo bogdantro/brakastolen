@@ -6,7 +6,7 @@
 <header class="page-head">
   <div>
     <h1>Feltinfo</h1>
-    <p class="page-lead">Det som står under tomtekartet på nettsiden: omkostningene som kommer i tillegg til tomteprisen, annonsene på FINN og reguleringsplanen.</p>
+    <p class="page-lead">Det som står under tomtekartet på nettsiden: omkostningene som kommer i tillegg til tomteprisen og reguleringsplanen.</p>
   </div>
   <div class="page-actions">
     <a href="/#omkostninger" class="button secondary" target="_blank" rel="noopener">Se på nettsiden</a>
@@ -52,69 +52,6 @@
     </div>
     {% if new_cost.errors %}<div class="row-errors">{{ new_cost.non_field_errors }}{% for field in new_cost %}{{ field.errors }}{% endfor %}</div>{% endif %}
   </form>
-</section>
-
-{% comment %} ---------------------------------------------------------------- FINN ads {% endcomment %}
-<section class="panel" id="finn">
-  <div class="panel-head">
-    <h2>Annonser på FINN</h2>
-    <p class="panel-note">Aktive annonser vises under tomtekartet, med tomter og hytter hver for seg. Ledige tomter med egen Finn-lenke kommer med av seg selv.</p>
-  </div>
-
-  <div class="edit-rows">
-    {% for ad, form in ads %}
-    <form method="post" class="edit-row ad-row{% if form.errors %} has-errors{% endif %}{% if not ad.is_active %} is-inactive{% endif %}">
-      {% csrf_token %}
-      <input type="hidden" name="pk" value="{{ ad.pk }}">
-      <label class="row-field grow"><span>Tittel</span>{{ form.title }}</label>
-      <label class="row-field grow"><span>Lenke</span>{{ form.url }}</label>
-      <label class="row-field narrow"><span>Tomt eller hytte</span>{{ form.category }}</label>
-      <label class="row-field"><span>Hva den gjelder</span>{{ form.kind }}</label>
-      <label class="row-field"><span>Pris (kr)</span>{{ form.price }}</label>
-      <label class="row-check">{{ form.is_active }} Aktiv</label>
-      <div class="row-actions">
-        <a href="{{ ad.url }}" target="_blank" rel="noopener" class="text-link">Åpne</a>
-        <button type="submit" name="action" value="ad_save" class="button small secondary">Lagre</button>
-        <button type="submit" name="action" value="ad_delete" class="icon-button" formnovalidate
-                data-confirm-click="Slette «{{ ad.title }}» fra listen? Annonsen på FINN blir ikke berørt." aria-label="Slett {{ ad.title }}">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></svg>
-        </button>
-      </div>
-      {% if form.errors %}<div class="row-errors">{% for field in form %}{{ field.errors }}{% endfor %}</div>{% endif %}
-    </form>
-    {% empty %}
-    <p class="muted">Ingen annonser lagt inn ennå.</p>
-    {% endfor %}
-  </div>
-
-  <form method="post" class="edit-row ad-row add-row{% if new_ad.errors %} has-errors{% endif %}">
-    {% csrf_token %}
-    <label class="row-field grow"><span>Ny annonse – tittel</span>{{ new_ad.title }}</label>
-    <label class="row-field grow"><span>Lenke</span>{{ new_ad.url }}</label>
-    <label class="row-field narrow"><span>Tomt eller hytte</span>{{ new_ad.category }}</label>
-    <label class="row-field"><span>Hva den gjelder</span>{{ new_ad.kind }}</label>
-    <label class="row-field"><span>Pris (kr)</span>{{ new_ad.price }}</label>
-    <label class="row-check">{{ new_ad.is_active }} Aktiv</label>
-    <div class="row-actions">
-      <button type="submit" name="action" value="ad_add" class="button small">Legg til</button>
-    </div>
-    {% if new_ad.errors %}<div class="row-errors">{% for field in new_ad %}{{ field.errors }}{% endfor %}</div>{% endif %}
-  </form>
-
-  {% if plot_ads %}
-  <div class="plot-ad-list">
-    <h3>Fra tomtene</h3>
-    <ul class="mini-list">
-      {% for plot in plot_ads %}
-      <li>
-        <a href="{% url 'dashboard_plot_edit' plot.pk %}">Tomt {{ plot.number }}</a>
-        <span class="status-label status-{{ plot.status }}">{{ plot.get_status_display }}</span>
-        <small>{% if plot.status == 'available' %}Vises på nettsiden{% else %}Vises ikke – tomten er ikke ledig{% endif %}</small>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
 </section>
 
 {% comment %} ---------------------------------------------------------------- Documents {% endcomment %}

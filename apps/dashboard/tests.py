@@ -441,18 +441,13 @@ class FieldInfoDashboardTests(DashboardTestCase):
         self.assertContains(response, 'Fyll inn enten et beløp')
         self.assertFalse(CostItem.objects.exists())
 
-    def test_finn_ads_must_link_to_finn(self):
-        response = self.client.post(self.url, {'action': 'ad_add', 'ad-new-title': 'Hytte', 'ad-new-url': 'https://example.com/finn.no',
-                                               'ad-new-is_active': 'on'})
-        self.assertContains(response, 'Lim inn lenken til annonsen på finn.no')
-        self.client.post(self.url, {'action': 'ad_add', 'ad-new-title': 'Hytte', 'ad-new-url': 'https://www.finn.no/ad?finnkode=1', 'ad-new-category': 'plot',
-                                    'ad-new-price': '5 350 000', 'ad-new-is_active': 'on'})
-        self.assertEqual(FinnAd.objects.get(url='https://www.finn.no/ad?finnkode=1').price, 5350000)
-
-    def test_finn_ad_can_be_marked_as_a_cabin(self):
-        self.client.post(self.url, {'action': 'ad_add', 'ad-new-title': 'Hytte', 'ad-new-url': 'https://www.finn.no/ad?finnkode=2',
-                                    'ad-new-category': 'cabin', 'ad-new-is_active': 'on'})
-        self.assertEqual(FinnAd.objects.get(url='https://www.finn.no/ad?finnkode=2').category, 'cabin')
+    def test_finn_ads_are_not_on_the_dashboard(self):
+        """The FINN ads were taken out of the dashboard (28.10.2026); the website still lists them."""
+        self.assertNotContains(self.client.get(self.url), 'Annonser på FINN')
+        count = FinnAd.objects.count()
+        self.client.post(self.url, {'action': 'ad_add', 'ad-new-title': 'Hytte', 'ad-new-url': 'https://www.finn.no/ad?finnkode=1',
+                                    'ad-new-category': 'plot', 'ad-new-is_active': 'on'})
+        self.assertEqual(FinnAd.objects.count(), count)
 
     def test_upload_a_pdf_and_delete_it_with_its_file(self):
         pdf = SimpleUploadedFile('regulering.pdf', b'%PDF-1.7 test', content_type='application/pdf')

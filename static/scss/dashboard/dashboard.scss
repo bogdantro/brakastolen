@@ -1259,7 +1259,7 @@ a.card-title:hover { text-decoration: underline; text-decoration-thickness: 1px;
 }
 
 // ------------------------------------------------------------
-// Feltinfo: costs, FINN ads and documents, one editable row each
+// Feltinfo: costs and documents, one editable row each
 // ------------------------------------------------------------
 .edit-rows {
   border-top: 1px solid $line;
@@ -1327,17 +1327,6 @@ a.card-title:hover { text-decoration: underline; text-decoration-thickness: 1px;
   flex-basis: 100%;
 
   .errorlist { font-size: 14px; }
-}
-
-.plot-ad-list {
-  margin-top: 24px;
-
-  h3 {
-    margin: 0 0 6px;
-    font-family: $fontBody;
-    font-size: 15px;
-    font-weight: 600;
-  }
 }
 
 // ------------------------------------------------------------

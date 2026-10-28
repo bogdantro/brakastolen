@@ -1,5 +1,5 @@
 """The client's dashboard at /dashboard/: inquiries (a small sales CRM), the plots for
-sale with their sales map, the field info under the plot map (costs, FINN ads, documents),
+sale with their sales map, the field info under the plot map (costs, documents),
 news posts and an activity log."""
 import csv
 import re
@@ -18,12 +18,12 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from apps.blog.models import Blog
-from apps.core.models import PLOT_STREETS, CostItem, FieldDocument, FinnAd, Inquiry, InquiryNote, Plot, PlotCategory
+from apps.core.models import PLOT_STREETS, CostItem, FieldDocument, Inquiry, InquiryNote, Plot, PlotCategory
 from apps.core.seo import BUSINESS
 from apps.core.views import wants_json
 
 from .forms import (
-    BlogForm, CostItemForm, DashboardLoginForm, FieldDocumentForm, FinnAdForm, InquiryNoteForm, PlotBulkForm,
+    BlogForm, CostItemForm, DashboardLoginForm, FieldDocumentForm, InquiryNoteForm, PlotBulkForm,
     PlotCategoryForm, PlotForm, PlotQuickForm,
 )
 from .models import ActivityLog, LoginAttempt
@@ -671,34 +671,28 @@ def dashboard_plot_delete(request, pk):
 
 
 # ------------------------------------------------------------------
-# The field: costs, FINN ads and documents shown under the plot map
+# The field: costs and documents shown under the plot map
 # ------------------------------------------------------------------
 
-def field_page(request, cost_forms=None, ad_forms=None, doc_forms=None, new_cost=None, new_ad=None, new_doc=None):
+def field_page(request, cost_forms=None, doc_forms=None, new_cost=None, new_doc=None):
     """The page, with any form that just failed shown again with its errors."""
     cost_forms = cost_forms or {}
-    ad_forms = ad_forms or {}
     doc_forms = doc_forms or {}
     costs = list(CostItem.objects.all())
-    ads = list(FinnAd.objects.order_by('-category', 'order', '-created_at'))  # plots first, as on the website
     documents = list(FieldDocument.objects.all())
     fixed_total = sum(c.amount or 0 for c in costs if c.percent is None)
     return render(request, 'dashboard/field.html', {
         'costs': [(c, cost_forms.get(c.pk) or CostItemForm(instance=c, prefix=f'cost-{c.pk}')) for c in costs],
         'fixed_total': fixed_total,
         'new_cost': new_cost or CostItemForm(prefix='cost-new'),
-        'ads': [(a, ad_forms.get(a.pk) or FinnAdForm(instance=a, prefix=f'ad-{a.pk}')) for a in ads],
-        'new_ad': new_ad or FinnAdForm(prefix='ad-new', initial={'is_active': True}),
-        'plot_ads': Plot.objects.exclude(finn_url='').select_related('category'),
         'documents': [(d, doc_forms.get(d.pk) or FieldDocumentForm(instance=d, prefix=f'doc-{d.pk}')) for d in documents],
         'new_doc': new_doc or FieldDocumentForm(prefix='doc-new', initial={'is_published': True}),
     })
 
 
-# «cost_add», «ad_save», «doc_delete» … -> (model, form, form prefix, noun for the log, section on the page)
+# «cost_add», «cost_save», «doc_delete» … -> (model, form, form prefix, noun for the log, section on the page)
 FIELD_ITEMS = {
     'cost': (CostItem, CostItemForm, 'cost', 'omkostning', 'omkostninger'),
-    'ad': (FinnAd, FinnAdForm, 'ad', 'Finn-annonse', 'finn'),
     'doc': (FieldDocument, FieldDocumentForm, 'doc', 'dokument', 'dokumenter'),
 }
 
