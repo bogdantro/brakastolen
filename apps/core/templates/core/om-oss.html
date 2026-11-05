@@ -38,8 +38,8 @@
       <p>Fra tomt og grunnmur til finansiering og oppgjør.</p>
     </div>
     <dl class="rows">
-      {% for role, name, url in partners %}
-      <div><dt>{{ role }}</dt><dd>{% if url %}<a href="{{ url }}" target="_blank" rel="noopener">{{ name }}</a>{% else %}{{ name }}{% endif %}</dd></div>
+      {% for role, group, companies in partners %}
+      <div><dt>{{ role }}</dt><dd>{% include 'core/partner-names.html' %}</dd></div>
       {% endfor %}
     </dl>
   </div>

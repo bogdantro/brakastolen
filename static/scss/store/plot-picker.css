@@ -459,21 +459,6 @@
 .plot-picker .map-legend .dot.selected {
   background: #001129;
 }
-.plot-picker .map-note {
-  position: absolute;
-  z-index: 3;
-  right: 16px;
-  bottom: 16px;
-  margin: 0;
-  padding: 6px 10px;
-  background: #FBFCFD;
-  border: 1px solid rgba(17, 26, 29, 0.16);
-  font-size: 12px;
-  color: #4B5A61;
-}
-.plot-picker .map-note a {
-  color: #002223;
-}
 .plot-picker .map-tooltip {
   position: absolute;
   z-index: 6;
@@ -1504,9 +1489,6 @@
   }
   .plot-picker .picker-list {
     max-height: 520px;
-  }
-  .plot-picker .map-note {
-    display: none;
   }
   .plot-picker .selected-card {
     padding: 18px 20px 22px;

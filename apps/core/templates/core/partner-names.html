@@ -1,0 +1,4 @@
+{% comment %}
+  The companies of one partner row (seo.PARTNERS), each linked to its own website.
+  Parameters: group – a group name shown first («FAUN Gruppen:») or ''; companies – [(name, url)].
+{% endcomment %}{% if group %}{{ group }}: {% endif %}{% for name, url in companies %}{% if url %}<a href="{{ url }}" target="_blank" rel="noopener">{{ name }}</a>{% else %}{{ name }}{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}

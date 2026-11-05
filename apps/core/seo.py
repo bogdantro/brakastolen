@@ -70,17 +70,25 @@ BUSINESS = {
     'same_as': [],
 }
 
-# Partners named on the old website ("Våre samarbeidspartnere på Brakastølen")
+# Partners named on the old website ("Våre samarbeidspartnere på Brakastølen"):
+# (role, group name or '', [(company, website or '')]). Every company links to its own website
+# (client feedback 05.11.2026); VA Entreprenør AS has none (none registered, checked 05.11.2026).
 PARTNERS = [
-    ('Hytteleverandør', 'Tinde Hytter', 'https://www.tindehytter.no'),
-    ('Hytteleverandør', 'FAUN Gruppen: Leve Hytter, Telemarkhytter, Øverbygg, Nordlyshytter, Familiehytta', 'https://www.levehytter.no'),
-    ('Hytteleverandør', 'Slidre Bygg & Prosjektering', 'https://www.slidre-bygg.no'),
-    ('Byggmester', 'RH Kvalitetsbygg AS', 'https://www.rhkvalitetsbygg.no'),
-    ('Opparbeidelse av tomt og grunnmur', 'VA Entreprenør AS', ''),
-    ('Planlegging av hytte på tomt', 'Plan og Oppmåling Valdres AS', ''),
-    ('Finansiering', 'SpareBank 1 Hallingdal Valdres', ''),
-    ('Oppgjørsmegler', 'EIE Fjellmegleren Fagernes', ''),
-    ('Byggesak', 'Vestre Slidre kommune', ''),
+    ('Hytteleverandør', '', [('Tinde Hytter', 'https://www.tindehytter.no')]),
+    ('Hytteleverandør', 'FAUN Gruppen', [
+        ('Leve Hytter', 'https://www.levehytter.no'),
+        ('Telemarkhytter', 'https://telemarkhytter.no'),
+        ('Øverbygg', 'https://overbygg.no'),
+        ('Nordlyshytter', 'https://nordlyshytter.no'),
+        ('Familiehytta', 'https://familiehytta.no'),
+    ]),
+    ('Hytteleverandør', '', [('Slidre Bygg & Prosjektering', 'https://www.slidre-bygg.no')]),
+    ('Byggmester', '', [('RH Kvalitetsbygg AS', 'https://www.rhkvalitetsbygg.no')]),
+    ('Opparbeidelse av tomt og grunnmur', '', [('VA Entreprenør AS', '')]),
+    ('Planlegging av hytte på tomt', '', [('Plan og Oppmåling Valdres AS', 'https://pov.no')]),
+    ('Finansiering', '', [('SpareBank 1 Hallingdal Valdres', 'https://www.sparebank1.no/nb/hallingdal.html')]),
+    ('Oppgjørsmegler', '', [('EIE Fjellmegleren Fagernes', 'https://eie.no/eiendom/kontorer/eie-fjellmegleren-fagernes')]),
+    ('Byggesak', '', [('Vestre Slidre kommune', 'https://www.vestre-slidre.kommune.no')]),
 ]
 
 # The cabin suppliers and builders shown as cards on the homepage («Våre hytteleverandører»).

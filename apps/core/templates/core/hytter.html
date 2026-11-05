@@ -106,10 +106,10 @@
       <p class="head-note">Fra tomt og grunnmur til finansiering og oppgjør.</p>
     </div>
     <ul class="partner-grid">
-      {% for role, name, url in partners %}
+      {% for role, group, companies in partners %}
       <li>
         <span class="role">{{ role }}</span>
-        {% if url %}<a href="{{ url }}" target="_blank" rel="noopener" class="name">{{ name }}</a>{% else %}<span class="name">{{ name }}</span>{% endif %}
+        <span class="name">{% include 'core/partner-names.html' %}</span>
       </li>
       {% endfor %}
     </ul>

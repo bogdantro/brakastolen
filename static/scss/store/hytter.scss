@@ -101,7 +101,8 @@
     color: $heroText;
   }
 
-  a.name {
+  .name a {
+    color: inherit;
     text-decoration: underline;
     text-decoration-color: $accent;
     text-underline-offset: 5px;

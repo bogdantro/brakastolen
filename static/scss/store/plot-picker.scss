@@ -524,24 +524,6 @@ $mapRatio: #{720 / 1000};
     }
   }
 
-  .map-note {
-    position: absolute;
-    z-index: 3;
-    right: 16px;
-    bottom: 16px;
-    margin: 0;
-    padding: 6px 10px;
-    // On a light panel like the legend – plain text would be lost on the green map
-    background: $panel;
-    border: 1px solid $border;
-    font-size: 12px;
-    color: $mutedText;
-
-    a {
-      color: $primaryColor;
-    }
-  }
-
   .map-tooltip {
     position: absolute;
     z-index: 6;
@@ -1648,11 +1630,6 @@ $mapRatio: #{720 / 1000};
 
     .picker-list {
       max-height: 520px;
-    }
-
-
-    .map-note {
-      display: none;
     }
 
     .selected-card {

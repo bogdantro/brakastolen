@@ -29,24 +29,18 @@ PERCENT_COSTS = [
     ('Dokumentavgift', '2.5'),
 ]
 
+# The Leve cabin at Brakastølvegen 116 (finnkode 371502243) was the first ad here; it is sold
+# and taken off the website (client feedback 05.11.2026, migration 0012_finn_ads_november).
 FINN_ADS = [
-    {
-        'title': 'Innflytningsklar Leve-hytte med spektakulær utsikt',
-        'url': 'https://www.finn.no/realestate/leisuresale/ad.html?finnkode=371502243',
-        'kind': 'Hytte til salgs, Brakastølvegen 116',
-        'price': 5350000,
-        'category': 'cabin',
-    },
-] + [
     # Every ad from Tranberg Utvikling, Tinde Hytter and Leve Hytter in a FINN search for
     # «Brakastølen» (27.10.2026) – the client asked for all of them. Also added to the live
-    # database by migration 0010_finn_ads_brakastolen.
+    # database by migration 0010_finn_ads_brakastolen; titles as updated by 0012_finn_ads_november.
     {'title': title, 'url': f'https://www.finn.no/realestate/{section}/ad.html?finnkode={code}', 'kind': kind, 'price': price,
      'category': 'plot' if section == 'plots' else 'cabin'}
     for title, section, code, kind, price in [
         ('Eksklusiv tomt med panoramautsikt og sol fra morgen til kveld', 'plots', 471023190,
          'Tomt, Brakastølvegen 110 – Tranberg Utvikling', 1850000),
-        ('Solrike panoramatomter – kampanje: 2 gratis el-sykler ved kjøp', 'plots', 470544998,
+        ('Solrike panoramatomter – Brakastølen/Vaset', 'plots', 470544998,  # the e-bike campaign has ended
          'Tomter, Øyebakkin – Tranberg Utvikling', 1400000),
         ('Drømmetomter – solvendt, luftig og med panoramautsikt', 'plots', 400288938,
          'Tomter, Brakastøllie – Tranberg Utvikling', 1500000),

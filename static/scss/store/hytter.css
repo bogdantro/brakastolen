@@ -82,7 +82,8 @@
   line-height: 1.2;
   color: #0B1619;
 }
-.partner-grid a.name {
+.partner-grid .name a {
+  color: inherit;
   text-decoration: underline;
   text-decoration-color: #9CC3D0;
   text-underline-offset: 5px;

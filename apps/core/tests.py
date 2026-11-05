@@ -137,6 +137,19 @@ class PageTests(MediaTestCase):
         self.assertEqual([p['number'] for p in response.context['picker_plots']], ['T10'])
         self.assertIn('no-cache', response['Cache-Control'])
 
+    def test_every_partner_with_a_website_is_a_link_to_it(self):
+        """Client feedback 05.11.2026: each company should open its own homepage – the five
+        FAUN brands each get their own link instead of one link to Leve Hytter."""
+        for page in ('hytter', 'om_oss'):
+            html = self.client.get(reverse(page)).content.decode()
+            for url in ('https://telemarkhytter.no', 'https://overbygg.no', 'https://pov.no',
+                        'https://www.sparebank1.no/nb/hallingdal.html', 'https://www.vestre-slidre.kommune.no',
+                        'https://eie.no/eiendom/kontorer/eie-fjellmegleren-fagernes'):
+                with self.subTest(page=page, url=url):
+                    self.assertIn(f'<a href="{url}" target="_blank" rel="noopener">', html)
+            self.assertIn('FAUN Gruppen: <a href="https://www.levehytter.no"', html)
+            self.assertIn('VA Entreprenør AS', html)  # no website, so plain text
+
 
 # ------------------------------------------------------------------
 # Old URLs from the WordPress site
@@ -636,11 +649,30 @@ class PlotPickerTests(MediaTestCase):
         plots 13–28, Øyebakkin through 38–63 and by 45 and 63, Nye Øyevegen on the diagonal and by
         29 and 64, Brakastølvegen beside 30–31."""
         plan = (Path(settings.BASE_DIR) / 'static' / 'images' / 'map' / 'brakastolen-plan.svg').read_text(encoding='utf-8')
-        self.assertEqual(plan.count('>BRAKASTØLLIE</text>'), 2)
-        self.assertEqual(plan.count('>ØYEBAKKIN</text>'), 4)
-        self.assertEqual(plan.count('>BRAKASTØLVEGEN</text>'), 1)
+        self.assertEqual(plan.count('>BRAKASTØLLIE</textPath>'), 2)
+        self.assertEqual(plan.count('>ØYEBAKKIN</textPath>'), 4)
+        self.assertEqual(plan.count('>BRAKASTØLVEGEN</textPath>'), 1)
         self.assertIn('id="NYE_OYEVEGEN_MIDT"', plan)
         self.assertIn('id="NYE_OYEVEGEN_29"', plan)
+
+    def test_map_has_no_link_to_the_old_simplified_plot_map(self):
+        """Client feedback 05.11.2026: «Forenklet tomtekart. Se tomtekartet» misled buyers –
+        the old map doesn't show what is for sale now."""
+        for page in ('/', reverse('tomter')):
+            with self.subTest(page=page):
+                html = self.client.get(page).content.decode()
+                self.assertNotIn('Forenklet tomtekart', html)
+                self.assertNotIn('tomtekart-2022-02-01', html)
+
+    def test_map_road_names_follow_the_road_instead_of_a_straight_line(self):
+        """Straight, rotated names drifted off the curved roads (client feedback 05.11.2026), so
+        every road name is laid along its road's centreline – including those once drawn letter by letter."""
+        plan = (Path(settings.BASE_DIR) / 'static' / 'images' / 'map' / 'brakastolen-plan.svg').read_text(encoding='utf-8')
+        road_names = re.findall(r'<text id="([A-Z0-9_]+)" class="st42 st43"[^>]*><textPath href="#\1_LINJE"', plan)
+        self.assertEqual(len(road_names), 13)
+        for name in road_names:
+            self.assertIn(f'<path id="{name}_LINJE" d="M', plan)
+        self.assertNotRegex(plan, r'<text transform="[^"]*" class="st42 ')  # no straight road names left
 
     def test_plot_without_position_is_still_listed(self):
         Plot.objects.create(number='5')
@@ -763,7 +795,18 @@ class FieldInfoTests(MediaTestCase):
         self.assertIn('PDF, 7,2 MB', html)
         self.assertIn('norgeskart.no', html)
         self.assertIn('https://www.google.com/maps/search/', html)
-        self.assertIn('finnkode=371502243', html)
+        self.assertIn('finnkode=374061108', html)
+
+    def test_sold_leve_cabin_is_no_longer_listed(self):
+        """Client feedback 05.11.2026: «Innflyttingsklar Leve-hytte …» is sold."""
+        html = self.client.get('/').content.decode()
+        self.assertNotIn('finnkode=371502243', html)
+        self.assertNotIn('Innflytningsklar Leve-hytte', html)
+
+    def test_ended_e_bike_campaign_is_gone_from_the_ad_title(self):
+        html = self.client.get('/').content.decode()
+        self.assertIn('Solrike panoramatomter – Brakastølen/Vaset', html)
+        self.assertNotIn('el-sykler', html)
 
     def test_every_tranberg_tinde_and_leve_ad_is_listed(self):
         """The client asked for all their FINN ads at Brakastølen, the cabin makers' included."""
@@ -785,7 +828,7 @@ class FieldInfoTests(MediaTestCase):
         for code in ['471023190', '280027233', '77']:  # plot ads, and a plot's own Finn link
             with self.subTest(finnkode=code):
                 self.assertTrue(plots_at < html.index(f'finnkode={code}') < cabins_at)
-        for code in ['371502243', '374061108', '284633576']:
+        for code in ['374061108', '339408992', '284633576']:
             with self.subTest(finnkode=code):
                 self.assertGreater(html.index(f'finnkode={code}'), cabins_at)
 
@@ -810,7 +853,7 @@ class FieldInfoTests(MediaTestCase):
     def test_seeding_twice_adds_nothing(self):
         from .models import CostItem, FieldDocument, FinnAd
         call_command('seed_field_info', stdout=io.StringIO())
-        self.assertEqual((CostItem.objects.count(), FinnAd.objects.count(), FieldDocument.objects.count()), (6, 12, 2))
+        self.assertEqual((CostItem.objects.count(), FinnAd.objects.count(), FieldDocument.objects.count()), (6, 11, 2))
 
     def test_the_old_png_of_the_plan_is_replaced_by_the_pdf(self):
         from django.core.files.base import ContentFile
@@ -833,7 +876,7 @@ class SeedSiteTests(MediaTestCase):
         call_command('seed_site', stdout=io.StringIO())
         self.assertEqual(Plot.objects.count(), 54)
         self.assertEqual(Plot.objects.get(number='11').altitude, 985)
-        self.assertEqual((CostItem.objects.count(), FinnAd.objects.count(), FieldDocument.objects.count()), (6, 12, 2))
+        self.assertEqual((CostItem.objects.count(), FinnAd.objects.count(), FieldDocument.objects.count()), (6, 11, 2))
         self.assertEqual(Blog.objects.count(), 6)
 
 

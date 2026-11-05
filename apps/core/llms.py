@@ -182,7 +182,9 @@ def build_llms_summary():
             lines += [heading, *items, '']
 
     lines.append('## Samarbeidspartnere')
-    lines += [f'- {role}: {name}' for role, name, _ in PARTNERS]
+    for role, group, companies in PARTNERS:
+        names = ', '.join(f'[{name}]({url})' if url else name for name, url in companies)
+        lines.append(f'- {role}: {group}: {names}' if group else f'- {role}: {names}')
     lines.append('')
 
     lines.append('## Ofte stilte spørsmål')
