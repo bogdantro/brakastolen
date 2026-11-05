@@ -224,9 +224,10 @@ h3 {
     letter-spacing: -0.02em;
     text-wrap: balance;
     text-shadow: 0 2px 30px rgba(4, 14, 17, 0.35);
-    // Long words ("Personvernerklæring") break instead of running off the screen
-    overflow-wrap: anywhere;
-    hyphens: auto;
+    // Long words break only at a soft hyphen in the title (a U+00AD in "Personvernerklæring" after "Personvern" ->
+    // «Personvern-/erklæring»). The browser's own hyphenation guessed «Personver-/nerklæring».
+    hyphens: manual;
+    overflow-wrap: anywhere;  // last resort, so a word never runs off a phone screen
   }
 
   .meta,

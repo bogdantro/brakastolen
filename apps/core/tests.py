@@ -148,7 +148,7 @@ class PageTests(MediaTestCase):
                 with self.subTest(page=page, url=url):
                     self.assertIn(f'<a href="{url}" target="_blank" rel="noopener">', html)
             self.assertIn('FAUN Gruppen: <a href="https://www.levehytter.no"', html)
-            self.assertIn('VA Entreprenør AS', html)  # no website, so plain text
+            self.assertIn('<a href="https://va-as.no" target="_blank" rel="noopener">VA Entreprenør AS</a>', html)
 
 
 # ------------------------------------------------------------------
@@ -838,6 +838,15 @@ class FieldInfoTests(MediaTestCase):
         html = self.client.get('/').content.decode()
         self.assertIn('<h4 class="finn-group">Tomter</h4>', html)
         self.assertNotIn('<h4 class="finn-group">Hytter</h4>', html)
+
+    def test_footer_credits_webiser_with_a_link(self):
+        html = self.client.get('/').content.decode()
+        self.assertIn('Nettside laget av <a href="https://webiser.no" target="_blank" rel="noopener">Webiser</a>', html)
+
+    def test_privacy_heading_only_breaks_between_personvern_and_erklaering(self):
+        """The browser's own hyphenation split it as «Personver-nerklæring» (client screenshot 05.11.2026)."""
+        html = self.client.get(reverse('personvern')).content.decode()
+        self.assertIn('<h1>Personvern­erklæring</h1>', html)
 
     def test_photographer_is_credited_in_the_footer(self):
         html = self.client.get('/').content.decode()

@@ -43,6 +43,7 @@
   <div class="content footer-bottom">
     <p>© {% now "Y" %} {{ business.company }}</p>
     <p>Mange av bildene er tatt av fotograf {{ business.photographer }}, {{ business.photographer_company }}</p>
+    <p>Nettside laget av <a href="https://webiser.no" target="_blank" rel="noopener">Webiser</a></p>
     <a href="{% url 'personvern' %}">Personvern</a>
     {% if ga_id %}<button type="button" class="cookie-settings" data-cookie-settings>Informasjonskapsler</button>{% endif %}
   </div>
