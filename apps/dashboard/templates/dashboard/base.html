@@ -64,6 +64,12 @@
           </a>
         </li>
         <li>
+          <a href="{% url 'dashboard_finn' %}" {% if name == 'dashboard_finn' %}aria-current="page"{% endif %}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></svg>
+            FINN-annonser
+          </a>
+        </li>
+        <li>
           <a href="{% url 'dashboard_blog' %}" {% if 'blog' in name %}aria-current="page"{% endif %}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11v16H5zM16 8h3v10a2 2 0 01-2 2M8 8h5M8 12h5M8 16h3"/></svg>
             Nyheter

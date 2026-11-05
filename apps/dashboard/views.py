@@ -1,5 +1,5 @@
 """The client's dashboard at /dashboard/: inquiries (a small sales CRM), the plots for
-sale with their sales map, the field info under the plot map (costs, documents),
+sale with their sales map, the field info under the plot map (costs, documents), the FINN ads,
 news posts and an activity log."""
 import csv
 import re
@@ -18,13 +18,13 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from apps.blog.models import Blog
-from apps.core.models import PLOT_STREETS, CostItem, FieldDocument, Inquiry, InquiryNote, Plot, PlotCategory
+from apps.core.models import PLOT_STREETS, CostItem, FieldDocument, FinnAd, Inquiry, InquiryNote, Plot, PlotCategory
 from apps.core.seo import BUSINESS
 from apps.core.views import wants_json
 
 from .forms import (
-    BlogForm, CostItemForm, DashboardLoginForm, FieldDocumentForm, InquiryNoteForm, PlotBulkForm,
-    PlotCategoryForm, PlotForm, PlotQuickForm,
+    BlogForm, CostItemForm, DashboardLoginForm, FieldDocumentForm, FinnAdForm, InquiryNoteForm, PlotBulkForm,
+    PlotCategoryForm, PlotFinnLinkForm, PlotForm, PlotQuickForm,
 )
 from .models import ActivityLog, LoginAttempt
 from .templatetags.dashboard_tags import millions
@@ -671,11 +671,11 @@ def dashboard_plot_delete(request, pk):
 
 
 # ------------------------------------------------------------------
-# The field: costs and documents shown under the plot map
+# The field: costs and documents (Feltinfo) and the FINN ads (own page), shown under the plot map
 # ------------------------------------------------------------------
 
 def field_page(request, cost_forms=None, doc_forms=None, new_cost=None, new_doc=None):
-    """The page, with any form that just failed shown again with its errors."""
+    """The Feltinfo page, with any form that just failed shown again with its errors."""
     cost_forms = cost_forms or {}
     doc_forms = doc_forms or {}
     costs = list(CostItem.objects.all())
@@ -690,10 +690,24 @@ def field_page(request, cost_forms=None, doc_forms=None, new_cost=None, new_doc=
     })
 
 
-# «cost_add», «cost_save», «doc_delete» … -> (model, form, form prefix, noun for the log, section on the page)
+def finn_page(request, ad_forms=None, new_ad=None, plot_forms=None):
+    """Every FINN link on the homepage: the client's own ads, and the links on the plots for sale."""
+    ad_forms = ad_forms or {}
+    plot_forms = plot_forms or {}
+    ads = list(FinnAd.objects.order_by('-category', 'order', '-created_at'))  # plots first, as on the website
+    plots = list(Plot.objects.available())
+    return render(request, 'dashboard/finn.html', {
+        'ads': [(a, ad_forms.get(a.pk) or FinnAdForm(instance=a, prefix=f'ad-{a.pk}')) for a in ads],
+        'new_ad': new_ad or FinnAdForm(prefix='ad-new', initial={'is_active': True}),
+        'plots': [(p, plot_forms.get(p.pk) or PlotFinnLinkForm(instance=p, prefix=f'plot-{p.pk}')) for p in plots],
+    })
+
+
+# «cost_add», «ad_save», «doc_delete» … -> (model, form, form prefix, noun for the log, page, section on the page)
 FIELD_ITEMS = {
-    'cost': (CostItem, CostItemForm, 'cost', 'omkostning', 'omkostninger'),
-    'doc': (FieldDocument, FieldDocumentForm, 'doc', 'dokument', 'dokumenter'),
+    'cost': (CostItem, CostItemForm, 'cost', 'omkostning', 'dashboard_field', 'omkostninger'),
+    'ad': (FinnAd, FinnAdForm, 'ad', 'Finn-annonse', 'dashboard_finn', 'annonser'),
+    'doc': (FieldDocument, FieldDocumentForm, 'doc', 'dokument', 'dashboard_field', 'dokumenter'),
 }
 
 
@@ -701,19 +715,47 @@ FIELD_ITEMS = {
 def dashboard_field(request):
     if request.method != 'POST':
         return field_page(request)
+    return save_field_item(request, ('cost', 'doc'), field_page)
 
+
+@staff_required
+def dashboard_finn(request):
+    if request.method != 'POST':
+        return finn_page(request)
+    if request.POST.get('action') == 'plotlink_save':
+        return save_plot_finn_link(request)
+    return save_field_item(request, ('ad',), finn_page)
+
+
+def save_plot_finn_link(request):
+    pk = request.POST.get('pk', '')
+    plot = get_object_or_404(Plot, pk=int(pk) if pk.isdigit() else 0)
+    form = PlotFinnLinkForm(request.POST, instance=plot, prefix=f'plot-{plot.pk}')
+    if not form.is_valid():
+        messages.error(request, 'Noe må rettes – se feltet som er merket.')
+        return finn_page(request, plot_forms={plot.pk: form})
+    if form.has_changed():
+        form.save()
+        action = 'La inn Finn-lenke for' if plot.finn_url else 'Fjernet Finn-lenken for'
+        log_activity(request, action, str(plot), reverse('dashboard_plot_edit', args=[plot.pk]))
+        messages.success(request, f'Finn-lenken for tomt {plot.number} ble lagret.')
+    return redirect(reverse('dashboard_finn') + '#tomtelenker')
+
+
+def save_field_item(request, kinds, show_page):
+    """Add, save or delete one cost, FINN ad or document – the «action» says which, e.g. «ad_save»."""
     action = request.POST.get('action', '')
     kind, _, verb = action.partition('_')
-    if kind not in FIELD_ITEMS or verb not in ('add', 'save', 'delete'):
-        return redirect(reverse('dashboard_field'))
-    model, form_class, prefix, noun, section = FIELD_ITEMS[kind]
-    target = reverse('dashboard_field') + f'#{section}'
+    if kind not in kinds or verb not in ('add', 'save', 'delete'):
+        return redirect(reverse(FIELD_ITEMS[kinds[0]][4]))
+    model, form_class, prefix, noun, page, section = FIELD_ITEMS[kind]
+    target = reverse(page) + f'#{section}'
 
     if verb == 'add':
         form = form_class(request.POST, request.FILES, prefix=f'{prefix}-new')
         if not form.is_valid():
             messages.error(request, 'Noe må rettes – se feltet som er merket.')
-            return field_page(request, **{f'new_{kind}': form})
+            return show_page(request, **{f'new_{kind}': form})
         item = form.save(commit=False)
         item.order = next_order(model)
         item.save()
@@ -735,7 +777,7 @@ def dashboard_field(request):
     form = form_class(request.POST, request.FILES, instance=item, prefix=f'{prefix}-{item.pk}')
     if not form.is_valid():
         messages.error(request, 'Noe må rettes – se feltet som er merket.')
-        return field_page(request, **{f'{kind}_forms': {item.pk: form}})
+        return show_page(request, **{f'{kind}_forms': {item.pk: form}})
     if form.has_changed():
         old_file = item.file.name if kind == 'doc' else None
         form.save()

@@ -1259,7 +1259,7 @@ a.card-title:hover { text-decoration: underline; text-decoration-thickness: 1px;
 }
 
 // ------------------------------------------------------------
-// Feltinfo: costs and documents, one editable row each
+// Feltinfo and FINN: costs, documents and ads, one editable row each
 // ------------------------------------------------------------
 .edit-rows {
   border-top: 1px solid $line;
@@ -1327,6 +1327,15 @@ a.card-title:hover { text-decoration: underline; text-decoration-thickness: 1px;
   flex-basis: 100%;
 
   .errorlist { font-size: 14px; }
+}
+
+// FINN page: the plot number in front of each plot's link, linking to the plot
+.row-plot {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  font-size: 17px;
+  font-weight: 600;
 }
 
 // ------------------------------------------------------------

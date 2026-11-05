@@ -2041,6 +2041,14 @@ a.card-title:hover {
   font-size: 14px;
 }
 
+.row-plot {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
 @media (max-width: 1719px) {
   .plots-layout {
     grid-template-columns: minmax(0, 1fr);

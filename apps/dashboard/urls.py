@@ -19,6 +19,7 @@ urlpatterns = [
     path('tomter/<int:pk>/slett/', views.dashboard_plot_delete, name='dashboard_plot_delete'),
 
     path('feltinfo/', views.dashboard_field, name='dashboard_field'),
+    path('finn-annonser/', views.dashboard_finn, name='dashboard_finn'),
 
     path('nyheter/', views.dashboard_blog, name='dashboard_blog'),
     path('nyheter/ny/', views.dashboard_blog_create, name='dashboard_blog_create'),

@@ -441,14 +441,6 @@ class FieldInfoDashboardTests(DashboardTestCase):
         self.assertContains(response, 'Fyll inn enten et beløp')
         self.assertFalse(CostItem.objects.exists())
 
-    def test_finn_ads_are_not_on_the_dashboard(self):
-        """The FINN ads were taken out of the dashboard (28.10.2026); the website still lists them."""
-        self.assertNotContains(self.client.get(self.url), 'Annonser på FINN')
-        count = FinnAd.objects.count()
-        self.client.post(self.url, {'action': 'ad_add', 'ad-new-title': 'Hytte', 'ad-new-url': 'https://www.finn.no/ad?finnkode=1',
-                                    'ad-new-category': 'plot', 'ad-new-is_active': 'on'})
-        self.assertEqual(FinnAd.objects.count(), count)
-
     def test_upload_a_pdf_and_delete_it_with_its_file(self):
         pdf = SimpleUploadedFile('regulering.pdf', b'%PDF-1.7 test', content_type='application/pdf')
         self.client.post(self.url, {'action': 'doc_add', 'doc-new-title': 'Reguleringsbestemmelser', 'doc-new-file': pdf,
@@ -474,6 +466,71 @@ class FieldInfoDashboardTests(DashboardTestCase):
 # ------------------------------------------------------------------
 # News
 # ------------------------------------------------------------------
+
+
+class FinnDashboardTests(DashboardTestCase):
+    """The FINN page edits every Finn link under the plot map on the homepage."""
+    url = reverse('dashboard_finn')
+
+    def test_page_loads_and_is_in_the_menu(self):
+        self.assertEqual(self.client.get(self.url).status_code, 200)
+        self.assertContains(self.client.get(reverse('dashboard_home')), 'FINN-annonser')
+
+    def test_finn_ads_must_link_to_finn(self):
+        response = self.client.post(self.url, {'action': 'ad_add', 'ad-new-title': 'Hytte', 'ad-new-url': 'https://example.com/finn.no',
+                                               'ad-new-is_active': 'on'})
+        self.assertContains(response, 'Lim inn lenken til annonsen på finn.no')
+        self.client.post(self.url, {'action': 'ad_add', 'ad-new-title': 'Hytte', 'ad-new-url': 'https://www.finn.no/ad?finnkode=1', 'ad-new-category': 'plot',
+                                    'ad-new-price': '5 350 000', 'ad-new-is_active': 'on'})
+        self.assertEqual(FinnAd.objects.get(url='https://www.finn.no/ad?finnkode=1').price, 5350000)
+
+    def test_finn_ad_can_be_marked_as_a_cabin(self):
+        self.client.post(self.url, {'action': 'ad_add', 'ad-new-title': 'Hytte', 'ad-new-url': 'https://www.finn.no/ad?finnkode=2',
+                                    'ad-new-category': 'cabin', 'ad-new-is_active': 'on'})
+        self.assertEqual(FinnAd.objects.get(url='https://www.finn.no/ad?finnkode=2').category, 'cabin')
+
+    def test_an_edited_ad_changes_the_homepage(self):
+        ad = FinnAd.objects.create(title='Gammel tittel', url='https://www.finn.no/ad?finnkode=5', category='plot')
+        self.client.post(self.url, {'action': 'ad_save', 'pk': ad.pk, f'ad-{ad.pk}-title': 'Ny hytte til salgs',
+                                    f'ad-{ad.pk}-url': 'https://www.finn.no/ad?finnkode=6', f'ad-{ad.pk}-category': 'cabin',
+                                    f'ad-{ad.pk}-is_active': 'on'})
+        html = self.client.get('/').content.decode()
+        self.assertNotIn('Gammel tittel', html)
+        self.assertIn('Ny hytte til salgs', html)
+        self.assertGreater(html.index('finnkode=6'), html.index('<h4 class="finn-group">Hytter</h4>'))
+
+    def test_an_inactive_ad_is_hidden_on_the_homepage(self):
+        ad = FinnAd.objects.create(title='Skjult annonse', url='https://www.finn.no/ad?finnkode=7')
+        self.client.post(self.url, {'action': 'ad_save', 'pk': ad.pk, f'ad-{ad.pk}-title': ad.title,
+                                    f'ad-{ad.pk}-url': ad.url, f'ad-{ad.pk}-category': 'plot'}, follow=True)
+        self.assertNotContains(self.client.get('/'), 'Skjult annonse')
+
+    def test_a_plot_link_set_here_shows_on_the_homepage(self):
+        plot = Plot.objects.create(number='88', status='available')
+        self.client.post(self.url, {'action': 'plotlink_save', 'pk': plot.pk,
+                                    f'plot-{plot.pk}-finn_url': 'https://www.finn.no/ad?finnkode=88'})
+        self.assertEqual(Plot.objects.get(pk=plot.pk).finn_url, 'https://www.finn.no/ad?finnkode=88')
+        self.assertContains(self.client.get('/'), 'finnkode=88')
+        self.assertTrue(ActivityLog.objects.filter(action='La inn Finn-lenke for').exists())
+
+    def test_a_plot_link_must_go_to_finn(self):
+        plot = Plot.objects.create(number='89', status='available')
+        response = self.client.post(self.url, {'action': 'plotlink_save', 'pk': plot.pk,
+                                               f'plot-{plot.pk}-finn_url': 'https://example.com/annonse'})
+        self.assertContains(response, 'Lim inn lenken til annonsen på finn.no')
+        self.assertEqual(Plot.objects.get(pk=plot.pk).finn_url, '')
+
+    def test_only_plots_for_sale_are_listed(self):
+        Plot.objects.create(number='90', status='available')
+        Plot.objects.create(number='91', status='sold')
+        response = self.client.get(self.url)
+        self.assertContains(response, 'Finn-lenke for tomt 90')
+        self.assertNotContains(response, 'Finn-lenke for tomt 91')
+
+    def test_ads_cannot_be_added_through_feltinfo(self):
+        self.client.post(reverse('dashboard_field'), {'action': 'ad_add', 'ad-new-title': 'Hytte', 'ad-new-category': 'plot',
+                                                      'ad-new-url': 'https://www.finn.no/ad?finnkode=9', 'ad-new-is_active': 'on'})
+        self.assertFalse(FinnAd.objects.filter(url='https://www.finn.no/ad?finnkode=9').exists())
 
 class BlogTests(DashboardTestCase):
     def test_sidebar_has_no_projects(self):

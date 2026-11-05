@@ -1,0 +1,88 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}FINN-annonser{% endblock %}
+
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>FINN-annonser</h1>
+    <p class="page-lead">Alle Finn-lenkene under tomtekartet på forsiden: annonsene dine, og lenkene på tomtene som er til salgs. Tomter og hytter vises hver for seg på nettsiden.</p>
+  </div>
+  <div class="page-actions">
+    <a href="/#finn-annonser" class="button secondary" target="_blank" rel="noopener">Se på nettsiden</a>
+  </div>
+</header>
+
+{% comment %} ---------------------------------------------------------------- The client's own ads {% endcomment %}
+<section class="panel" id="annonser">
+  <div class="panel-head">
+    <h2>Annonser</h2>
+    <p class="panel-note">Aktive annonser vises på forsiden. Ta bort haken ved «Aktiv» for å skjule en annonse uten å slette den.</p>
+  </div>
+
+  <div class="edit-rows">
+    {% for ad, form in ads %}
+    <form method="post" class="edit-row ad-row{% if form.errors %} has-errors{% endif %}{% if not ad.is_active %} is-inactive{% endif %}">
+      {% csrf_token %}
+      <input type="hidden" name="pk" value="{{ ad.pk }}">
+      <label class="row-field grow"><span>Tittel</span>{{ form.title }}</label>
+      <label class="row-field grow"><span>Lenke</span>{{ form.url }}</label>
+      <label class="row-field narrow"><span>Tomt eller hytte</span>{{ form.category }}</label>
+      <label class="row-field"><span>Hva den gjelder</span>{{ form.kind }}</label>
+      <label class="row-field"><span>Pris (kr)</span>{{ form.price }}</label>
+      <label class="row-check">{{ form.is_active }} Aktiv</label>
+      <div class="row-actions">
+        <a href="{{ ad.url }}" target="_blank" rel="noopener" class="text-link">Åpne</a>
+        <button type="submit" name="action" value="ad_save" class="button small secondary">Lagre</button>
+        <button type="submit" name="action" value="ad_delete" class="icon-button" formnovalidate
+                data-confirm-click="Slette «{{ ad.title }}» fra listen? Annonsen på FINN blir ikke berørt." aria-label="Slett {{ ad.title }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></svg>
+        </button>
+      </div>
+      {% if form.errors %}<div class="row-errors">{% for field in form %}{{ field.errors }}{% endfor %}</div>{% endif %}
+    </form>
+    {% empty %}
+    <p class="muted">Ingen annonser lagt inn ennå.</p>
+    {% endfor %}
+  </div>
+
+  <form method="post" class="edit-row ad-row add-row{% if new_ad.errors %} has-errors{% endif %}">
+    {% csrf_token %}
+    <label class="row-field grow"><span>Ny annonse – tittel</span>{{ new_ad.title }}</label>
+    <label class="row-field grow"><span>Lenke</span>{{ new_ad.url }}</label>
+    <label class="row-field narrow"><span>Tomt eller hytte</span>{{ new_ad.category }}</label>
+    <label class="row-field"><span>Hva den gjelder</span>{{ new_ad.kind }}</label>
+    <label class="row-field"><span>Pris (kr)</span>{{ new_ad.price }}</label>
+    <label class="row-check">{{ new_ad.is_active }} Aktiv</label>
+    <div class="row-actions">
+      <button type="submit" name="action" value="ad_add" class="button small">Legg til</button>
+    </div>
+    {% if new_ad.errors %}<div class="row-errors">{% for field in new_ad %}{{ field.errors }}{% endfor %}</div>{% endif %}
+  </form>
+</section>
+
+{% comment %} ---------------------------------------------------------------- Links on the plots for sale {% endcomment %}
+<section class="panel" id="tomtelenker">
+  <div class="panel-head">
+    <h2>Finn-lenker på tomtene</h2>
+    <p class="panel-note">En ledig tomt med Finn-lenke vises som «Hyttetomt …» under «Tomter» på forsiden. Når tomten blir reservert eller solgt, forsvinner lenken av seg selv.</p>
+  </div>
+
+  <div class="edit-rows">
+    {% for plot, form in plots %}
+    <form method="post" class="edit-row{% if form.errors %} has-errors{% endif %}">
+      {% csrf_token %}
+      <input type="hidden" name="pk" value="{{ plot.pk }}">
+      <div class="row-field narrow"><span>Tomt</span><a href="{% url 'dashboard_plot_edit' plot.pk %}" class="row-plot">{{ plot.number }}</a></div>
+      <label class="row-field grow"><span>Finn-lenke for tomt {{ plot.number }}{% if plot.street %}, {{ plot.street }}{% endif %}</span>{{ form.finn_url }}</label>
+      <div class="row-actions">
+        {% if plot.finn_url %}<a href="{{ plot.finn_url }}" target="_blank" rel="noopener" class="text-link">Åpne</a>{% endif %}
+        <button type="submit" name="action" value="plotlink_save" class="button small secondary">Lagre</button>
+      </div>
+      {% if form.errors %}<div class="row-errors">{% for field in form %}{{ field.errors }}{% endfor %}</div>{% endif %}
+    </form>
+    {% empty %}
+    <p class="muted">Ingen ledige tomter akkurat nå.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
