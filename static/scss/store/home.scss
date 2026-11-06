@@ -927,7 +927,7 @@
   }
 }
 
-// Phones: the six smaller cards in a row you swipe through, so the page doesn't go on forever
+// Phones: the smaller cards in a row you swipe through, so the page doesn't go on forever
 @media (max-width: 699px) {
   .suppliers .supplier-grid {
     grid-auto-flow: column;
@@ -946,6 +946,37 @@
   }
 }
 
+// A tile left alone on the last row (7 tiles in rows of 3) spans the whole row instead: photo
+// as wide as one column on the left, text beside it – so the row doesn't look like a gap.
+// $column is one grid column's width, $gap the grid's column gap.
+@mixin lone-last-tile($column, $gap) {
+  grid-column: 1 / -1;
+
+  .supplier-tile {
+    display: grid;
+    grid-template-columns: $column 1fr;
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: $gap;
+  }
+
+  .tile-photo {
+    grid-row: 1 / span 4;
+    margin-bottom: 0;
+  }
+
+  .tile-kicker {
+    padding-top: 8px;
+  }
+
+  .tile-text {
+    max-width: 560px;
+  }
+
+  .tile-link {
+    margin-top: 0;  // right under the text, not at the bottom of the photo
+  }
+}
+
 @media (min-width: 700px) and (max-width: 1139px) {
   .suppliers {
     .supplier-cards {
@@ -956,6 +987,10 @@
     .supplier-grid {
       grid-template-columns: 1fr 1fr;
       gap: 40px 28px;
+
+      li:last-child:nth-child(2n + 1) {
+        @include lone-last-tile(calc((100% - 28px) / 2), 28px);
+      }
     }
   }
 }
@@ -971,6 +1006,10 @@
     .supplier-grid {
       grid-template-columns: repeat(3, 1fr);
       gap: u(56) u(40);
+
+      li:last-child:nth-child(3n + 1) {
+        @include lone-last-tile(calc((100% - 2 * #{u(40)}) / 3), u(40));
+      }
     }
   }
 }

@@ -122,6 +122,10 @@ SUPPLIERS = [
     ('RH Kvalitetsbygg', 'Byggmester på Lillehammer',
      'Sentralt godkjent byggmester med over 20 års erfaring – spesialister på laft og stavlaft, fra grunnarbeid til nøkkelferdig.',
      'https://www.rhkvalitetsbygg.no', 'images/suppliers/rhkvalitetsbygg.jpg'),
+    # Added at the client's request (06.11.2026); text and photo from va-as.no
+    ('VA Entreprenør', 'Maskinentreprenør fra Valdres',
+     'Opparbeider tomt og grunnmur – totalleverandør av grunn- og gravearbeid, infrastruktur, betong og fundamentering.',
+     'https://va-as.no', 'images/suppliers/va-entreprenor.jpg'),
 ]
 
 FAQ = [
